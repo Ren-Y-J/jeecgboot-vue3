@@ -10,6 +10,7 @@ import { updateDarkTheme } from '/@/logics/theme/dark';
 import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 
 export function baseHandler(event: HandlerEnum, value: any) {
+	console.log(value,'HandlerEnum')
   const appStore = useAppStore();
   const config = handler(event, value);
   appStore.setProjectConfig(config);

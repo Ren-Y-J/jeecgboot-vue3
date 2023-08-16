@@ -5,7 +5,8 @@
             <div class="app-loading-dots">
                 <span class="dot dot-spin"><i></i><i></i><i></i><i></i></span>
             </div>
-            <div class="app-loading-title">JeecgBoot 企业级低代码平台</div>
+            <!-- <div class="app-loading-title">JeecgBoot 企业级低代码平台</div> -->
+			<div class="app-loading-title">系统</div>
         </div>
     </div>
 </template>
@@ -47,6 +48,7 @@
       });
 
       function requestFailed (err) {
+		  
         notification.error({
           message: '登录失败',
           description: ((err.response || {}).data || {}).message || err.message || "请求出现错误，请稍后再试",

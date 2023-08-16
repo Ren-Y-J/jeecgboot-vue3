@@ -44,6 +44,7 @@
       const { prefixCls } = useDesign('setting-theme-picker');
 
       function handleClick(color: string) {
+			console.log(color,666,props.colorList)
         props.event && baseHandler(props.event, color);
       }
       return {
