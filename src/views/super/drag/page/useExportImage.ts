@@ -1,6 +1,6 @@
 
 import {ref} from 'vue'
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
 
 /**
  * 用于导出生成image
@@ -23,10 +23,10 @@ export function useExportImage() {
       width: ele.offsetWidth,
       height: ele.offsetHeight
     }
-    html2canvas(ele, { useCORS: true, logging: true }).then(async (canvas) => {
-      const dataURL = canvas.toDataURL('image/png');
-      await download(dataURL, size, fileName);
-    });
+    // html2canvas(ele, { useCORS: true, logging: true }).then(async (canvas) => {
+    //   const dataURL = canvas.toDataURL('image/png');
+    //   await download(dataURL, size, fileName);
+    // });
   }
 
   async function download(imgUrl, size, fileName) {
