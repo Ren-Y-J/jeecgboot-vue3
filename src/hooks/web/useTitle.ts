@@ -8,7 +8,7 @@ import { useLocaleStore } from '/@/store/modules/locale';
 import { REDIRECT_NAME } from '/@/router/constant';
 
 /**
- * Listening to page changes and dynamically changing site titles
+ * 监听页面更改和动态更改网站标题
  */
 export function useTitle() {
   const { title } = useGlobSetting();
@@ -27,8 +27,10 @@ export function useTitle() {
         return;
       }
 
-      const tTitle = t(route?.meta?.title as string);
-      pageTitle.value = tTitle ? ` ${tTitle} - ${title} ` : `${title}`;
+      // const tTitle = t(route?.meta?.title as string);
+	  const tTitle ='点亮网络DNS系统';
+      // pageTitle.value = tTitle ? ` ${tTitle} - ${title} ` : `${title}`;'
+	  pageTitle.value = tTitle
     },
     { immediate: true }
   );

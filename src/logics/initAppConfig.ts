@@ -1,5 +1,5 @@
 /**
- * Application configuration
+ *应用程序配置 
  */
 import type { ProjectConfig } from '/#/config';
 
@@ -22,7 +22,7 @@ import { Persistent } from '/@/utils/cache/persistent';
 import { deepMerge } from '/@/utils';
 import { ThemeEnum } from '/@/enums/appEnum';
 
-// Initial project configuration
+// 初始项目配置
 export function initAppConfigStore() {
   const localeStore = useLocaleStore();
   const appStore = useAppStore();
@@ -49,7 +49,7 @@ export function initAppConfigStore() {
   }
   appStore.setProjectConfig(projCfg);
 
-  // init dark mode
+  // 初始黑暗模式
   updateDarkTheme(darkMode);
   if (darkMode === ThemeEnum.DARK) {
     updateHeaderBgColor();
@@ -58,7 +58,7 @@ export function initAppConfigStore() {
     headerBgColor && updateHeaderBgColor(headerBgColor);
     bgColor && updateSidebarBgColor(bgColor);
   }
-  // init store
+  // 初始化存储
   localeStore.initLocale();
 
   setTimeout(() => {
@@ -67,8 +67,8 @@ export function initAppConfigStore() {
 }
 
 /**
- * As the version continues to iterate, there will be more and more cache keys stored in localStorage.
- * This method is used to delete useless keys
+随着版本的不断迭代，本地存储中存储的缓存键会越来越多。
+ * 此方法用于删除无用的密钥
  */
 export function clearObsoleteStorage() {
   const commonPrefix = getCommonStoragePrefix();

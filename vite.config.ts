@@ -29,7 +29,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     ]
   const env = loadEnv(mode, root);
 
-  // The boolean type read by loadEnv is a string. This function can be converted to boolean type
+  // loadEnv的布尔类型是一个字符串。这个函数可以转换为布尔类型
   const viteEnv = wrapperEnv(env);
 
   const { VITE_PORT, VITE_PUBLIC_PATH, VITE_PROXY, VITE_DROP_CONSOLE } = viteEnv;
@@ -58,11 +58,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       ],
     },
     server: {
-      // Listening on all local IPs
+      // 监听所有本地IPs
       host: true,
       https: false,
       port: VITE_PORT,
-      // Load proxy configuration from .env
+      // 来自.env的负载代理配置
       proxy: createProxy(VITE_PROXY),
     },
     build: {
@@ -70,17 +70,28 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       target: 'es2015',
       cssTarget: 'chrome80',
       outDir: OUTPUT_DIR,
+			
       terserOptions: {
         compress: {
           keep_infinity: true,
-          // Used to delete console in production environment
+          // 用于在生产环境中删除控制台
           drop_console: VITE_DROP_CONSOLE,
           drop_debugger: true,
         },
       },
-      // Turning off brotliSize display can slightly reduce packaging time
+      // 关闭brotliSize显示可以稍微减少包装时间
       reportCompressedSize: false,
       chunkSizeWarningLimit: 2000,
+	  // 优化:代码分割
+	   rollupOptions: {
+	          output: {
+	            manualChunks(id) {
+	              if (id.includes('components')) { 
+	                return 'components';
+	              }
+	            },
+	          },
+	        },
     },
     define: {
       // setting vue-i18-next
