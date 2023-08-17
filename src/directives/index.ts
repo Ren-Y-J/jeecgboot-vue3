@@ -1,5 +1,5 @@
 /**
- * Configure and register global directives
+ * 配置和注册全局指令
  */
 import type { App } from 'vue';
 import { setupPermissionDirective } from './permission';
