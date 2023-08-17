@@ -24,14 +24,14 @@ export const getEnabledTypes = async () => {
   if (enabledTypes != null) {
     return cloneObject(enabledTypes);
   } else {
-    let { success, result } = await defHttp.get({ url: backEndUrl.getEnabledType }, { isTransformResponse: false });
-    if (success) {
-      // 在此缓存
-      enabledTypes = cloneObject(result);
-      return result;
-    } else {
-      console.warn('getEnabledType查询失败：');
-    }
+  //   let { success, result } = await defHttp.get({ url: backEndUrl.getEnabledType }, { isTransformResponse: false });
+  //   if (success) {
+  //     // 在此缓存
+  //     enabledTypes = cloneObject(result);
+  //     return result;
+  //   } else {
+  //     console.warn('getEnabledType查询失败：');
+  //   }
   }
   return {};
 };
