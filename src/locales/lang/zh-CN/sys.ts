@@ -61,7 +61,7 @@ export default {
   },
   login: {
     backSignIn: '返回',
-    signInFormTitle: '登录',
+    signInFormTitle: '用户登录',
     mobileSignInFormTitle: '手机登录',
     qrSignInFormTitle: '二维码登录',
     signUpFormTitle: '注册',
@@ -75,7 +75,7 @@ export default {
 
     loginButton: '登录',
     registerButton: '注册',
-    rememberMe: '记住我',
+    rememberMe: '记住密码',
     forgetPassword: '忘记密码?',
     otherSignIn: '其他登录方式',
 
@@ -103,10 +103,10 @@ export default {
     subTitleText: '{0}秒后返回登录页面',
 
     //重置密码页面中文
-    authentication:'验证身份',
-    resetLoginPassword:'重置登录密码',
-    resetSuccess:'重置成功',
-    nextStep:'下一步',
-    goToLogin:'去登录'
+    authentication: '验证身份',
+    resetLoginPassword: '重置登录密码',
+    resetSuccess: '重置成功',
+    nextStep: '下一步',
+    goToLogin: '去登录',
   },
 };
