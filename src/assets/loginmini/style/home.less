@@ -11,7 +11,7 @@
   top: 50%;
   left: 50%;
   // width: 92%;
-  width: 886px;
+  width: 874px;
   height: auto;
   -webkit-transform: translateX(-50%) translateY(-50%);
   -moz-transform: translateX(-50%) translateY(-50%);
@@ -24,14 +24,15 @@
     display: flex;
     justify-content: center;
     // align-items: center;
-    height: 40px;
+    height: 34px;
     font-size: 26px;
     font-family: MicrosoftYaHei;
     color: #ffffff;
     // line-height: 0px;
     // letter-spacing: 7px;
     // background-color: ;
-    padding-bottom: 63px;
+    // padding-bottom: 63px;
+    margin-bottom: 63px;
   }
 }
 
@@ -54,6 +55,8 @@
 
   width: 100%;
   height: 100%;
+  width: 446px;
+  height: 440px;
   background-size: cover;
   margin: 25px 13px 32px 0;
   // padding: 25px 13px 32px 0;
@@ -64,10 +67,12 @@
 .aui-image-text {
   // top: 50%;
   // left: 50%;
-  // width: 100%;
-  width: 462px;
-  height: 454px;
-
+  width: 100%;
+  height: 100%;
+  // width: 462px;
+  // height: 454px;
+  // width: 446px;
+  // height: 440px;
   // background: #ffffff;
   border-radius: 14px 14px 14px 14px;
 }
@@ -80,7 +85,7 @@
   padding: 30px 61px 100px 39px;
   background: #fff;
   // box-shadow: 2px 9px 49px -17px rgba(0, 0, 0, 0.1);
-  border-radius: 14px 14px 14px 14px;
+  border-radius: 14px 0px 0px 14px;
 }
 
 .aui-logo {
@@ -273,6 +278,7 @@
   text-align: left;
   padding-top: 31px;
   font-family: Microsoft Ya Hei;
+  padding-left: 10px;
 }
 
 .aui-clear-left {
@@ -363,7 +369,7 @@
   position: relative;
   // padding-left: 20px;
   background: #fff;
-  margin-bottom: 8px;
+  // margin-bottom: 8px;
   margin-top: 20px;
 }
 
@@ -382,11 +388,15 @@
   font-size: 14px;
   background: none;
 }
+// placeholder里面的颜色
+.aui-inputClear input::placeholder {
+  color: #919191 !important;
+}
 // 短信验证码图片
 .aui-code {
   position: absolute;
   right: 1px;
-  bottom: 3px;
+  bottom: 4px;
   width: 115px;
   cursor: pointer;
 }
@@ -423,7 +433,7 @@
   position: relative;
   color: #040404;
   // padding-left: 22px;
-  padding: 19px 0 33px 4px;
+  padding: 19px 0 33px 6px;
 }
 
 .aui-choice input {
