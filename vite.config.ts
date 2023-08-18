@@ -10,7 +10,8 @@ import { createVitePlugins } from './build/vite/plugin';
 import { OUTPUT_DIR } from './build/constant';
 import OptimizationPersist from 'vite-plugin-optimize-persist'
 import PkgConfig from 'vite-plugin-package-config'
-
+// 压缩打包代码
+import compression from 'vite-plugin-compression2';
 function pathResolve(dir: string) {
   return resolve(process.cwd(), '.', dir);
 }
@@ -109,8 +110,18 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
 
     // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
-    plugins: createVitePlugins(viteEnv, isBuild),
-
+ plugins: [
+	  createVitePlugins(viteEnv, isBuild),
+      // ...其他插件
+      compression({
+        algorithm: 'gzip',
+        exclude: [/\.(br)$ /, /\.(gz)$/],
+      }),
+      compression({
+        algorithm: 'brotliCompress',
+        exclude: [/\.(br)$ /, /\.(gz)$/],
+      }),
+    ],
     optimizeDeps: {
       esbuildOptions: {
         target: 'es2020',
