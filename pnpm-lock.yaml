@@ -392,6 +392,9 @@ devDependencies:
   vite-plugin-compression:
     specifier: ^0.5.1
     version: 0.5.1(vite@3.0.2)
+  vite-plugin-compression2:
+    specifier: ^0.10.3
+    version: 0.10.3(rollup@2.72.0)
   vite-plugin-html:
     specifier: ^3.2.0
     version: 3.2.0(vite@3.0.2)
@@ -3053,6 +3056,21 @@ packages:
     dependencies:
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: true
+
+  /@rollup/pluginutils@5.0.3(rollup@2.72.0):
+    resolution: {integrity: sha512-hfllNN4a80rwNQ9QCxhxuHCGHMAvabXqxNdaChUSSadMre7t4iEUI6fFAhBOn/eIYTgYVhBv7vCLsAJ4u3lf3g==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.1
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+      rollup: 2.72.0
     dev: true
 
   /@rys-fe/vite-plugin-theme@0.8.6(vite@3.0.2):
@@ -13221,6 +13239,14 @@ packages:
     dependencies:
       diff-match-patch: 1.0.5
     dev: false
+
+  /vite-plugin-compression2@0.10.3(rollup@2.72.0):
+    resolution: {integrity: sha512-QhEfkA8qoEekcclWJEyC+YLI5bI4pC4eLCjb254dXmKHScsrwHBOL1NiOielKFvrxdTMnoAFaiB72668VvAvlw==}
+    dependencies:
+      '@rollup/pluginutils': 5.0.3(rollup@2.72.0)
+    transitivePeerDependencies:
+      - rollup
+    dev: true
 
   /vite-plugin-compression@0.5.1(vite@3.0.2):
     resolution: {integrity: sha512-5QJKBDc+gNYVqL/skgFAP81Yuzo9R+EAf19d+EtsMF/i8kFUpNi3J/H01QD3Oo8zBQn+NzoCIFkpPLynoOzaJg==}
