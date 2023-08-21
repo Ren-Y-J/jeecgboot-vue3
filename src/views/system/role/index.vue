@@ -1,4 +1,5 @@
 <template>
+  <!-- 封装的表格组件 -->
   <BasicTable @register="registerTable">
     <template #tableTitle>
       <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleCreate"> 新增</a-button>

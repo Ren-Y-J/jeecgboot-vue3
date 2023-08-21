@@ -45,7 +45,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'orgCodeTxt',
   },
   {
-    title: '负责部门',
+    title: '负责部门2',
     width: 150,
     dataIndex: 'departIds_dictText',
   },
@@ -285,10 +285,7 @@ export const formSchema: FormSchema[] = [
     field: 'email',
     component: 'Input',
     dynamicRules: ({ model, schema }) => {
-      return [
-        { ...rules.duplicateCheckRule('sys_user', 'email', model, schema, true)[0] },
-        { ...rules.rule('email', false)[0] },
-      ];
+      return [{ ...rules.duplicateCheckRule('sys_user', 'email', model, schema, true)[0] }, { ...rules.rule('email', false)[0] }];
     },
   },
   {

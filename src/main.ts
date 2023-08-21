@@ -18,6 +18,8 @@ import { setupI18n } from '/@/locales/setupI18n';
 import { registerGlobComp } from '/@/components/registerGlobComp';
 import { registerThirdComp } from '/@/settings/registerThirdComp';
 import { useSso } from '/@/hooks/web/useSso';
+
+import Antd from 'ant-design-vue';
 // 注册online模块lib
 import { registerPackages } from '/@/utils/monorepo/registerPackages';
 
@@ -65,6 +67,7 @@ async function bootstrap() {
   // 当路由准备好时再执行挂载( https://next.router.vuejs.org/api/#isready)
   await router.isReady();
 
+  app.use(Antd); //自己
   // 挂载应用
   app.mount('#app', true);
 }

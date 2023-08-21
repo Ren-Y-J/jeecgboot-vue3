@@ -152,3 +152,4 @@ export type ComponentType =
   | 'linkRecordSelect'
   | 'RangeTime'
   | 'JRangeNumber';
+('MyInput');
