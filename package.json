@@ -39,7 +39,6 @@
     "@jeecg/online": "3.5.3-beta3",
     "@logicflow/core": "^1.1.13",
     "@logicflow/extension": "^1.1.13",
-    "@qiaoqiaoyun/drag-free": "^1.0.52",
     "@vue/runtime-core": "^3.2.33",
     "@vue/shared": "^3.2.33",
     "@vueuse/core": "^8.3.0",
