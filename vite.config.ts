@@ -84,15 +84,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       reportCompressedSize: false,
       chunkSizeWarningLimit: 2000,
 	  // 优化:代码分割
-	   rollupOptions: {
-	          output: {
-	            manualChunks(id) {
-	              if (id.includes('components')) { 
-	                return 'components';
-	              }
-	            },
-	          },
-	        },
+	   // rollupOptions: {
+	   //        output: {
+	   //          manualChunks(id) {
+	   //            if (id.includes('components')) { 
+	   //              return 'components';
+	   //            }
+	   //          },
+	   //        },
+	   //      },
     },
     define: {
       // setting vue-i18-next
