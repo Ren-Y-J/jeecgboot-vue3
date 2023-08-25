@@ -11,10 +11,10 @@ const { t } = useI18n();
  */
 export function createPlaceholderMessage(component: ComponentType) {
   if (component.includes('Input') || component.includes('Complete')) {
-    return t(' ');
+    return t('common.inputText');
   }
   if (component.includes('Picker')) {
-    return t(' ');
+    return t('common.chooseText');
   }
   if (
     component.includes('Select') ||
@@ -24,7 +24,7 @@ export function createPlaceholderMessage(component: ComponentType) {
     component.includes('Switch')
   ) {
     // return `请选择${label}`;
-    return t(' ');
+    return t('common.chooseText');
   }
   return '';
 }

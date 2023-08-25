@@ -8,10 +8,10 @@ const { t } = useI18n();
  */
 export function createPlaceholderMessage(component: ComponentType) {
   if (component.includes('Input')) {
-    return t(' ');
+    return t('common.inputText');
   }
   if (component.includes('Picker')) {
-    return t(' ');
+    return t('common.chooseText');
   }
 
   if (
@@ -22,7 +22,7 @@ export function createPlaceholderMessage(component: ComponentType) {
     component.includes('DatePicker') ||
     component.includes('TimePicker')
   ) {
-    return t(' ');
+    return t('common.chooseText');
   }
   return '';
 }

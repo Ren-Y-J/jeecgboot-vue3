@@ -113,14 +113,14 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
  plugins: [
 	  createVitePlugins(viteEnv, isBuild),
       // ...其他插件
-      compression({
-        algorithm: 'gzip',
-        exclude: [/\.(br)$ /, /\.(gz)$/],
-      }),
-      compression({
-        algorithm: 'brotliCompress',
-        exclude: [/\.(br)$ /, /\.(gz)$/],
-      }),
+      // compression({
+      //   algorithm: 'gzip',
+      //   exclude: [/\.(br)$ /, /\.(gz)$/],
+      // }),
+      // compression({
+      //   algorithm: 'brotliCompress',
+      //   exclude: [/\.(br)$ /, /\.(gz)$/],
+      // }),
     ],
     optimizeDeps: {
       esbuildOptions: {
