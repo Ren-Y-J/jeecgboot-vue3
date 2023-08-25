@@ -154,5 +154,5 @@
   initData();
 </script>
 <style lang="less" scoped>
-  @import '@qiaoqiaoyun/drag-free/lib/index.css';
+  // @import '@qiaoqiaoyun/drag-free/lib/index.css';
 </style>

@@ -170,7 +170,7 @@
   }
 </script>
 <style lang="less">
-  @import '@qiaoqiaoyun/drag-free/lib/index.css';
+  // @import '@qiaoqiaoyun/drag-free/lib/index.css';
   
   .drag-design-process-modal {
     .ant-modal-header {
