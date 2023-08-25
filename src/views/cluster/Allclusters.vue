@@ -4,17 +4,20 @@
       <a-card>
         <!-- <div id="components-grid-demo-flex"> -->
         <div class="title">
-          <a-form :model="formState" name="basic" autocomplete="off" :labelCol="{ span: 0 }"
-            :wrapperCol="{ span: 16, offset: 1 }" @finish="onFinish" @finishFailed="onFinishFailed">
+
+          <!--:labelCol="{ span: 0 }" :wrapperCol="{ span: 16, offset: 1 }" -->
+          <a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
             <a-row :gutter="1">
               <a-col :md="6" :sm="24">
-                <a-form-item label="集群名称" name="clusterName" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }">
+                <a-form-item style="margin-bottom: 0px;" label="集群名称" name="clusterName" :labelCol="{ span: 6 }"
+                  :wrapperCol="{ span: 16 }">
                   <!-- :label-col="{ span: 6 }" :wrapper-col="{ span: 70 }" -->
-                  <a-input v-model:value="queryParams.clusterName" placeholder="填写集群名称" />
+                  <a-input v-model:value="queryParams.clusterName" placeholder="请输入集群名称" />
                 </a-form-item>
               </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="状态" name="status" :labelCol="{ span: 4 }" :wrapperCol="{ span: 10 }">
+              <a-col :md="5" :sm="5">
+                <a-form-item style="margin-bottom: 0px;" label="状态" name="status" :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 2 }">
                   <!-- :label-col="{ span: 1 }" :wrapper-col="{ span: 16 }" -->
                   <a-space>
                     <a-select ref="select" v-model:value="changesearch" style="width: 120px" @focus="focus"
@@ -26,7 +29,7 @@
 
                 </a-form-item>
               </a-col>
-              <a-col :md="5" :sm="24">
+              <a-col :md="4" :sm="5">
                 <!-- <a-form-item :labelCol="{ span: 8 }" :wrapperCol="{ span: 16 }"> -->
                 <!-- :label-col="{ span: 1 }" :wrapper-col="{ span: 16 }" -->
                 <!-- <a-space>
@@ -36,10 +39,11 @@
                   <a-select-option value="0">异常</a-select-option>
                 </a-select>
               </a-space> -->
-                <span style="display: inline-block; margin-top: 3px">
+                <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                     <search-outlined />搜索</a-button>
-                  <a-button :style="{ margin: '0px 5px ' }" type="primary"><reload-outlined />重置</a-button>
+                  <a-button :style="{ margin: '0px 5px ' }" type="primary"
+                    @click="AlldelFn"><reload-outlined />重置</a-button>
                 </span>
                 <!-- </a-form-item> -->
               </a-col>
@@ -83,7 +87,7 @@
         <!-- rowKey表格行 key 的取值，可以是字符串或一个函数 expand点击展开图标时触发 expandRowByClick通过点击行来展开子行 :expandedRowKeys="expandedRowKeys"   这个是负责控制行的展开与关闭，（这个变量是以数组的形式展示，谁的id在数组里就显示谁）-->
         <!-- :row-selection="rowSelection"   -->
         <a-table :columns="columns" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
-          :data-source="data" :pagination="false" :rowKey="(record) => record.clusterId">
+          :data-source="data" :pagination="false" :rowKey="(record) => record.clusterId" bordered>
           <template #bodyCell="{ column, record }">
             <!-- expandedRowRender	额外的展开行 -->
             <template v-if="column.dataIndex === 'hostNum'">
@@ -168,17 +172,19 @@
     <!-- 在这 :title="opTitle"标题 我昨晚好像改毁了点 你能在vascodel写下嘛我这看着好迷-->
     <div class="modal">
       <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
-
-        <a-form :model="formState" :labelCol="{ span: 4 }" :wrapperCol="{ span: 16, offset: 1 }">
+        <!-- :labelCol="{ span: 4 }"
+          :wrapperCol="{ span: 16, offset: 1 }" -->
+        <a-form style=" padding: 33px 74px 0px 78px;margin-left: 0;" :model="formState">
           <a-row :gutter="8">
             <a-col span="24">
-              <a-form-item label="名称" name="clusterName" :labelCol="{ span: 4 }" :wrapper-col="{ offset: 2, span: 20 }">
+              <!-- :labelCol="{ span: 4 }"  :labelCol="[ style: 'width: 100px’" :wrapperCol="[ span: 10 )"-->
+              <a-form-item label="名称" :labelCol="{ style: 'width:50px' }" name="clusterName" :wrapper-col="{ span: 20 }">
 
                 <div class="name"> <a-input v-model:value="rowData.clusterName" /></div>
               </a-form-item>
             </a-col>
             <a-col span="24">
-              <a-form-item label="备注" name="remark" :labelCol="{ span: 4 }" :wrapper-col="{ offset: 2, span: 20 }">
+              <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px' }" :wrapper-col="{ span: 20 }">
 
                 <a-input v-model:value="rowData.remark" />
               </a-form-item>
@@ -210,16 +216,13 @@
     </a-form>
   </a-drawer> -->
 </template>
-<!-- 咋收图标这会议的  不知道，要回头在说那打字在这我领导在附件 -->
+
 <script   name='One' setup>
 import { ref, defineComponent, reactive, } from 'vue'
 import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { list, addclusterList, editclusterList, clusterInfo, delclusterList, queryhost } from './cluster '
 import { SmileTwoTone, HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue';
-
-// import { message } from 'ant-design-vue';
-
 
 const columns = [{
   title: '状态',
@@ -310,7 +313,7 @@ const allclusterId = ref([])
 
 
 const state = reactive({
-  selectedRowKeys: [], // Check here to configure the defaul你改了啥t column
+  selectedRowKeys: [],
 });
 
 const rowSelection = async (selectedRowKeys, selectedRows) => {
@@ -320,31 +323,6 @@ const rowSelection = async (selectedRowKeys, selectedRows) => {
   number.value = allclusterId.value.length
   //这个是勾选的id存放的位置 我点清空我id复空
 }
-
-
-
-// const rowSelection = {
-//   onChange: async (selectedRowKeys, selectedRows) => {
-
-//     console.log('selectedRows: ', selectedRows);
-//     state.value.selectedRowKeys = selectedRowKeys; //我没动你还动吗，你别动，我看看文档
-//     // 接口传的是对象吗，还是只有id的数组 是对对象包数组然后里面放id，，，数组包对象
-//     // console.log('selectedRows: ', selectedRows.length);
-//     // number.value = selectedRows.length
-//     // console.log(typeof number.value, 'number.value');
-//     // selectedRows.forEach(item => { 
-//     //    item.clusterId 
-
-//     //   });
-//     // console.log(allclusterIds);
-//     // 对原数组元素进行运算后再赋值给新的数组
-//     allclusterId.value = selectedRows.map(it => it.clusterId)
-//     number.value = allclusterId.value.length
-//     console.log(allclusterId.value);//这个是勾选的id存放的位置 我点清空我id复空
-//     // 再试试
-//   },
-
-// }
 
 // 初始化
 const getList = () => {
@@ -476,6 +454,13 @@ const fn = () => {
   number.value = 0
   state.selectedRowKeys = [];
 }
+
+const AlldelFn = () => {
+  console.log('1');
+  queryParams.value.clusterName = ''
+  changesearch.value = ''
+  getList()
+}
 </script>
 <style scoped lang="less">
 .allclustersBox {
@@ -598,9 +583,7 @@ const fn = () => {
     }
 
     .ant-form {
-      box-sizing: border-box; //你要说啥
-      // 你那标题呢
-
+      box-sizing: border-box;
       margin: 0;
       padding: 32px 0px;
       color: rgba(0, 0, 0, 0.85);
@@ -609,14 +592,6 @@ const fn = () => {
       line-height: 1.5715;
       list-style: none;
       font-feature-settings: tnum;
-
-      .ant-col-offset-2 {
-        margin-left: 0 !important;
-      }
-
-      .ant-col-offset-2 {
-        margin-left: 0 !important;
-      }
 
       .ant-col-offset-2 {
         margin-left: 0 !important;
@@ -633,7 +608,7 @@ const fn = () => {
       .ant-modal-body {
         padding: 32px 56px;
 
-        // 人还在吗
+
         .ant-col-offset-2 {
           margin-left: 0;
         }
@@ -642,128 +617,8 @@ const fn = () => {
       ::v-deep(.ant-modal .ant-modal-body) {
         padding: 32px 56px;
       }
-
-    }
-
-    ::v-deep(.ant-modal .ant-modal-body) {
-      padding: 32px 56px;
-    }
-
-    .ant-col-offset-2 {
-      margin-left: 0 !important;
-    }
-
-    .ant-col-offset-2 {
-      margin-left: 0 !important;
-    }
-
-    .ant-col-offset-2 {
-      margin-left: 0 !important;
-    }
-
-    :deep(.ant-col-offset-2) {
-      margin-left: 0 !important;
-    }
-
-    ::v-deep(.ant-col-offset-2) {
-      margin-left: 0 !important;
-    }
-
-    .ant-modal-body {
-      .ant-col-offset-2 {
-        margin-left: 0;
-      }
-    }
-
-    .ant-row .ant-form-item {
-      .ant-col-offset-2 {
-        margin-left: 0;
-      }
-    }
-
-  }
-
-  // .ant-form {
-  //   box-sizing: border-box;
-  //   margin: 0px;
-  //   margin-top: 0px;
-  //   // margin-left: 36px;
-  //   padding: 0;
-  //   color: rgba(0, 0, 0, 0.85);
-  //   font-size: 14px;
-  //   font-variant: tabular-nums;
-  //   line-height: 1.5715;
-  //   list-style: none;
-  //   font-feature-settings: tnum;
-  // }
-
-  // :deep(.ant-col-16) {
-  //   display: block;
-  //   flex: 0 0 66.66666667%;
-  //   max-width: 90%;
-  // }
-
-
-
-  .ant-form-item {
-    margin-bottom: 0px;
-  }
-
-  :deep(.ant-col-offset-2) {
-    margin-left: 0;
-  }
-
-  .ant-col-offset-2 {
-    margin-left: 0 !important;
-  }
-
-  :deep(.ant-col-offset-2) {
-    margin-left: 0 !important;
-  }
-
-  ::v-deep(.ant-col-offset-2) {
-    margin-left: 0 !important;
-  }
-
-  // .ant-input {
-  //   .name {
-  //     width: 527px;
-  //     height: 44px;
-
-  //     :deep(.ant-input) {
-  //       height: 44px;
-  //       height: 100%;
-  //     }
-  //   }
-  // }
-
-  .ant-modal-wrap {
-    .ant-modal {
-      .ant-modal-content {
-        ::v-deep(.ant-modal-body) {
-          padding: 32px 56px !important;
-        }
-      }
     }
   }
 
-  .ant-modal .ant-modal-body {
-    padding: 33px 74px 0px 0px;
-  }
-
-  ::v-deep(.ant-modal .ant-modal-body) {
-
-    padding: 33px 74px 0px 0px;
-
-  }
-
-  :deep(.ant-col-offset-2) {
-
-    padding: 33px 74px 0px 0px;
-
-  }
-
-  :deep(.ant-col-offset-2) {
-    padding: 33px 74px 0px 0px;
-  }
-}</style>
+}
+</style>
