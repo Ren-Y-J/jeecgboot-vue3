@@ -2,23 +2,18 @@
   <div class="allclustersBox">
     <div class="nav">
       <a-card>
-        <!-- <div id="components-grid-demo-flex"> -->
         <div class="title">
-
-          <!--:labelCol="{ span: 0 }" :wrapperCol="{ span: 16, offset: 1 }" -->
           <a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
             <a-row :gutter="1">
               <a-col :md="6" :sm="24">
                 <a-form-item style="margin-bottom: 0px;" label="集群名称" name="clusterName" :labelCol="{ span: 6 }"
                   :wrapperCol="{ span: 16 }">
-                  <!-- :label-col="{ span: 6 }" :wrapper-col="{ span: 70 }" -->
                   <a-input v-model:value="queryParams.clusterName" placeholder="请输入集群名称" />
                 </a-form-item>
               </a-col>
-              <a-col :md="5" :sm="5">
-                <a-form-item style="margin-bottom: 0px;" label="状态" name="status" :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 2 }">
-                  <!-- :label-col="{ span: 1 }" :wrapper-col="{ span: 16 }" -->
+              <a-col :md="3" :sm="24">
+                <a-form-item style="margin-bottom: 0px;" label="状态" name="status" :labelCol="{ span: 7 }"
+                  :wrapperCol="{ span: 10 }">
                   <a-space>
                     <a-select ref="select" v-model:value="changesearch" style="width: 120px" @focus="focus"
                       @change="handleChange">
@@ -26,48 +21,45 @@
                       <a-select-option value="0">异常</a-select-option>
                     </a-select>
                   </a-space>
-
                 </a-form-item>
               </a-col>
               <a-col :md="4" :sm="5">
-                <!-- <a-form-item :labelCol="{ span: 8 }" :wrapperCol="{ span: 16 }"> -->
-                <!-- :label-col="{ span: 1 }" :wrapper-col="{ span: 16 }" -->
-                <!-- <a-space>
-                <a-select ref="select" v-model:value="changesearch" style="width: 120px" @focus="focus"
-                  @change="handleChange">
-                  <a-select-option value="1">正常</a-select-option>
-                  <a-select-option value="0">异常</a-select-option>
-                </a-select>
-              </a-space> -->
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                     <search-outlined />搜索</a-button>
                   <a-button :style="{ margin: '0px 5px ' }" type="primary"
                     @click="AlldelFn"><reload-outlined />重置</a-button>
                 </span>
-                <!-- </a-form-item> -->
               </a-col>
-
             </a-row>
-
           </a-form>
         </div>
-        <!-- </div> -->
       </a-card>
     </div>
 
     <div class="contion">
       <a-card>
+        <div class="controls">
+          <div class="select">
+            <span class="select-option">
+              <a-space>
+                <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
+                  <a-select-option value="0"> <rest-outlined />删除</a-select-option>
+                  <a-select-option value="1">导出</a-select-option>
+                </a-select>
+              </a-space>
+            </span>
+            <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加集群</a-button>
+          </div>
+          <div class="icon">
+            <span class="icon-sx" @click="AlldelFn">
+              <img src="../../assets/loginmini/icon/sx.png" alt="">
+              <!-- <reload-outlined /> -->
+            </span>
+            <span class="icon-kz"><img src="../../assets/loginmini/icon/kz.png" alt=""></span>
 
-        <span class="select">
-          <a-space>
-            <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
-              <a-select-option value="0"> <rest-outlined />删除</a-select-option>
-              <a-select-option value="1">导出</a-select-option>
-            </a-select>
-          </a-space>
-        </span>
-        <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加集群</a-button>
+          </div>
+        </div>
         <a-alert type="info" show-icon class="alert" style="margin-bottom: 8px">
           <!-- Ant Design Vue 的Alert使用 z这块我点清空我那些勾选的东西都取消 number是勾选的个数-->
           <template #message>
@@ -104,7 +96,10 @@
               <a v-if="record.status == 1">
                 <check-circle-two-tone two-tone-color="#52c41a" />
               </a>
-              <a v-else> <smile-outlined :rotate="180" /></a>
+              <a v-else>
+                <img src="../../assets/loginmini/icon/error.png" alt="">
+                <!-- <smile-outlined :rotate="180" /> -->
+              </a>
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <div>
@@ -127,65 +122,17 @@
       </a-card>
     </div>
 
-    <!-- <div class="modal">
-      <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
-
-        <a-form :model="formState" :label-col="{ span: 2 }" :wrapper-col="{ span: 20 }">
-          <a-form-item label="名称" name="clusterName" :wrapper-col="{ offset: 2, span: 20 }">
-       
-            <div class="name"> <a-input v-model:value="rowData.clusterName" /></div>
-          </a-form-item>
-          <a-form-item label="备注" name="remark" :wrapper-col="{ offset: 2, span: 20 }">
-       
-            <a-input v-model:value="rowData.remark" />
-          </a-form-item>
-
-        </a-form>
-
-      </a-modal>
-    </div> -->
-
-    <!-- <div class="modal">
-      <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
-
-        <a-form :model="formState">
-          <a-row type="flex" justify="space-between" align="bottom" class="bg-gray">
-            <a-col span="24">
-              <a-form-item label="名称" name="clusterName" :wrapper-col="{ offset: 2, span: 20 }">
-
-                <div class="name"> <a-input v-model:value="rowData.clusterName" /></div>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row type="flex" justify="space-between" align="bottom" class="bg-gray">
-            <a-col span="24">
-              <a-form-item label="备注" name="remark" :wrapper-col="{ offset: 2, span: 20 }">
-
-                <a-input v-model:value="rowData.remark" />
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
-
-      </a-modal>
-    </div> -->
-    <!-- 在这 :title="opTitle"标题 我昨晚好像改毁了点 你能在vascodel写下嘛我这看着好迷-->
     <div class="modal">
       <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
-        <!-- :labelCol="{ span: 4 }"
-          :wrapperCol="{ span: 16, offset: 1 }" -->
         <a-form style=" padding: 33px 74px 0px 78px;margin-left: 0;" :model="formState">
           <a-row :gutter="8">
             <a-col span="24">
-              <!-- :labelCol="{ span: 4 }"  :labelCol="[ style: 'width: 100px’" :wrapperCol="[ span: 10 )"-->
               <a-form-item label="名称" :labelCol="{ style: 'width:50px' }" name="clusterName" :wrapper-col="{ span: 20 }">
-
                 <div class="name"> <a-input v-model:value="rowData.clusterName" /></div>
               </a-form-item>
             </a-col>
             <a-col span="24">
               <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px' }" :wrapper-col="{ span: 20 }">
-
                 <a-input v-model:value="rowData.remark" />
               </a-form-item>
             </a-col>
@@ -228,38 +175,43 @@ const columns = [{
   title: '状态',
   dataIndex: 'status',
   width: 220,
+  align: 'center'
 }, {
   title: '名称',
   dataIndex: 'clusterName',
   width: 228,
+  align: 'center'
 }, {
   title: '备注',
   dataIndex: 'remark',
   width: 228,
+  align: 'center'
 },
 {
   title: '主机',
   dataIndex: 'hostNum',
   width: 228,
-
+  align: 'center'
 },
 {
   title: '创建时间',
   dataIndex: 'createTime',
   width: 230,
+  align: 'center'
 
 },
 {
   title: '更新时间',
   dataIndex: 'updateTime',
   width: 230,
+  align: 'center'
 
 },
 {
   title: '操作',
   dataIndex: 'operation',
   width: 240,
-
+  align: 'center'
 },
 
 ];
@@ -477,6 +429,11 @@ const AlldelFn = () => {
     justify-content: start;
     flex-direction: column;
 
+    th.class-center-sum,
+    td.class-center-sum {
+      text-align: center;
+    }
+
     .select {
       margin: 0 20px 0 0;
     }
@@ -486,8 +443,6 @@ const AlldelFn = () => {
       display: flex;
       justify-content: flex-end;
     }
-
-
 
     .ant-card-body {
       padding: 6px !important;
@@ -505,6 +460,54 @@ const AlldelFn = () => {
       padding: 6px !important;
     }
 
+    .controls {
+      display: flex;
+      justify-content: space-between;
+
+      .select {
+        .select-option {
+          padding-right: 6px;
+        }
+      }
+
+      .icon {
+        height: 32px;
+        display: flex;
+        align-items: center;
+        margin-top: 4px;
+
+        .icon-sx {
+          width: 22px;
+          height: 16px;
+          display: inline-block;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .icon-kz {
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        span:nth-child(1) {
+          padding-right: 7px;
+
+        }
+      }
+    }
 
   }
 
