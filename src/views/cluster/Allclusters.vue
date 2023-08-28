@@ -95,7 +95,7 @@
                   style="display: flex;align-items: center; padding-left: 36px;">
                   <a v-if="item.status == 1" style="display: flex;align-items: center;">
 
-                    <img src="../../assets/loginmini/icon/status-ok" alt=""
+                    <img src="../../assets/loginmini/icon/status-ok.png" alt=""
                       style="    margin-top: 5px;width:11.6px;height: 11.6px; margin-top: 5px;">
                     <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:11.6px;height: 11.6px;" /> -->
 
