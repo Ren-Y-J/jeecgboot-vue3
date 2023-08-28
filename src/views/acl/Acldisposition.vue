@@ -27,7 +27,8 @@
     <div class="contion">
       <a-card style="width: 1684px">
         <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加</a-button>
-        <a-table :row-selection="rowSelection" :columns="columns" :data-source="data">
+        <!-- :row-selection="rowSelection" -->
+        <a-table :columns="columns" :data-source="data" :pagination="false">
           <template #bodyCell="{ column, record }">
             <!-- <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
@@ -47,7 +48,25 @@
             </template>
           </template>
         </a-table>
+        <div class="pagination">
+          <a-pagination :show-total="total => `共 ${total} 条数据`" v-model:current="queryParams.pageNum" :total="totals"
+            v-model:pageSize="queryParams.pageSize" show-size-changer @showSizeChange="onShowSizeChange"
+            @change="changeFn" />
+        </div>
       </a-card>
+    </div>
+    <div class="model">
+      <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk">
+        <a-form :model="formState" name="basic" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+          @finish="onFinish" @finishFailed="onFinishFailed">
+          <a-form-item label="ACL名称" name="aclName">
+            <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
+            <a-input v-model:value="formState.aclName" />
+          </a-form-item>
+
+
+        </a-form>
+      </a-modal>
     </div>
   </div>
 </template>
@@ -78,16 +97,31 @@ const queryParams = ref({
 });
 const data = ref([])
 const totals = ref(0)
+const opTitle = ref('新增')
+const visible = ref(false)
+const formState = ref({
+  aclName: '',
+});
 const initData = () => {
   console.log('搜索11111');
   acllist(queryParams.value).then(res => {
-    console.log(res.records, 'res11');
-    console.log(res.total, 'res11');
+    // console.log(res.records, 'res11');
+    // console.log(res.total, 'res11');
     data.value = res.records
     totals.value = res.total
   });
 }
 initData()
+const changeFn = (P, Ps) => {
+  console.log(P, 'p');
+  queryParams.value.pageNum = P
+  initData()
+}
+const onShowSizeChange = (current, pageSize) => {
+  console.log(pageSize, 'pageSize');
+  queryParams.value.pageSize = pageSize
+  initData()
+};
 const onFinish = values => {
   // console.log('Success:', values);
 };
@@ -95,7 +129,8 @@ const onFinishFailed = errorInfo => {
   // console.log('Failed:', errorInfo);
 };
 const isOpen = () => {
-
+  visible.value = true
+  opTitle.value = '新增名称'
 }
 </script>
 <style scoped lang="less">
@@ -131,6 +166,22 @@ const isOpen = () => {
   }
 
   .contion {
+    .ant-card-body {
+      padding: 6px !important;
+    }
+
+    .ant-card-body {
+      padding: 6px !important;
+    }
+
+    :deep(.ant-card-body) {
+      padding: 6px !important;
+    }
+
+    ::v-deep(.ant-card-body) {
+      padding: 6px !important;
+    }
+
     .edit {
       color: #2E7DFF;
       padding: 0px 5px;
@@ -150,6 +201,13 @@ const isOpen = () => {
       color: #2E7DFF;
       padding: 0px 5px;
     }
+
+    .pagination {
+      margin: 10px 0 0 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+
   }
 }
 </style>

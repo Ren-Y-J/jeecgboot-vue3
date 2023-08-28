@@ -115,7 +115,8 @@
             <template v-if="column.dataIndex === 'status'">
 
               <a v-if="record.status == 1" style="width:100%;height: 100%;display: flex; justify-content: center;">
-                <check-circle-two-tone two-tone-color="#52c41a" style="width:11.6px;height: 11.6px;" />
+                <!-- <check-circle-two-tone two-tone-color="#52c41a" style="width:11.6px;height: 11.6px;" /> -->
+                <img src="../../assets/loginmini/icon/status-ok.png" alt="" style="width:11.6px;height: 11.6px; ">
               </a>
               <a v-else style="width:100%;height: 100%;display: flex; justify-content: center;">
                 <img src="../../assets/loginmini/icon/error.png" alt="" style="width:11.6px;height: 11.6px; ">
@@ -175,8 +176,16 @@
 
       </a-modal>
     </div>
-    <!-- <context-holder />
-    <a-button type="primary" @click="info"></a-button> -->
+    <div class="Tips">
+      <a-modal v-model:visible="visibledel" title="提示" @ok="handleOkdel" @cancel="onClosedel" class="Tips">
+        <div class="Tips-img" style="display: flex;justify-content: center;align-items: center;">
+          <p><img src="../../assets/loginmini/icon/warning.png" alt=""
+              style="width:11.6px;height: 11.6px;margin-right: 5px; "></p>
+          <p> 您确定要批量删除这些名称吗?</p>
+        </div>
+
+      </a-modal>
+    </div>
   </div>
 
   <!-- 弹框 -->
@@ -253,10 +262,12 @@ const columns = [{
 const data = ref([])
 const totals = ref(0)
 const visible = ref(false)
+const visibledel = ref(false)
 const opTitle = ref('新增')
 const lists = ref([])
 const values = ref([])
 const number = ref(0)
+const selects = ref(0)
 // 对象包数组 
 const commonEnty = ref({ values: [] })
 
@@ -331,9 +342,9 @@ const isOpen = async (record) => {
   if (record.clusterId) {
     let res = await clusterInfo(`${record.clusterId}`)
     rowData.value = res
-    opTitle.value = "修改集群管理"
+    opTitle.value = "修改名称"
   } else {
-    opTitle.value = "新增集群管理"
+    opTitle.value = "新增名称"
   }
 }
 
@@ -385,18 +396,37 @@ const delFn = async (record) => {
 }
 // 批量删除
 const handlChangeFn = async (val) => {
+  // visibledel.value = true
   // // console.log(val, 'val');
   // console.log(allclusterId.value.length, 'allclusterId.value');
-  if (allclusterId.value.length == 0) {
-    message.error('请勾选中批量删除')
+  // if (allclusterId.value.length == 0) {
+  //   message.error('请勾选要删除的名称')
+  // }
+  // if (val == '0' && !allclusterId.value.length == 0) {
+  //   let res = await delclusterList({ values: allclusterId.value })
+  //   // console.log(res, 'allclusterId');v
+  //   getList()
+  //   message.success('批量删除成功')
+  // }
+
+  selects.value = val//select点击删除的的value字段0字符串类型
+  if (number.value == 0) { //number.value个数数字类型  allclusterId.value.length勾选的id是几个字符串类型
+    message.error('请勾选要删除的名称')
+  } else {
+    visibledel.value = true
   }
-  if (val == '0' && !allclusterId.value.length == 0) {
+}
+const handleOkdel = async (val) => {
+
+  if (selects.value == '0' && !allclusterId.value.length == 0) {
 
     let res = await delclusterList({ values: allclusterId.value })
-    // console.log(res, 'allclusterId');v
+    // console.log(res, 'allclusterId');
     getList()
     message.success('批量删除成功')
+
   }
+  visibledel.value = false
 }
 // 批量删除handlChangeFn
 function delAllFn() {
@@ -710,5 +740,67 @@ const AlldelFn = () => {
     }
   }
 
+
+  .Tips {
+    /deep/ .ant-modal-header {
+      padding: 16px 24px;
+      color: rgba(0, 0, 0, 0.85);
+      background: #fff;
+      border-bottom: 0px solid #f0f0f0;
+      border-radius: 2px 2px 0 0;
+    }
+
+    /deep/ .ant-modal-footer {
+      padding: 10px 16px;
+      text-align: right;
+      background: transparent;
+      border-top: 0px solid #f0f0f0;
+      border-radius: 0 0 2px 2px;
+    }
+
+    :deep(.ant-modal-footer) {
+      padding: 10px 16px;
+      text-align: right;
+      background: transparent;
+      border-top: 0px solid #f0f0f0;
+      border-radius: 0 0 2px 2px;
+    }
+
+    ::v-deep .ant-modal-footer {
+      padding: 10px 16px;
+      text-align: right;
+      background: transparent;
+      border-top: 0px solid #f0f0f0;
+      border-radius: 0 0 2px 2px;
+    }
+
+    .Tips-img {
+      display: flex;
+
+      /deep/ .ant-modal-footer {
+        padding: 10px 16px;
+        text-align: right;
+        background: transparent;
+        border-top: 0px solid #f0f0f0;
+        border-radius: 0 0 2px 2px;
+      }
+
+      :deep(.ant-modal-footer) {
+        padding: 10px 16px;
+        text-align: right;
+        background: transparent;
+        border-top: 0px solid #f0f0f0;
+        border-radius: 0 0 2px 2px;
+      }
+
+      ::v-deep .ant-modal-footer {
+        padding: 10px 16px;
+        text-align: right;
+        background: transparent;
+        border-top: 0px solid #f0f0f0;
+        border-radius: 0 0 2px 2px;
+      }
+    }
+  }
 }
 </style>
