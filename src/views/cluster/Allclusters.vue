@@ -49,7 +49,7 @@
                 </a-select>
               </a-space>
             </span>
-            <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加集群</a-button>
+            <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加集群</a-button>
           </div>
           <div class="icon">
             <span class="icon-sx" @click="AlldelFn">
@@ -575,57 +575,60 @@ const AlldelFn = () => {
 
         }
       }
+
+
     }
+
   }
 
   .nav {
     margin-bottom: 6px;
 
     .title {
-      :deep(.ant-card-body) {
+      // :deep(.ant-card-body) {
 
-        padding: 12px 10px 6px 10px !important;
-      }
+      //   padding: 12px 10px 13px 10px !important;
+      // }
 
-      .ant-card-body {
-        padding: 12px 10px 6px 10px !important;
-      }
+      // .ant-card-body {
+      //   padding: 12px 10px 13px 10px !important;
+      // }
 
-      .ant-card-body {
-        padding: 12px 10px 6px 10px !important;
-      }
+      // .ant-card-body {
+      //   padding: 12px 10px 13px 10px !important;
+      // }
 
-      :deep(.ant-card-body) {
-        padding: 12px 10px 6px 10px !important;
-      }
+      // :deep(.ant-card-body) {
+      //   padding: 12px 10px 13px 10px !important;
+      // }
 
-      ::v-deep(.ant-card-body) {
-        padding: 12px 10px 6px 10px !important;
-      }
+      // ::v-deep(.ant-card-body) {
+      //   padding: 12px 10px 13px 10px !important;
+      // }
     }
 
 
-    .jeecg-basic-table-form-container .ant-form {
-      padding: 12px 10px 6px 10px;
-      margin-bottom: 8px;
-      background-color: #fff;
-      border-radius: 2px;
+    // .jeecg-basic-table-form-container .ant-form {
+    //   padding: 12px 10px 13px 10px;
+    //   margin-bottom: 8px;
+    //   background-color: #fff;
+    //   border-radius: 2px;
+    // }
+
+    .ant-card-body {
+      padding: 12px 10px 13px 10px !important;
     }
 
     .ant-card-body {
-      padding: 12px 10px 6px 10px !important;
-    }
-
-    .ant-card-body {
-      padding: 12px 10px 6px 10px !important;
+      padding: 12px 10px 13px 10px !important;
     }
 
     :deep(.ant-card-body) {
-      padding: 12px 10px 6px 10px !important;
+      padding: 12px 10px 13px 10px !important;
     }
 
     ::v-deep(.ant-card-body) {
-      padding: 12px 10px 6px 10px !important;
+      padding: 12px 10px 13px 10px !important;
     }
 
 
@@ -707,4 +710,5 @@ const AlldelFn = () => {
     }
   }
 
-}</style>
+}
+</style>
