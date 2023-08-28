@@ -57,7 +57,6 @@
               <!-- <reload-outlined /> -->
             </span>
             <span class="icon-kz"><img src="../../assets/loginmini/icon/kz.png" alt=""></span>
-
           </div>
         </div>
 
