@@ -165,7 +165,7 @@
               <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px' }" :wrapper-col="{ span: 20 }">
                 <div class="remark" margin-bottom="32px">
                   <div class="remark" margin-bottom="32px">
-                    <a-input v-model:value="rowData.clusterName" style="height:44px;width: 526px;" />
+                    <a-input v-model:value="rowData.remark" style="height:44px;width: 526px;" />
 
                   </div>
                 </div>
@@ -176,8 +176,8 @@
 
       </a-modal>
     </div>
-    <context-holder />
-    <a-button type="primary" @click="info"></a-button>
+    <!-- <context-holder />
+    <a-button type="primary" @click="info"></a-button> -->
   </div>
 
   <!-- 弹框 -->
@@ -391,6 +391,7 @@ const handlChangeFn = async (val) => {
     let res = await delclusterList({ values: allclusterId.value })
     console.log(res, 'allclusterId');
     getList()
+    message.success('批量删除成功')
   }
 }
 // 批量删除handlChangeFn
@@ -398,8 +399,9 @@ function delAllFn() {
   delclusterList({ values: allclusterId.value }).then(res => {
     console.log(res);
     getList()
+    message.success('删除成功')
   })
-  message.success('批量删除成功')
+
 }
 const confirm = (record) => {
   console.log(record.clusterId, 'record2');
