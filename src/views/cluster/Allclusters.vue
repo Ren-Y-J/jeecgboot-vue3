@@ -66,8 +66,7 @@
             <template v-if="number > 0">
               <span>已选定 {{ number }} 条记录(可跨页)</span>
               <a-divider type="vertical" />
-              <a @click="fn">清空</a>
-              <a-divider type="vertical" />
+              <a @click="fn" style="color:#4D85E1;">清空</a>
             </template>
             <template v-else>
               <span>未选中任何数据</span>
@@ -115,11 +114,11 @@
             <!-- 0异常 1正常 -->
             <template v-if="column.dataIndex === 'status'">
 
-              <a v-if="record.status == 1">
-                <check-circle-two-tone two-tone-color="#52c41a" />
+              <a v-if="record.status == 1" style="width:100%;height: 100%;display: flex; justify-content: center;">
+                <check-circle-two-tone two-tone-color="#52c41a" style="width:11.6px;height: 11.6px;" />
               </a>
-              <a v-else>
-                <img src="../../assets/loginmini/icon/error.png" alt="">
+              <a v-else style="width:100%;height: 100%;display: flex; justify-content: center;">
+                <img src="../../assets/loginmini/icon/error.png" alt="" style="width:11.6px;height: 11.6px; ">
                 <!-- <smile-outlined :rotate="180" /> -->
               </a>
             </template>
@@ -150,22 +149,23 @@
       <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
         <a-form style="padding: 58px 74px 30px 80px;margin-left: 0;" :model="formState">
           <a-row :gutter="8">
-            <a-col span="24" style="margin-bottom: 12px">
+            <!-- style="margin-bottom: 12px" -->
+            <a-col span="24">
               <!-- <div style="margin-bottom: 32px"> -->
-              <a-form-item label="名称" :labelCol="{ style: 'width:50px;height:44px;line-height: 44px;' }"
+              <a-form-item label="名称" :labelCol="{ style: 'width:50px;height:32px;line-height: 32px;' }"
                 name="clusterName" :wrapper-col="{ span: 20 }">
                 <div class="name" margin-bottom="32px">
-                  <a-input v-model:value="rowData.clusterName" style="height:44px;width: 526px;" />
+                  <a-input v-model:value="rowData.clusterName" style="height:32px;width: 526px;" />
                 </div>
               </a-form-item>
               <!-- </div> -->
             </a-col>
             <a-col span="24">
-              <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px' }" :wrapper-col="{ span: 20 }">
+              <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px;' }" :wrapper-col="{ span: 24 }">
                 <div class="remark" margin-bottom="32px">
                   <div class="remark" margin-bottom="32px">
-                    <a-input v-model:value="rowData.remark" style="height:44px;width: 526px;" />
-
+                    <!-- <a-input v-model:value="rowData.remark" style="height:44px;width: 526px;" /> -->
+                    <a-textarea v-model:value="rowData.remark" style="height:54px;width: 526px;" />
                   </div>
                 </div>
               </a-form-item>
@@ -344,13 +344,13 @@ const formState = ref({
 //新增和修改
 const addFn = async () => {
   if (rowData.value.clusterId) {
-    console.log('编辑');
+    // console.log('编辑');
     // 换了rowData.value
     let res = await editclusterList(rowData.value)
     visible.value = false
     message.success('修改成功')
   } else {
-    console.log('新增');
+    // console.log('新增');
     let res = await addclusterList(rowData.value)
     console.log(res, 'resadd');
     visible.value = false
@@ -372,7 +372,7 @@ const onClose = () => {
 // 删除逻辑功能
 const delFn = async (record) => {
   // 拿到点击删除的id
-  console.log(record, 'record1');
+  // console.log(record, 'record1');
   // 错误的写法lists.value.push(record.clusterId)
   // 把id放到对象（包）数组
   commonEnty.value.values.push(record);
@@ -385,10 +385,15 @@ const delFn = async (record) => {
 }
 // 批量删除
 const handlChangeFn = async (val) => {
-  console.log(val, 'val');
-  if (val == '0') {
+  // // console.log(val, 'val');
+  // console.log(allclusterId.value.length, 'allclusterId.value');
+  if (allclusterId.value.length == 0) {
+    message.error('请勾选中批量删除')
+  }
+  if (val == '0' && !allclusterId.value.length == 0) {
+
     let res = await delclusterList({ values: allclusterId.value })
-    console.log(res, 'allclusterId');
+    // console.log(res, 'allclusterId');v
     getList()
     message.success('批量删除成功')
   }
@@ -396,7 +401,7 @@ const handlChangeFn = async (val) => {
 // 批量删除handlChangeFn
 function delAllFn() {
   delclusterList({ values: allclusterId.value }).then(res => {
-    console.log(res);
+    // console.log(res);
     getList()
     message.success('删除成功')
   })
@@ -408,7 +413,7 @@ const confirm = (record) => {
   getList()
 };
 const cancel = async (e) => {
-  console.log(e, '	点击取消的回调');
+  // console.log(e, '	点击取消的回调');
   // message.error('Click on No');// 捕获异常
 };
 //分页功能
@@ -453,18 +458,21 @@ const AlldelFn = () => {
 </script>
 <style scoped lang="less">
 .allclustersBox {
-  // margin: 10px;
   padding: 10px;
-  // .ant-card-body {
-  //   /* padding: 24px; */
-  //   padding: 12px 10px 6px 10px;
-  // }
 
   .contion {
-    // margin: 10px;
     display: flex;
     justify-content: start;
     flex-direction: column;
+
+    /deep/ .ant-alert-info {
+      background-color: #E5F7FF;
+      border: 1px solid #4D85E1;
+    }
+
+    /deep/ .ant-alert-info .ant-alert-icon {
+      color: #4D85E1;
+    }
 
     .hostinfo {
       &:hover {
@@ -568,7 +576,6 @@ const AlldelFn = () => {
         }
       }
     }
-
   }
 
   .nav {
@@ -700,5 +707,4 @@ const AlldelFn = () => {
     }
   }
 
-}
-</style>
+}</style>
