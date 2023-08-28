@@ -45,7 +45,7 @@
               <a-space>
                 <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
                   <a-select-option value="0"> <rest-outlined />删除</a-select-option>
-                  <a-select-option value="1">导出</a-select-option>
+                  <!-- <a-select-option value="1">以后要加别的导出</a-select-option> -->
                 </a-select>
               </a-space>
             </span>
@@ -60,20 +60,23 @@
 
           </div>
         </div>
-        <a-alert type="info" show-icon class="alert" style="margin-bottom: 8px">
-          <!-- Ant Design Vue 的Alert使用 z这块我点清空我那些勾选的东西都取消 number是勾选的个数-->
+
+        <a-alert show-icon class="alert" style="margin-bottom: 8px" type="info">
+          <!-- Ant Design Vue 的Alert使用 z这块我点清空我那些勾选的东西都取消 number是勾选的个数 type="info"-->
           <template #message>
             <template v-if="number > 0">
               <span>已选定 {{ number }} 条记录(可跨页)</span>
               <a-divider type="vertical" />
               <a @click="fn">清空</a>
-              <!-- <a-divider type="vertical" /> -->
+              <a-divider type="vertical" />
             </template>
             <template v-else>
               <span>未选中任何数据</span>
             </template>
           </template>
         </a-alert>
+
+
 
         <!-- <a-button type="primary" style="margin-bottom: 10px;" @click="delAllFn">批量删除</a-button> -->
         <!-- rowKey表格行 key 的取值，可以是字符串或一个函数 expand点击展开图标时触发 expandRowByClick通过点击行来展开子行 :expandedRowKeys="expandedRowKeys"   这个是负责控制行的展开与关闭，（这个变量是以数组的形式展示，谁的id在数组里就显示谁）-->
@@ -83,16 +86,36 @@
           <template #bodyCell="{ column, record }">
             <!-- expandedRowRender	额外的展开行 -->
             <template v-if="column.dataIndex === 'hostNum'">
-              <p style="margin: 0" @click="selHostFn(record.clusterId)">
+              <p class="hostinfo" style="margin: 0" @click="selHostFn(record.clusterId)">
                 <!-- 这个前面你自己弄个图标定义一个变量取反  用计算属性弄就-->
                 <span v-if="selHostId === record.clusterId && AllHostNum.length"> <down-outlined /></span>
                 <span v-else> <left-outlined /></span>{{ record.hostNum }}台主机
               </p>
               <ul v-if="selHostId === record.clusterId">
-                <li v-for="(  item, index  ) in   AllHostNum  " :key="index">{{ item }}</li>
+                <li v-for="(   item, index   ) in    AllHostNum   " :key="index"
+                  style="display: flex;align-items: center; padding-left: 36px;">
+                  <a v-if="item.status == 1" style="display: flex;align-items: center;">
+
+                    <img src="../../assets/loginmini/icon/status-ok" alt=""
+                      style="    margin-top: 5px;width:11.6px;height: 11.6px; margin-top: 5px;">
+                    <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:11.6px;height: 11.6px;" /> -->
+
+                    <a> {{ item }}</a>
+
+                  </a>
+                  <a v-else style=" display: flex;  padding-left: 36px;">
+                    <img src="../../assets/loginmini/icon/error.png" alt=""
+                      style="width:11.6px;height: 11.6px; margin-top: 5px;">
+                    <!-- <smile-outlined :rotate="180" /> -->
+                    {{ item }}
+                  </a>
+                  <!-- {{ item }} -->
+                </li>
               </ul>
             </template>
+            <!-- 0异常 1正常 -->
             <template v-if="column.dataIndex === 'status'">
+
               <a v-if="record.status == 1">
                 <check-circle-two-tone two-tone-color="#52c41a" />
               </a>
@@ -103,9 +126,11 @@
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <div>
-                <span :style="{ margin: '0px 8px ' }" @click="isOpen(record)" style=" color:#2E7DFF">编辑</span>
+                <span :style="{ margin: '0px 8px ' }" @click="isOpen(record)" class="eait"
+                  style=" color:#2E7DFF">编辑</span>
                 <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="isOpen(record)">编辑</a-button> -->
-                <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" @confirm="confirm(record)" @cancel="cancel">
+                <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
+                  @cancel="cancel">
                   <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary">删除</a-button> -->
                   <span style="color:#2E7DFF">删除</span>
                 </a-popconfirm>
@@ -124,16 +149,26 @@
 
     <div class="modal">
       <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
-        <a-form style=" padding: 33px 74px 0px 78px;margin-left: 0;" :model="formState">
+        <a-form style="padding: 58px 74px 30px 80px;margin-left: 0;" :model="formState">
           <a-row :gutter="8">
-            <a-col span="24">
-              <a-form-item label="名称" :labelCol="{ style: 'width:50px' }" name="clusterName" :wrapper-col="{ span: 20 }">
-                <div class="name"> <a-input v-model:value="rowData.clusterName" /></div>
+            <a-col span="24" style="margin-bottom: 12px">
+              <!-- <div style="margin-bottom: 32px"> -->
+              <a-form-item label="名称" :labelCol="{ style: 'width:50px;height:44px;line-height: 44px;' }"
+                name="clusterName" :wrapper-col="{ span: 20 }">
+                <div class="name" margin-bottom="32px">
+                  <a-input v-model:value="rowData.clusterName" style="height:44px;width: 526px;" />
+                </div>
               </a-form-item>
+              <!-- </div> -->
             </a-col>
             <a-col span="24">
               <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px' }" :wrapper-col="{ span: 20 }">
-                <a-input v-model:value="rowData.remark" />
+                <div class="remark" margin-bottom="32px">
+                  <div class="remark" margin-bottom="32px">
+                    <a-input v-model:value="rowData.clusterName" style="height:44px;width: 526px;" />
+
+                  </div>
+                </div>
               </a-form-item>
             </a-col>
           </a-row>
@@ -234,7 +269,7 @@ const queryParams = ref({
   hostNum: 0,
   remark: "",
   pageNum: 1,
-  pageSize: 5,
+  pageSize: 10,
 
 });
 const rowData = ref({
@@ -408,10 +443,11 @@ const fn = () => {
 }
 
 const AlldelFn = () => {
-  console.log('1');
+  // console.log('1');
   queryParams.value.clusterName = ''
   changesearch.value = ''
   getList()
+  changesearch.value = '请选择'
 }
 </script>
 <style scoped lang="less">
@@ -428,6 +464,29 @@ const AlldelFn = () => {
     display: flex;
     justify-content: start;
     flex-direction: column;
+
+    .hostinfo {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .del {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .eait {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
+    /deep/ .ant-table-tbody>tr>td {
+      padding: 13px !important;
+    }
 
     th.class-center-sum,
     td.class-center-sum {
@@ -574,15 +633,31 @@ const AlldelFn = () => {
       .ant-modal {
         .ant-modal-content {
           .ant-modal-body {
-            padding: 32px 56px !important;
+            // padding: 32px 56px !important;
+            padding: 50px 74px 30px 78px !important;
           }
         }
       }
     }
 
-    .ant-col-24 {
+    /deep/ .ant-form-item {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 14px;
+      font-variant: tabular-nums;
+      line-height: 1.5715;
+      list-style: none;
+      font-feature-settings: tnum;
+      margin-bottom: 32px;
+      vertical-align: top;
+    }
+
+    /deep/ .ant-col-24 {
       padding-left: 0 !important;
       padding-right: 0 !important;
+      margin-bottom: 32px;
     }
 
     .ant-form {
@@ -608,17 +683,18 @@ const AlldelFn = () => {
         margin-left: 0 !important;
       }
 
-      .ant-modal-body {
-        padding: 32px 56px;
+      // .ant-modal-body {
+      //   padding: 32px 56px;
+      //   padding: 50px 74px 30px 78px;
 
-
-        .ant-col-offset-2 {
-          margin-left: 0;
-        }
-      }
+      //   .ant-col-offset-2 {
+      //     margin-left: 0;
+      //   }
+      // }
 
       ::v-deep(.ant-modal .ant-modal-body) {
-        padding: 32px 56px;
+        // padding: 32px 56px;
+        padding: 50px 74px 30px 78px;
       }
     }
   }
