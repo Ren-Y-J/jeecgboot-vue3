@@ -1,20 +1,20 @@
 <template>
   <div class="allcal">
     {{ 1 }}
-    <!-- <div class="nav">
+    <div class="nav">
       <a-card style="width: 1684px" class="nav">
         <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed">
           <a-row :gutter="1">
             <a-col :span="6">
-             
+
             </a-col>
             <a-col :span="6">
               <div class="gutter-box">
-                <a-form-item label="名称" name="hostName">
-                
+                <a-form-item label="名称" name="aclName">
 
-                  <a-input v-model:value="queryParams.hostName" />
+
+                  <a-input v-model:value="queryParams.aclName" />
                 </a-form-item>
               </div>
             </a-col>
@@ -46,7 +46,7 @@
           </template>
         </a-table>
       </a-card>
-    </div> -->
+    </div>
   </div>
 </template>
 <script name='Two-hosts' setup>
@@ -61,10 +61,17 @@ const columns = [
     dataIndex: 'Name',
     width: 220,
     align: 'center'
-  }];
+  },
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    width: 240,
+    align: 'center'
+  }
+];
 
 const queryParams = ref({
-  hostName: '',
+  aclName: '',
   hostId: 0,
   port: 0,
   rootSec: '',
@@ -102,7 +109,7 @@ const isOpen = () => {
 
     :deep(.ant-card-body) {
 
-      padding: 12px 10px 6px 10px !important;
+      padding: 12px 10px 13px 10px !important;
     }
 
     .ant-card-body {
