@@ -1,3 +1,5 @@
 <template></template>
-<script name='Ones' setup></script>
+<script name='Ones' setup>
+
+</script>
 <style scoped lang="less"></style>

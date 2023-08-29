@@ -8,7 +8,7 @@
             <a-col :md="6" :sm="24">
               <a-form-item style="margin-bottom: 0px;" label="名称" name="aclName" :labelCol="{ span: 6 }"
                 :wrapperCol="{ span: 16 }">
-                <a-input v-model:value="queryParams.aclName" placeholder="请输入集群名称" />
+                <a-input v-model:value="formData.aclName" placeholder="请输入集群名称" />
               </a-form-item>
             </a-col>
             <a-col :md="4" :sm="5">
@@ -40,31 +40,34 @@
           </template> -->
             <template v-if="column.dataIndex === 'operation'">
               <div>
-                <span class="edit">修改</span>
+                <span class="edit" @click="isOpen(record)">修改</span>
                 <span class="add">添加</span>
-                <span class="del">删除</span>
-                <span class="info">详情</span>
+                <a-popconfirm title="是否确认删除?" ok-text="是" cancel-text="否" @confirm="confirm(record)" @cancel="cancel">
+                  <span class="del">删除</span>
+                  <!--  @click="delFn(record)" -->
+                </a-popconfirm>
+
+                <span class="info" @click="onGoToaclInfo(record)">详情</span>
               </div>
             </template>
           </template>
         </a-table>
         <div class="pagination">
-          <a-pagination :show-total="total => `共 ${total} 条数据`" v-model:current="queryParams.pageNum" :total="totals"
-            v-model:pageSize="queryParams.pageSize" show-size-changer @showSizeChange="onShowSizeChange"
+          <a-pagination :show-total="total => `共 ${total} 条数据`" v-model:current="formData.pageNum" :total="totals"
+            v-model:pageSize="formData.pageSize" show-size-changer @showSizeChange="onShowSizeChange"
             @change="changeFn" />
         </div>
       </a-card>
     </div>
+
     <div class="model">
-      <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk">
-        <a-form :model="formState" name="basic" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+      <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onClose">
+        <a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed">
-          <a-form-item label="ACL名称" name="aclName">
+          <a-form-item label="ACL名称" name="aclName" style='margin-top: 26px'>
             <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
             <a-input v-model:value="formState.aclName" />
           </a-form-item>
-
-
         </a-form>
       </a-modal>
     </div>
@@ -73,7 +76,9 @@
 <script name='Two-hosts' setup>
 import { ref, defineComponent, reactive } from 'vue';
 import { SmileTwoTone, HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
-import { acllist } from './disposition'
+import { acllist, addaclList, editaclname, aclnameInfo, delcalList } from './disposition'
+import { message } from 'ant-design-vue';
+import { router } from '/@/router';
 const columns = [
   {
     title: 'ACL名称',
@@ -89,11 +94,11 @@ const columns = [
   }
 ];
 
-const queryParams = ref({
+const formData = ref({
   aclId: 0,
   aclName: "",
   pageNum: 1,
-  pageSize: 5,
+  pageSize: 10,
 });
 const data = ref([])
 const totals = ref(0)
@@ -102,9 +107,13 @@ const visible = ref(false)
 const formState = ref({
   aclName: '',
 });
+// ---------------删除定义的字段
+const values = ref([])
+const commonEnty = ref({ values: [] })//// 对象包数组 
+
 const initData = () => {
   console.log('搜索11111');
-  acllist(queryParams.value).then(res => {
+  acllist(formData.value).then(res => {
     // console.log(res.records, 'res11');
     // console.log(res.total, 'res11');
     data.value = res.records
@@ -114,12 +123,12 @@ const initData = () => {
 initData()
 const changeFn = (P, Ps) => {
   console.log(P, 'p');
-  queryParams.value.pageNum = P
+  formData.value.pageNum = P
   initData()
 }
 const onShowSizeChange = (current, pageSize) => {
   console.log(pageSize, 'pageSize');
-  queryParams.value.pageSize = pageSize
+  formData.value.pageSize = pageSize
   initData()
 };
 const onFinish = values => {
@@ -128,9 +137,67 @@ const onFinish = values => {
 const onFinishFailed = errorInfo => {
   // console.log('Failed:', errorInfo);
 };
-const isOpen = () => {
+const isOpen = async (record) => {
+  console.log(record, 'record');
   visible.value = true
-  opTitle.value = '新增名称'
+  // opTitle.value = '新增名称'
+  if (record.aclId) {
+    let res = await aclnameInfo(`${record.aclId}`)
+    formState.value = res
+    console.log(res, 'recoed');
+    opTitle.value = "修改名称"
+  } else {
+    opTitle.value = "新增名称"
+  }
+
+}
+const handleOk = async () => {
+
+  if (formState.value.aclId) {
+    let res = await editaclname(formState.value)
+    visible.value = false
+    message.success('修改成功')
+  } else {
+    let res = await addaclList(formState.value)
+    console.log(res, '新增');
+    visible.value = false
+    message.success('添加成功')
+  }
+
+  initData()
+  onClose()
+}
+// 关闭弹框
+const onClose = () => {
+  visible.value = false;
+  formState.value.aclName = ""
+  formState.value = {}
+  opTitle.value = ""
+};
+const delFn = async (record) => {
+  console.log(record, '删除');
+  commonEnty.value.values.push(record)
+  console.log(commonEnty.value, '  commonEnty.value.');
+  await delcalList(commonEnty.value)
+  // 更新列表
+  initData()
+  message.success('删除成功')
+}
+const confirm = (recoed) => {
+  console.log(recoed.aclId);
+  delFn(recoed.aclId)
+  initData()
+};
+const cancel = e => {
+  console.log(e);
+  message.error('Click on No');
+};
+function onGoToaclInfo(record) {
+  console.log(record);
+  console.log(record.aclId);
+  let aclId = record.aclId
+  router.push(`/acl/aclInfo?${aclId}`)
+  // router.push('/acl/aclInfo')
 }
 </script>
 <style scoped lang="less">
@@ -185,21 +252,37 @@ const isOpen = () => {
     .edit {
       color: #2E7DFF;
       padding: 0px 5px;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .add {
       color: #2E7DFF;
       padding: 0px 5px;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .info {
       color: #2E7DFF;
       padding: 0px 5px;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .del {
       color: #2E7DFF;
       padding: 0px 5px;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .pagination {

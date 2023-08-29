@@ -91,21 +91,26 @@
               </p>
               <ul v-if="selHostId === record.clusterId">
                 <li v-for="(   item, index   ) in    AllHostNum   " :key="index"
-                  style="display: flex;align-items: center; padding-left: 36px;">
+                  style="display: flex;align-items: center;padding-left: 62px; ">
+                  <!-- padding-left: 36px; -->
                   <a v-if="item.status == 1" style="display: flex;align-items: center;">
 
                     <img src="../../assets/loginmini/icon/status-ok.png" alt=""
-                      style="    margin-top: 5px;width:11.6px;height: 11.6px; margin-top: 5px;">
+                      style="    margin-top: 5px;width:11.6px;height: 11.6px; margin-top: 0px;">
+                    <!-- margin-top: 5px; -->
                     <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:11.6px;height: 11.6px;" /> -->
+                    <!-- {{ item }} -->
+                    <a> {{ item.ipAddress }}</a>
 
-                    <a> {{ item }}</a>
 
                   </a>
                   <a v-else style=" display: flex;  padding-left: 36px;">
                     <img src="../../assets/loginmini/icon/error.png" alt=""
-                      style="width:11.6px;height: 11.6px; margin-top: 5px;">
-                    <!-- <smile-outlined :rotate="180" /> -->
-                    {{ item }}
+                      style="width:11.6px;height: 11.6px; margin-top: 0px;">
+                    <!-- margin-top: 5px; -->
+                    <!-- {{ item }} -->
+                    {{ item.ipAddress }}
+
                   </a>
                   <!-- {{ item }} -->
                 </li>
@@ -176,9 +181,11 @@
 
       </a-modal>
     </div>
-    <div class="Tips">
-      <a-modal v-model:visible="visibledel" title="提示" @ok="handleOkdel" @cancel="onClosedel" class="Tips">
-        <div class="Tips-img" style="display: flex;justify-content: center;align-items: center;">
+    <div class="Tips " style=" border-bottom: none !important; border-top: none !important;border: none !important;">
+      <a-modal v-model:visible="visibledel" title="提示" @ok="handleOkdel" @cancel="onClosedel"
+        style=" border-bottom: none !important; border-top: none !important;border: none !important;">
+        <div class="Tips-img"
+          style="display: flex;justify-content: center;align-items: center; height: 56px;padding-top: 13px; border-bottom: none !important; border-top: none !important;border: none !important;">
           <p><img src="../../assets/loginmini/icon/warning.png" alt=""
               style="width:11.6px;height: 11.6px;margin-right: 5px; "></p>
           <p> 您确定要批量删除这些名称吗?</p>
@@ -294,15 +301,19 @@ const AllHostNum = ref([])
 
 
 const selHostFn = async (val) => {
+  // console.log(val, 'selHostId.value');
   if (selHostId.value === val) {
     selHostId.value = ''
     return AllHostNum.value = []
   }
   let res = await queryhost({ value: val })
-  let ipAddress = res.map(item => item.ipAddress)
+  console.log(res, 'res');
+  //这个代码 let ipAddress = res.map(item => item.ipAddress)
+  let ipAddress = res.map(item => item)
   // console.log(ipAddress, 'ipAddress');
   selHostId.value = val
   AllHostNum.value = ipAddress
+  // console.log(AllHostNum.value, ' AllHostNum.valu');
 }
 const changevalue = ref('批量操作')
 const changesearch = ref('请选择')
@@ -378,6 +389,9 @@ const onClose = () => {
   rowData.value = {}
   opTitle.value = ""
 };
+const onClosedel = () => {
+  visibledel.value = false
+}
 
 
 // 删除逻辑功能
@@ -524,6 +538,10 @@ const AlldelFn = () => {
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
     /deep/ .ant-table-tbody>tr>td {
+      padding: 13px !important;
+    }
+
+    /deep/ .ant-table.ant-table-bordered>.ant-table-container>.ant-table-content>table>thead>tr>th {
       padding: 13px !important;
     }
 
@@ -774,8 +792,27 @@ const AlldelFn = () => {
       border-radius: 0 0 2px 2px;
     }
 
+    /* 设置a-modal弹出框去除两条横线 */
+    ::v-deep ant-modal .Tips .ant-modal-content .ant-modal-header {
+      border-bottom: none !important;
+    }
+
+    ::v-deep ant-modal .Tips .ant-modal-content .ant-modal-footer {
+      border-top: none !important;
+    }
+
     .Tips-img {
       display: flex;
+
+      .ant-modal-content {
+        ::v-deep .ant-modal-header {
+          border-top: none !important;
+        }
+
+        ::v-deep .ant-modal-header {
+          border-bottom: none !important;
+        }
+      }
 
       /deep/ .ant-modal-footer {
         padding: 10px 16px;
@@ -799,6 +836,14 @@ const AlldelFn = () => {
         background: transparent;
         border-top: 0px solid #f0f0f0;
         border-radius: 0 0 2px 2px;
+      }
+
+      ::v-deep .ant-modal-content .ant-modal-header {
+        border-bottom: none !important;
+      }
+
+      ::v-deep .ant-modal-content .ant-modal-footer {
+        border-top: none !important;
       }
     }
   }
