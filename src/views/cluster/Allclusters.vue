@@ -319,7 +319,7 @@ const selHostFn = async (val) => {
     return AllHostNum.value = []
   }
   let res = await queryhost({ value: val })
-  console.log(res, 'res');
+  // console.log(res, 'res');
   //这个代码 let ipAddress = res.map(item => item.ipAddress)
   let ipAddress = res.map(item => item)
   // console.log(ipAddress, 'ipAddress');
@@ -381,7 +381,7 @@ const addFn = async () => {
   try {
     await formRef.value.validate()
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return message.error('请输入内容')
   }
   // 提交表单
@@ -553,8 +553,9 @@ const AlldelFn = () => {
     flex-direction: column;
 
     /deep/ .ant-alert-info {
-      background-color: #E5F7FF;
-      border: 1px solid #4D85E1;
+      background-color: #e6f7ff;
+      border: 1px solid #91d5ff;
+      ;
     }
 
     /deep/ .ant-alert-info .ant-alert-icon {

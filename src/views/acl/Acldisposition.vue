@@ -62,9 +62,9 @@
 
     <div class="model">
       <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onClose">
-        <a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-          @finish="onFinish" @finishFailed="onFinishFailed">
-          <a-form-item label="ACL名称" name="aclName" style='margin-top: 26px'>
+        <a-form :model="formState" ref='formRef' name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
+          <a-form-item :rules="formRules.aclName" label="ACL名称" name="aclName" style='margin-top: 26px'>
             <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
             <a-input v-model:value="formState.aclName" />
           </a-form-item>
@@ -93,6 +93,11 @@ const columns = [
     align: 'center'
   }
 ];
+const formRules = {
+  aclName: [{ required: true, message: "请输入内容" }]
+
+
+}
 
 const formData = ref({
   aclId: 0,
@@ -100,9 +105,10 @@ const formData = ref({
   pageNum: 1,
   pageSize: 10,
 });
+const formRef = ref(null)
 const data = ref([])
 const totals = ref(0)
-const opTitle = ref('新增')
+const opTitle = ref('新增ACL配置')
 const visible = ref(false)
 const formState = ref({
   aclName: '',
@@ -111,8 +117,8 @@ const formState = ref({
 const values = ref([])
 const commonEnty = ref({ values: [] })//// 对象包数组 
 
-const initData = () => {
-  console.log('搜索11111');
+const initData = async () => {
+  // console.log('搜索11111');
   acllist(formData.value).then(res => {
     // console.log(res.records, 'res11');
     // console.log(res.total, 'res11');
@@ -122,21 +128,21 @@ const initData = () => {
 }
 initData()
 const changeFn = (P, Ps) => {
-  console.log(P, 'p');
+  // console.log(P, 'p');
   formData.value.pageNum = P
   initData()
 }
 const onShowSizeChange = (current, pageSize) => {
-  console.log(pageSize, 'pageSize');
+  // console.log(pageSize, 'pageSize');
   formData.value.pageSize = pageSize
   initData()
 };
 const onFinish = values => {
   // console.log('Success:', values);
 };
-const onFinishFailed = errorInfo => {
-  // console.log('Failed:', errorInfo);
-};
+// const onFinishFailed = errorInfo => {
+//   // console.log('Failed:', errorInfo);
+// };
 const isOpen = async (record) => {
   console.log(record, 'record');
   visible.value = true
@@ -145,14 +151,19 @@ const isOpen = async (record) => {
     let res = await aclnameInfo(`${record.aclId}`)
     formState.value = res
     console.log(res, 'recoed');
-    opTitle.value = "修改名称"
+    opTitle.value = "修改ACL配置"
   } else {
-    opTitle.value = "新增名称"
+    opTitle.value = "新增ACL配置"
   }
 
 }
 const handleOk = async () => {
-
+  try {
+    await formRef.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return message.error('请输入内容')
+  }
   if (formState.value.aclId) {
     let res = await editaclname(formState.value)
     visible.value = false
