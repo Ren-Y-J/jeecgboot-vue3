@@ -5,6 +5,7 @@ enum RoleApi {
   edit = '/acl/manage/update', //修改
   add = '/acl/manage/add', //新增
   del = '/acl/manage/delete', //删除
+  infolist = '/acl/details/list',
 }
 export const acllist = (params) => defHttp.post({ url: RoleApi.list, params });
 /**
@@ -21,4 +22,5 @@ export const aclnameInfo = (params) => defHttp.get({ url: '/acl/manage/' + param
 //删除
 export const delcalList = (params) => defHttp.post({ url: RoleApi.del, params });
 // 根据集群ID查询主机zhe
-// export const queryhost = (params) => defHttp.post({ url: RoleApi.query, params });
+
+export const aclIdinfoList = (params) => defHttp.post({ url: RoleApi.infolist, params });

@@ -96,17 +96,17 @@
                   <a v-if="item.status == 1" style="display: flex;align-items: center;">
 
                     <img src="../../assets/loginmini/icon/status-ok.png" alt=""
-                      style="    margin-top: 5px;width:16px;height: 16px; margin-top: 0px;">
+                      style="    margin-top: 5px;width:11.6px;height: 11.6px; margin-top: 0px;">
                     <!-- margin-top: 5px; -->
-                    <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:16px;height: 16px;" /> -->
+                    <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:11.6px;height: 11.6px;" /> -->
                     <!-- {{ item }} -->
                     <a> {{ item.ipAddress }}</a>
 
 
                   </a>
-                  <a v-else style=" display: flex;  padding-left: 0px;">
+                  <a v-else style=" display: flex;  padding-left: 36px;">
                     <img src="../../assets/loginmini/icon/error.png" alt=""
-                      style="width:16px;height: 16px; margin-top: 0px;">
+                      style="width:11.6px;height: 11.6px; margin-top: 0px;">
                     <!-- margin-top: 5px; -->
                     <!-- {{ item }} -->
                     {{ item.ipAddress }}
@@ -120,11 +120,11 @@
             <template v-if="column.dataIndex === 'status'">
 
               <a v-if="record.status == 1" style="width:100%;height: 100%;display: flex; justify-content: center;">
-                <!-- <check-circle-two-tone two-tone-color="#52c41a" style="width:16px;height: 16px;" /> -->
-                <img src="../../assets/loginmini/icon/status-ok.png" alt="" style="width:16px;height: 16px; ">
+                <!-- <check-circle-two-tone two-tone-color="#52c41a" style="width:11.6px;height: 11.6px;" /> -->
+                <img src="../../assets/loginmini/icon/status-ok.png" alt="" style="width:11.6px;height: 11.6px; ">
               </a>
               <a v-else style="width:100%;height: 100%;display: flex; justify-content: center;">
-                <img src="../../assets/loginmini/icon/error.png" alt="" style="width:16px;height: 16px; ">
+                <img src="../../assets/loginmini/icon/error.png" alt="" style="width:11.6px;height: 11.6px; ">
                 <!-- <smile-outlined :rotate="180" /> -->
               </a>
             </template>
@@ -152,27 +152,24 @@
     </div>
 
     <div class="modal">
-      <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="610px">
-        <!-- padding: 58px 74px 30px 80px; -->
-        <a-form ref='formRef' style="padding: 20px 43px 0px;margin-left: 0;" :model="rowData" validateTrigger='blur'>
+      <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="747px">
+        <a-form style="padding: 58px 74px 30px 80px;margin-left: 0;" :model="formState">
           <a-row :gutter="8">
             <!-- style="margin-bottom: 12px" -->
             <a-col span="24">
               <!-- <div style="margin-bottom: 32px"> -->
-              <a-form-item label="集群名称" :rules="formRules.clusterName"
-                :labelCol="{ style: 'width:80px;height:32px;line-height: 32px;' }" name="clusterName"
-                :wrapper-col="{ span: 20 }">
-                <div class="name" margin-bottom="18px">
-                  <a-input v-model:value="rowData.clusterName" style="height:32px;width: 444px;" />
+              <a-form-item label="名称" :labelCol="{ style: 'width:50px;height:32px;line-height: 32px;' }"
+                name="clusterName" :wrapper-col="{ span: 20 }">
+                <div class="name" margin-bottom="32px">
+                  <a-input v-model:value="rowData.clusterName" style="height:32px;width: 526px;" />
                 </div>
               </a-form-item>
               <!-- </div> -->
             </a-col>
             <a-col span="24">
-              <a-form-item label="备注" :rules="formRules.remark" name="remark" :labelCol="{ style: 'width:80px;' }"
-                :wrapper-col="{ span: 24 }">
-                <div class="remark" margin-bottom="20px">
-                  <div class="remark" margin-bottom="20px">
+              <a-form-item label="备注" name="remark" :labelCol="{ style: 'width:50px;' }" :wrapper-col="{ span: 24 }">
+                <div class="remark" margin-bottom="32px">
+                  <div class="remark" margin-bottom="32px">
                     <!-- <a-input v-model:value="rowData.remark" style="height:44px;width: 526px;" /> -->
                     <a-textarea v-model:value="rowData.remark" style="height:54px;width: 526px;" />
                   </div>
@@ -184,20 +181,20 @@
 
       </a-modal>
     </div>
-    <!-- <div class="Tips " style=" border-bottom: none !important; border-top: none !important;border: none !important;">
+    <div class="Tips " style=" border-bottom: none !important; border-top: none !important;border: none !important;">
       <a-modal v-model:visible="visibledel" @ok="handleOkdel" @cancel="onClosedel"
         style=" border-bottom: none !important; border-top: none !important;border: none !important;">
         <div class="Tips-img"
-          style="display: flex;position: relative;justify-content: flex-start;align-items: center; height: 56px;padding-top: 24px; border-bottom: none !important; border-top: none !important;border: none !important;">
+          style="display: flex;position: relative;justify-content: center;align-items: center; height: 56px;padding-top: 13px; border-bottom: none !important; border-top: none !important;border: none !important;">
           <div class="line top"></div>
           <p><img src="../../assets/loginmini/icon/warning.png" alt=""
-              style="width:22px;height: 22px;    margin-left: 20px;"></p>
-          <p style=" margin-left: 16px;"> 删除</p>
+              style="width:11.6px;height: 11.6px;margin-right: 5px; "></p>
+          <p> 您确定要批量删除这些名称吗?</p>
           <div class="line bot"></div>
         </div>
-        <p style=" margin-left: 57px;margin-top: 6px;">是否删除选中数据</p>
+
       </a-modal>
-    </div> -->
+    </div>
   </div>
 
   <!-- 弹框 -->
@@ -225,16 +222,14 @@ import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { list, addclusterList, editclusterList, clusterInfo, delclusterList, queryhost } from './cluster '
 import { SmileTwoTone, HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+
 const columns = [{
   title: '状态',
   dataIndex: 'status',
   width: 220,
   align: 'center'
 }, {
-  title: '集群名称',
+  title: '名称',
   dataIndex: 'clusterName',
   width: 228,
   align: 'center'
@@ -272,16 +267,12 @@ const columns = [{
 },
 
 ];
-const formRules = {
-  clusterName: [{ required: true, message: "请输入集群名称" }],
-  remark: [{ required: true, message: "请输入备注" }],
 
-}
 const data = ref([])
 const totals = ref(0)
 const visible = ref(false)
 const visibledel = ref(false)
-const opTitle = ref('新增集群')
+const opTitle = ref('新增')
 const lists = ref([])
 const values = ref([])
 const number = ref(0)
@@ -305,8 +296,7 @@ const rowData = ref({
   clusterName: ''
 })
 
-// const current = ref(4)
-const formRef = ref(null)
+const current = ref(4)
 
 const selHostId = ref('')
 const AllHostNum = ref([])
@@ -355,9 +345,9 @@ const getList = () => {
 }
 getList()
 
-// const info = () => {
-//   messageApi.info('Hello, Ant Design Vue!');
-// };
+const info = () => {
+  messageApi.info('Hello, Ant Design Vue!');
+};
 const isOpen = async (record) => {
   // console.log(record, 'record.createTime');
   visible.value = true
@@ -365,9 +355,9 @@ const isOpen = async (record) => {
   if (record.clusterId) {
     let res = await clusterInfo(`${record.clusterId}`)
     rowData.value = res
-    opTitle.value = "修改集群"
+    opTitle.value = "修改名称"
   } else {
-    opTitle.value = "新增集群"
+    opTitle.value = "新增名称"
   }
 }
 
@@ -377,14 +367,6 @@ const formState = ref({
 
 //新增和修改
 const addFn = async () => {
-  // 校验表单
-  try {
-    await formRef.value.validate()
-  } catch (error) {
-    console.log(error);
-    return message.error('请输入内容')
-  }
-  // 提交表单
   if (rowData.value.clusterId) {
     // console.log('编辑');
     // 换了rowData.value
@@ -394,7 +376,7 @@ const addFn = async () => {
   } else {
     // console.log('新增');
     let res = await addclusterList(rowData.value)
-    // console.log(res, 'resadd');
+    console.log(res, 'resadd');
     visible.value = false
     message.success('添加成功')
   }
@@ -447,44 +429,21 @@ const handlChangeFn = async (val) => {
   if (number.value == 0) { //number.value个数数字类型  allclusterId.value.length勾选的id是几个字符串类型
     message.error('请勾选要删除的名称')
   } else {
-    // visibledel.value = true
-    Modal.confirm({
-      title: '删除',
-      icon: createVNode(ExclamationCircleOutlined),
-      content: createVNode('div', {
-        style: 'color:rgba(0, 0, 0, 0.85);font-size: 14px;',
-      }, '是否删除选中数据'),
-      onOk() {
-        console.log('OK');
-        if (selects.value == '0' && !allclusterId.value.length == 0) {
-          delclusterList({ values: allclusterId.value }).then(res => {
-            // console.log(res);
-            getList()
-            message.success('批量删除成功')
-          })
-          // console.log(res, 'allclusterId');
-
-
-        }
-
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-      class: 'test',
-    });
+    visibledel.value = true
   }
-
 }
-// const handleOkdel = async (val) => {
-//   if (selects.value == '0' && !allclusterId.value.length == 0) {
-//     let res = await delclusterList({ values: allclusterId.value })
-//     // console.log(res, 'allclusterId');
-//     getList()
-//     message.success('批量删除成功')
-//   }
-//   visibledel.value = false
-// }
+const handleOkdel = async (val) => {
+
+  if (selects.value == '0' && !allclusterId.value.length == 0) {
+
+    let res = await delclusterList({ values: allclusterId.value })
+    // console.log(res, 'allclusterId');
+    getList()
+    message.success('批量删除成功')
+
+  }
+  visibledel.value = false
+}
 // 批量删除handlChangeFn
 function delAllFn() {
   delclusterList({ values: allclusterId.value }).then(res => {
@@ -584,9 +543,8 @@ const AlldelFn = () => {
       padding: 13px !important;
     }
 
-    // 标题
     /deep/ .ant-table.ant-table-bordered>.ant-table-container>.ant-table-content>table>thead>tr>th {
-      padding: 7.5px !important;
+      padding: 13px !important;
     }
 
     th.class-center-sum,
@@ -670,25 +628,6 @@ const AlldelFn = () => {
 
 
     }
-
-    .ant-alert {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      color: rgba(0, 0, 0, 0.85);
-      font-size: 14px;
-      font-variant: tabular-nums;
-      line-height: 1.5715;
-      list-style: none;
-      font-feature-settings: tnum;
-      position: relative;
-      display: flex;
-      align-items: center;
-      padding: 7px 15px;
-      word-wrap: break-word;
-      border-radius: 2px;
-    }
-
 
   }
 
@@ -823,7 +762,7 @@ const AlldelFn = () => {
 }
 </style>
 
-<!-- <style scoped>
+<style scoped>
 .line {
   height: 2px;
   width: 100%;
@@ -838,4 +777,4 @@ const AlldelFn = () => {
 .bot {
   bottom: -1px
 }
-</style> -->
+</style>
