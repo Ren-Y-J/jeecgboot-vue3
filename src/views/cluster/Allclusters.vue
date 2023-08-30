@@ -72,6 +72,7 @@
               <span>未选中任何数据</span>
             </template>
           </template>
+
         </a-alert>
 
 
@@ -130,13 +131,16 @@
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <div>
-                <span :style="{ margin: '0px 8px ' }" @click="isOpen(record)" class="eait"
-                  style=" color:#2E7DFF">编辑</span>
+                <!-- <span :style="{ margin: '0px 8px ' }" @click="isOpen(record)" class="eait"
+                  style=" color:#2E7DFF">编辑</span> -->
+                <a-button type="link">编辑</a-button>
                 <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="isOpen(record)">编辑</a-button> -->
                 <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
                   @cancel="cancel">
-                  <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary">删除</a-button> -->
-                  <span style="color:#2E7DFF">删除</span>
+                  <!-- <a-button :style="{ margin: '0px 5px ', border: '0px solid transparent', background: 'transparent' }"
+                    type="primary">删除</a-button> -->
+                  <a-button type="link">删除</a-button>
+                  <!-- <span style="color:#2E7DFF"></span> -->
                 </a-popconfirm>
               </div>
             </template>
@@ -152,7 +156,7 @@
     </div>
 
     <div class="modal">
-      <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="610px">
+      <a-modal :title="opTitle" v-model:visible="visible" @ok="addFn" @cancel="onClose" width="500px">
         <!-- padding: 58px 74px 30px 80px; -->
         <a-form ref='formRef' style="padding: 20px 43px 0px;margin-left: 0;" :model="rowData" validateTrigger='blur'>
           <a-row :gutter="8">
@@ -163,7 +167,7 @@
                 :labelCol="{ style: 'width:80px;height:32px;line-height: 32px;' }" name="clusterName"
                 :wrapper-col="{ span: 20 }">
                 <div class="name" margin-bottom="18px">
-                  <a-input v-model:value="rowData.clusterName" style="height:32px;width: 444px;" />
+                  <a-input v-model:value="rowData.clusterName" placeholder="请输入集群名称" style="height:32px;width: 334px;" />
                 </div>
               </a-form-item>
               <!-- </div> -->
@@ -174,7 +178,7 @@
                 <div class="remark" margin-bottom="20px">
                   <div class="remark" margin-bottom="20px">
                     <!-- <a-input v-model:value="rowData.remark" style="height:44px;width: 526px;" /> -->
-                    <a-textarea v-model:value="rowData.remark" style="height:54px;width: 526px;" />
+                    <a-textarea v-model:value="rowData.remark" placeholder="请输入备注" style="height:54px;width: 526px;" />
                   </div>
                 </div>
               </a-form-item>
@@ -382,7 +386,7 @@ const addFn = async () => {
     await formRef.value.validate()
   } catch (error) {
     // console.log(error);
-    return message.error('请输入内容')
+    return console.log(error)
   }
   // 提交表单
   if (rowData.value.clusterId) {
@@ -446,7 +450,7 @@ const handlChangeFn = async (val) => {
 
   selects.value = val//select点击删除的的value字段0字符串类型
   if (number.value == 0) { //number.value个数数字类型  allclusterId.value.length勾选的id是几个字符串类型
-    message.error('请勾选要删除的名称')
+    message.error('请勾选需要删除的集群')
   } else {
     // visibledel.value = true
     Modal.confirm({
@@ -559,9 +563,10 @@ const AlldelFn = () => {
       ;
     }
 
-    /deep/ .ant-alert-info .ant-alert-icon {
-      color: #4D85E1;
-    }
+    // icon
+    // /deep/ .ant-alert-info .ant-alert-icon {
+    //   color: #4D85E1;
+    // }
 
     .hostinfo {
       &:hover {
@@ -752,7 +757,42 @@ const AlldelFn = () => {
     padding: 32px 56px;
   }
 
+  /deep/ .ant-modal-title {
+    font-size: 16px;
+    line-height: 16px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .ant-modal-title {
+    font-size: 16px;
+    line-height: 16px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  #vcDialogTitle2 {
+    ont-size: 16px;
+    font-weight: 500;
+  }
+
+  .ant-modal-content {
+    ::v-deep(.ant-modal-title) {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+
   .modal {
+    /deep/ .ant-modal-title {
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 16px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
     .ant-modal-wrap {
       .ant-modal {
         .ant-modal-content {
