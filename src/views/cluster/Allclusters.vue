@@ -27,8 +27,11 @@
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                     <search-outlined />搜索</a-button>
-                  <a-button :style="{ margin: '0px 5px ' }" type="primary"
-                    @click="AlldelFn"><reload-outlined />重置</a-button>
+                  <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
+                    @click="AlldelFn"><reload-outlined />重置</a-button> -->
+                  <!-- <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
+                   -->
+                  <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
                 </span>
               </a-col>
             </a-row>
@@ -133,7 +136,7 @@
               <div>
                 <!-- <span :style="{ margin: '0px 8px ' }" @click="isOpen(record)" class="eait"
                   style=" color:#2E7DFF">编辑</span> -->
-                <a-button type="link">编辑</a-button>
+                <a-button type="link" @click="isOpen(record)">编辑</a-button>
                 <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="isOpen(record)">编辑</a-button> -->
                 <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
                   @cancel="cancel">

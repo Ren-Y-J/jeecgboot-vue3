@@ -15,8 +15,9 @@
               <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                 <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                   <search-outlined />搜索</a-button>
-                <a-button :style="{ margin: '0px 5px ' }" type="primary"
-                  @click="AlldelFn"><reload-outlined />重置</a-button>
+                <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
+                  @click="AlldelFn"><reload-outlined />重置</a-button> -->
+                <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
               </span>
             </a-col>
           </a-row>

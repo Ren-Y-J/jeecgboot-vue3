@@ -22,8 +22,9 @@
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                     <search-outlined />搜索</a-button>
-                  <a-button :style="{ margin: '0px 5px ' }" type="primary"
-                    @click="AlldelFn"><reload-outlined />重置</a-button>
+                  <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
+                    @click="AlldelFn"><reload-outlined />重置</a-button> -->
+                  <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
                 </span>
               </a-col>
             </a-row>
@@ -41,8 +42,8 @@
 
             <template v-if="column.dataIndex === 'remark'">
 
-              <a-button v-if="!isEdit" @click="handelClick(record.key)" class="editable-add-btn"
-                style="margin-bottom: 8px">Add</a-button>
+              <a-button v-if="!isEdit || isEditKey !== record.key" @click="handelClick(record.key)"
+                class="editable-add-btn" style="margin-bottom: 8px">Add</a-button>
               <a-input v-if="isEdit && (isEsditKey == record.key)" @pressEnter=" save(record.key)" v-model="editRemark" />
               <!--你先把逻辑走通，事件应该可以给通过ref获取 -->
             </template>
