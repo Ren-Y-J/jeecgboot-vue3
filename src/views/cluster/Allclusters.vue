@@ -404,6 +404,7 @@ const addFn = async () => {
 // 关闭弹框
 const onClose = () => {
   visible.value = false;
+  formRef.value.resetFields()
   rowData.value.remark = ""
   rowData.value.clusterName = ""
   rowData.value = {}

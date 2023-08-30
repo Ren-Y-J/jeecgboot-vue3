@@ -181,9 +181,11 @@ const handleOk = async () => {
 // 关闭弹框
 const onClose = () => {
   visible.value = false;
+  formRef.value.resetFields()
   formState.value.aclName = ""
   formState.value = {}
   opTitle.value = ""
+  Modal.destroyAll();
 };
 const delFn = async (record) => {
   console.log(record, '删除');
