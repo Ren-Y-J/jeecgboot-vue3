@@ -40,6 +40,22 @@
 
           <template #bodyCell="{ column, record }">
 
+
+            <template v-if="column.dataIndex === 'aclRelName'">
+              <div style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
+                <!-- a-popover宽度-->
+                <a-popover :overlayStyle="{ width: '30%' }" trigger="hover">
+                  <template #content>
+                    {{ record.aclRelName }}
+                  </template>
+
+                  <p
+                    style="width: 220;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
+                    {{ record.aclRelName }}</p>
+                </a-popover>
+              </div>
+            </template>
+
             <template v-if="column.dataIndex === 'remark'">
 
               <a-button v-if="!isEdit || isEditKey !== record.key" @click="handelClick(record.key)"
@@ -70,7 +86,8 @@
             <template v-if="column.dataIndex === 'operation'">
               <div>
                 <a-popconfirm title="是否确认删除?" ok-text="是" cancel-text="否" @confirm="confirm(record)" @cancel="cancel">
-                  <span class="del">删除</span>
+                  <!-- <span class="del">删除</span> -->
+                  <a-button type="link">删除</a-button>
                   <!--  @click="delFn(record)"  -->
                 </a-popconfirm>
               </div>
@@ -91,6 +108,7 @@ import { aclIdinfoList, acldelInfo } from './disposition'
 import { ref, defineComponent, reactive, computed } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { is } from '/@/utils/is';
+import { left } from 'inquirer/lib/utils/readline';
 const isEdit = ref(false)
 const isEditKey = ref(null)
 const editRemark = ref('')
@@ -253,12 +271,21 @@ const AlldelFn = () => {
       padding: 4px !important;
     }
 
+    /deep/ p {
+      margin-top: 0;
+      margin-bottom: 0em;
+    }
+
     // 标题
     /deep/.ant-table-thead>tr>th,
     .ant-table-tbody>tr>td,
     .ant-table tfoot>tr>th,
     .ant-table tfoot>tr>td {
       padding: 7.5px 16px;
+    }
+
+    ::v-deep(.ant-card-body) {
+      padding: 8px !important;
     }
 
     .pagination {

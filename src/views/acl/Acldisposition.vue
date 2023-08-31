@@ -39,16 +39,33 @@
               </span>
             </template>
           </template> -->
+            <template v-if="column.dataIndex === 'aclName'">
+              <div style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
+                <!-- a-popover宽度-->
+                <a-popover :overlayStyle="{ width: '50%' }" trigger="hover">
+                  <template #content>
+                    {{ record.aclName }}
+                  </template>
+
+                  <p
+                    style="width: 220;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
+                    {{ record.aclName }}</p>
+                </a-popover>
+              </div>
+            </template>
             <template v-if="column.dataIndex === 'operation'">
               <div>
-                <span class="edit" @click="isOpen(record)">修改</span>
-                <span class="add" @click="addaclRelNameFn(record)">添加</span>
+                <a-button type="link" @click="isOpen(record)">修改</a-button>
+                <a-button type="link" @click="addaclRelNameFn(record)">添加</a-button>
+                <!-- <span class="edit" @click="isOpen(record)">修改</span>
+                <span class="add" @click="addaclRelNameFn(record)">添加</span> -->
                 <a-popconfirm title="是否确认删除?" ok-text="是" cancel-text="否" @confirm="confirm(record)" @cancel="cancel">
-                  <span class="del">删除</span>
+                  <!-- <span class="del">删除</span> -->
+                  <a-button type="link">删除</a-button>
                   <!--  @click="delFn(record)" -->
                 </a-popconfirm>
-
-                <span class="info" @click="onGoToaclInfo(record)">详情</span>
+                <a-button type="link" @click="onGoToaclInfo(record)">详情</a-button>
+                <!-- <span class="info" @click="onGoToaclInfo(record)">详情</span> -->
               </div>
             </template>
           </template>
@@ -191,11 +208,12 @@ const isOpen = async (record) => {
 }
 const addaclRelNameFn = async (record) => {
   let aclId = record.aclId
-  console.log(aclId);
+  // console.log(aclId);
   aclInfoData.value.aclId = aclId
-  console.log(aclInfoData.value.aclId);
+  // console.log(aclInfoData.value.aclId);
   visibleinfo.value = true
   opTitles.value = "新增ACL详情"
+
 
 }
 const handleOkaclRelNameFn = async () => {
@@ -209,6 +227,7 @@ const handleOkaclRelNameFn = async () => {
   let res = await addInfo(aclInfoData.value)
   console.log(res, 'res');
   visibleinfo.value = false
+  message.success('添加成功')
 }
 const handleOk = async () => {
   try {
@@ -262,7 +281,7 @@ const confirm = (recoed) => {
 };
 const cancel = e => {
   console.log(e);
-  message.error('Click on No');
+  // message.error('Click on No');
 };
 
 const handleQuery = () => {
@@ -333,7 +352,12 @@ function onGoToaclInfo(record) {
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
     /deep/ .ant-table-tbody>tr>td {
-      padding: 13px !important;
+      padding: 6px !important;
+    }
+
+    /deep/ p {
+      margin-top: 0;
+      margin-bottom: 0em !important;
     }
 
     // 标题

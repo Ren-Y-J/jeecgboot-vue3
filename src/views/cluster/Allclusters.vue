@@ -133,14 +133,19 @@
               </a>
             </template>
             <template v-if="column.dataIndex === 'clusterName'">
-              <div :style="{ width: '100px' }">
-                <a-popover :style="{ width: '200px' }">
+              <div style="text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+">
+                <!-- a-popover宽度-->
+                <a-popover :overlayStyle="{ width: '50%' }" trigger="hover">
                   <template #content>
                     {{ record.clusterName }}
                   </template>
 
                   <p
-                    style="width: 228px;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
+                    style="width: 228;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
                     {{ record.clusterName }}</p>
                 </a-popover>
               </div>
@@ -613,7 +618,12 @@ const AlldelFn = () => {
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
     /deep/ .ant-table-tbody>tr>td {
-      padding: 13px !important;
+      padding: 8px !important;
+    }
+
+    /deep/ p {
+      margin-top: 0;
+      margin-bottom: 0em;
     }
 
     // 标题
@@ -626,6 +636,8 @@ const AlldelFn = () => {
       text-align: center;
     }
 
+
+
     .select {
       margin: 0 20px 0 0;
     }
@@ -636,21 +648,21 @@ const AlldelFn = () => {
       justify-content: flex-end;
     }
 
-    .ant-card-body {
-      padding: 6px !important;
-    }
+    // .ant-card-body {
+    //   padding: 6px !important;
+    // }
 
-    .ant-card-body {
-      padding: 6px !important;
-    }
+    // .ant-card-body {
+    //   padding: 6px !important;
+    // }
 
-    :deep(.ant-card-body) {
-      padding: 6px !important;
-    }
+    // :deep(.ant-card-body) {
+    //   padding: 6px !important;
+    // }
 
-    ::v-deep(.ant-card-body) {
-      padding: 6px !important;
-    }
+    // ::v-deep(.ant-card-body) {
+    //   padding: 6px !important;
+    // }
 
     .controls {
       display: flex;
