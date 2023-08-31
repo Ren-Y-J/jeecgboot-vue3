@@ -1,22 +1,23 @@
 <template>
   <div class="allcal">
     <div class="nav">
-      <a-card style="width: 1684px" class="nav">
+      <a-card class="nav">
         <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed">
           <a-row :gutter="1">
             <a-col :md="6" :sm="24">
               <a-form-item style="margin-bottom: 0px;" label="名称" name="aclName" :labelCol="{ span: 6 }"
                 :wrapperCol="{ span: 16 }">
-                <a-input v-model:value="formData.aclName" placeholder="请输入集群名称" />
+                <a-input v-model:value="formData.aclName" placeholder="请输入ACL名称" />
               </a-form-item>
             </a-col>
             <a-col :md="4" :sm="5">
               <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                 <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                   <search-outlined />搜索</a-button>
-                <a-button :style="{ margin: '0px 5px ' }" type="primary"
-                  @click="AlldelFn"><reload-outlined />重置</a-button>
+                <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
+                  @click="AlldelFn"><reload-outlined />重置</a-button> -->
+                <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
               </span>
             </a-col>
           </a-row>
@@ -25,8 +26,8 @@
 
     </div>
     <div class="contion">
-      <a-card style="width: 1684px">
-        <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加</a-button>
+      <a-card>
+        <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加</a-button>
         <!-- :row-selection="rowSelection" -->
         <a-table :columns="columns" :data-source="data" :pagination="false">
           <template #bodyCell="{ column, record }">
@@ -41,7 +42,7 @@
             <template v-if="column.dataIndex === 'operation'">
               <div>
                 <span class="edit" @click="isOpen(record)">修改</span>
-                <span class="add">添加</span>
+                <span class="add" @click="addaclRelNameFn(record)">添加</span>
                 <a-popconfirm title="是否确认删除?" ok-text="是" cancel-text="否" @confirm="confirm(record)" @cancel="cancel">
                   <span class="del">删除</span>
                   <!--  @click="delFn(record)" -->
@@ -62,11 +63,22 @@
 
     <div class="model">
       <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onClose">
-        <a-form :model="formState" ref='formRef' name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }"
-          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
+        <a-form :model="formState" ref='formRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item :rules="formRules.aclName" label="ACL名称" name="aclName" style='margin-top: 26px'>
             <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
-            <a-input v-model:value="formState.aclName" />
+            <a-input v-model:value="formState.aclName" placeholder="请输入ACL名称" />
+          </a-form-item>
+        </a-form>
+      </a-modal>
+    </div>
+    <div class="modelinfo">
+      <a-modal v-model:visible="visibleinfo" :title="opTitles" @ok="handleOkaclRelNameFn" @cancel="onCloseaclFn">
+        <a-form :model="aclInfoData" ref='formRefinfo' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <a-form-item :rules="fromaclinfoRules.aclRelName" label="ACL名称" name="aclRelName" style='margin-top: 26px'>
+            <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
+            <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入ACL名称" />
           </a-form-item>
         </a-form>
       </a-modal>
@@ -76,7 +88,7 @@
 <script name='Two-hosts' setup>
 import { ref, defineComponent, reactive } from 'vue';
 import { SmileTwoTone, HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
-import { acllist, addaclList, editaclname, aclnameInfo, delcalList } from './disposition'
+import { acllist, addaclList, editaclname, aclnameInfo, delcalList, addInfo } from './disposition'
 import { message } from 'ant-design-vue';
 import { router } from '/@/router';
 const columns = [
@@ -94,9 +106,10 @@ const columns = [
   }
 ];
 const formRules = {
-  aclName: [{ required: true, message: "请输入内容" }]
-
-
+  aclName: [{ required: true, message: "请输入ACL名称" }]
+}
+const fromaclinfoRules = {
+  aclRelName: [{ required: true, message: "请输入ACL名称" }]
 }
 
 const formData = ref({
@@ -105,20 +118,39 @@ const formData = ref({
   pageNum: 1,
   pageSize: 10,
 });
+const aclInfoData = ref({
+  aclId: 0,
+  aclName: "",
+  aclRelName: "",
+  aclType: "0",
+  createTime: "",
+  createUserId: 0,
+  remark: "",
+  status: "1",
+  updateTime: "",
+  updateUserId: 0
+})
 const formRef = ref(null)
+const formRefinfo = ref(null)
 const data = ref([])
 const totals = ref(0)
 const opTitle = ref('新增ACL配置')
+const opTitles = ref('新增ACL详情')
 const visible = ref(false)
+const visibleinfo = ref(false)
 const formState = ref({
   aclName: '',
 });
+const fromaclRelNameinfo = ref({
+  aclRelName: '',
+});
+
 // ---------------删除定义的字段
 const values = ref([])
 const commonEnty = ref({ values: [] })//// 对象包数组 
 
 const initData = async () => {
-  // console.log('搜索11111');
+  console.log('搜索11111');
   acllist(formData.value).then(res => {
     // console.log(res.records, 'res11');
     // console.log(res.total, 'res11');
@@ -157,20 +189,42 @@ const isOpen = async (record) => {
   }
 
 }
+const addaclRelNameFn = async (record) => {
+  let aclId = record.aclId
+  console.log(aclId);
+  aclInfoData.value.aclId = aclId
+  console.log(aclInfoData.value.aclId);
+  visibleinfo.value = true
+  opTitles.value = "新增ACL详情"
+
+}
+const handleOkaclRelNameFn = async () => {
+  try {
+    await formRefinfo.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return console.log(error)
+  }
+
+  let res = await addInfo(aclInfoData.value)
+  console.log(res, 'res');
+  visibleinfo.value = false
+}
 const handleOk = async () => {
   try {
     await formRef.value.validate()
   } catch (error) {
     // console.log(error);
-    return message.error('请输入内容')
+    return console.log(error)
   }
   if (formState.value.aclId) {
     let res = await editaclname(formState.value)
+    console.log(res, '1');
     visible.value = false
     message.success('修改成功')
   } else {
     let res = await addaclList(formState.value)
-    console.log(res, '新增');
+    console.log(res, '新增1');
     visible.value = false
     message.success('添加成功')
   }
@@ -181,10 +235,17 @@ const handleOk = async () => {
 // 关闭弹框
 const onClose = () => {
   visible.value = false;
+  formRef.value.resetFields()
   formState.value.aclName = ""
   formState.value = {}
   opTitle.value = ""
 };
+const onCloseaclFn = () => {
+  visibleinfo.value = false
+  // aclInfoData.value = {}
+  fromaclRelNameinfo.value.aclRelName = ""
+  formRefinfo.value.resetFields()
+}
 const delFn = async (record) => {
   console.log(record, '删除');
   commonEnty.value.values.push(record)
@@ -203,6 +264,16 @@ const cancel = e => {
   console.log(e);
   message.error('Click on No');
 };
+
+const handleQuery = () => {
+  formData.value.pageNum = 1
+  initData()
+
+};
+const AlldelFn = () => {
+  formData.value.aclName = ""
+  initData()
+}
 function onGoToaclInfo(record) {
   console.log(record);
   console.log(record.aclId);
@@ -258,6 +329,19 @@ function onGoToaclInfo(record) {
 
     ::v-deep(.ant-card-body) {
       padding: 6px !important;
+    }
+
+    // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
+    /deep/ .ant-table-tbody>tr>td {
+      padding: 13px !important;
+    }
+
+    // 标题
+    /deep/.ant-table-thead>tr>th,
+    .ant-table-tbody>tr>td,
+    .ant-table tfoot>tr>th,
+    .ant-table tfoot>tr>td {
+      padding: 7.5px 16px;
     }
 
     .edit {
