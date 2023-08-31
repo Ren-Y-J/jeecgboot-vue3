@@ -95,12 +95,11 @@
               </p>
               <ul v-if="selHostId === record.clusterId">
                 <li v-for="(   item, index   ) in    AllHostNum   " :key="index"
-                  style="display: flex;align-items: center;padding-left: 62px; ">
+                  style="display: flex;align-items: center;padding-left: 65px; ">
                   <!-- padding-left: 36px; -->
                   <a v-if="item.status == 1" style="display: flex;align-items: center;">
 
-                    <img src="../../assets/loginmini/icon/status-ok.png" alt=""
-                      style="    margin-top: 5px;width:16px;height: 16px; margin-top: 0px;">
+                    <img src="../../assets/loginmini/icon/status-ok.png" alt="" style="width:16px;height: 16px;">
                     <!-- margin-top: 5px; -->
                     <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:16px;height: 16px;" /> -->
                     <!-- {{ item }} -->
@@ -110,7 +109,7 @@
                   </a>
                   <a v-else style=" display: flex;  padding-left: 0px;">
                     <img src="../../assets/loginmini/icon/error.png" alt=""
-                      style="width:16px;height: 16px; margin-top: 0px;">
+                      style="width:16px;height: 16px; margin-top: 2px;">
                     <!-- margin-top: 5px; -->
                     <!-- {{ item }} -->
                     {{ item.ipAddress }}
@@ -363,9 +362,12 @@ const state = reactive({
 });
 
 const rowSelection = async (selectedRowKeys, selectedRows) => {
+  // console.log(selectedRowKeys);
+  // console.log(selectedRows)
   state.selectedRowKeys = selectedRowKeys;
   // 对原数组元素进行运算后再赋值给新的数组
   allclusterId.value = selectedRows.map(it => it.clusterId)
+  // console.log(allclusterId.value);
   number.value = allclusterId.value.length
   //这个是勾选的id存放的位置 我点清空我id复空
 }
@@ -488,6 +490,7 @@ const handlChangeFn = async (val) => {
             // console.log(res);
             getList()
             message.success('批量删除成功')
+            number.value = 0
           })
           // console.log(res, 'allclusterId');
 
