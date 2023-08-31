@@ -55,8 +55,8 @@
             <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加集群</a-button>
           </div>
           <div class="icon">
-            <span class="icon-sx" @click="AlldelFn">
-              <img src="../../assets/loginmini/icon/sx.png" alt="">
+            <span class="icon-sx">
+              <img src="../../assets/loginmini/icon/sx.png" alt="" @click="AlldelFn">
               <!-- <reload-outlined /> -->
             </span>
             <span class="icon-kz"><img src="../../assets/loginmini/icon/kz.png" alt=""></span>
@@ -566,6 +566,8 @@ const AlldelFn = () => {
   // console.log('1');
   queryParams.value.clusterName = ''
   changesearch.value = ''
+  queryParams.value.pageNum = 1
+  queryParams.value.pageSize = 10
   getList()
   changesearch.value = '请选择'
 }
