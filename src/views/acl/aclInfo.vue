@@ -59,7 +59,7 @@
             <template v-if="column.dataIndex === 'remark'">
 
               <a-button v-if="!isEdit || isEditKey !== record.key" @click="handelClick(record.key)"
-                class="editable-add-btn" style="margin-bottom: 8px">Add</a-button>
+                class="editable-add-btn" style="margin-bottom: 8px">{{ record.remark }}</a-button>
               <a-input v-if="isEdit && (isEsditKey == record.key)" @pressEnter=" save(record.key)" v-model="editRemark" />
               <!--你先把逻辑走通，事件应该可以给通过ref获取 -->
             </template>
@@ -204,7 +204,7 @@ const count = computed(() => dataSource.value.length + 1);
 
 const confirm = async (record) => {
   console.log(record);
-  commonEnty.value.values.push(record.aclId)
+  commonEnty.value.values.push(record.id)
   console.log(commonEnty.value, '  commonEnty.value.');
   // let res = await acldelInfo()
   acldelInfo(commonEnty.value).then(res => {

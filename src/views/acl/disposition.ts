@@ -8,6 +8,8 @@ enum RoleApi {
   addInfo = '/acl/details/add', //新增Acl详情
   aclIdinfoList = '/acl/details/list',
   delInfo = '/acl/details/delete',
+  operator = '/acl/details/get/operator',
+  district = '/acl/details/get/areas',
 }
 export const acllist = (params) => defHttp.post({ url: RoleApi.list, params });
 /**
@@ -29,3 +31,6 @@ export const addInfo = (params) => defHttp.post({ url: RoleApi.addInfo, params }
 // export const aclIdinfoList = (params) => defHttp.post({ url: '/cluster/manage/' + params });
 export const aclIdinfoList = (params) => defHttp.post({ url: RoleApi.aclIdinfoList, params });
 export const acldelInfo = (params) => defHttp.post({ url: RoleApi.delInfo, params });
+// 运营商
+export const getoperator = (params) => defHttp.post({ url: RoleApi.operator, params });
+export const getdistrict = (params) => defHttp.post({ url: RoleApi.district, params });
