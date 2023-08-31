@@ -132,6 +132,19 @@
                 <!-- <smile-outlined :rotate="180" /> -->
               </a>
             </template>
+            <template v-if="column.dataIndex === 'clusterName'">
+              <div :style="{ width: '100px' }">
+                <a-popover :style="{ width: '200px' }">
+                  <template #content>
+                    {{ record.clusterName }}
+                  </template>
+
+                  <p
+                    style="width: 228px;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
+                    {{ record.clusterName }}</p>
+                </a-popover>
+              </div>
+            </template>
             <template v-if="column.dataIndex === 'operation'">
               <div>
                 <!-- <span :style="{ margin: '0px 8px ' }" @click="isOpen(record)" class="eait"
@@ -318,6 +331,7 @@ const formRef = ref(null)
 const selHostId = ref('')
 const AllHostNum = ref([])
 
+const buttonWidth = ref(70)
 
 const selHostFn = async (val) => {
   // console.log(val, 'selHostId.value');
@@ -564,6 +578,14 @@ const AlldelFn = () => {
       background-color: #e6f7ff;
       border: 1px solid #91d5ff;
       ;
+    }
+
+    #components-popover-demo-placement .ant-btn {
+      width: 70px;
+      text-align: center;
+      padding: 0;
+      margin-right: 8px;
+      margin-bottom: 8px;
     }
 
     // icon
