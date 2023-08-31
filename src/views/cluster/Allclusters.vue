@@ -369,7 +369,7 @@ const rowSelection = async (selectedRowKeys, selectedRows) => {
 const getList = () => {
   // console.log('搜索11111');
   list(queryParams.value).then(res => {
-    // console.log(res.records, 'res11');
+    console.log(res.records, 'res11');
     data.value = res.records
     totals.value = res.total
   });

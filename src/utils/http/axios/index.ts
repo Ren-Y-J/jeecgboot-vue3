@@ -54,10 +54,10 @@ const transform: AxiosTransform = {
     // success
     const hasSuccess = data && Reflect.has(data, 'code') && (code === ResultEnum.SUCCESS || code === 200);
     if (hasSuccess) {
-      // if (success && message && options.successMessageMode === 'success') {
-      //   //信息成功提示
-      //   // createMessage.success(message);
-      // }
+      if (success && message && options.successMessageMode === 'success') {
+        //信息成功提示
+        // createMessage.success(message);
+      }
       return result;
     }
 
