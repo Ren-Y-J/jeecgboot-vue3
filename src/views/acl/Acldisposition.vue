@@ -203,7 +203,7 @@ const formRules = {
   aclName: [{ required: true, message: "请输入ACL名称" }]
 }
 const fromaclinfoRules = {
-  aclRelName: [{ required: true, message: "请输入ACL名称" }]
+  aclRelName: [{ required: true, message: "请输入内容" }]
 }
 
 const formData = ref({
