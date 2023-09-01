@@ -58,10 +58,15 @@
 
             <template v-if="column.dataIndex === 'remark'">
 
-              <a-button v-if="!isEdit || isEditKey !== record.key" @click="handelClick(record.key)"
-                class="editable-add-btn" style="margin-bottom: 8px">{{ record.remark }}</a-button>
-              <a-input v-if="isEdit && (isEsditKey == record.key)" @pressEnter=" save(record.key)" v-model="editRemark" />
-              <!--你先把逻辑走通，事件应该可以给通过ref获取 -->
+              <a-button v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)" class="editable-add-btn"
+                style="margin-bottom: 8px">
+                {{ fromaclRelNameinfo.remark }}
+                请编辑内容
+              </a-button>
+              <a-input ref="RemarkInp" @blur="save(record.id)" v-if="isEdit && (isEditKey == record.id)"
+                @pressEnter=" save(record.id)" v-model:value="editRemark" />
+              <!--
+               -->
             </template>
             <template v-if="column.dataIndex === 'aclType'">
               <span v-if="record.aclType == 0">
@@ -105,32 +110,50 @@
 </template>
 <script name='aclInfo' setup>
 import { aclIdinfoList, acldelInfo } from './disposition'
-import { ref, defineComponent, reactive, computed } from 'vue';
+import { ref, defineComponent, reactive, computed, nextTick } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { is } from '/@/utils/is';
 import { left } from 'inquirer/lib/utils/readline';
 const isEdit = ref(false)
 const isEditKey = ref(null)
 const editRemark = ref('')
-const Rinp = ref(null)
+const RemarkInp = ref(null)
 const totals = ref(0)
 // ---------------删除定义的字段
 const values = ref([])
-const commonEnty = ref({ values: [] })//// 对象包数组 
+const commonEnty = ref({ values: [] })//// 对象包数组   dengyixia wokankan hao
 
-const save = () => {
-  //自动获取焦点在这发送请求 请求在这写shi    
-  isEdit.value = false
-  isEditKey.value = null
 
-  // this.$refs.myInput.focus()
+const fromaclRelNameinfo = ref({
+  remark: '星星',
+});
+const save = (val) => {
+  console.log(val, 'val');
+  console.log(editRemark.value);
+  if (val) {
+
+    fromaclRelNameinfo.value.remark = editRemark.value
+    //自动获取焦点在这发送请求 请求在这写 
+    isEdit.value = false
+    isEditKey.value = null
+    editRemark.value = ''
+  }
+
+  // this.$refs.myInput.focus()  
+
 }
-const handelClick = (val) => {
+const handelClick = async (val) => {
   console.log(val);
-  isEditKey.value = val
-  isEdit.value = true
-  //判断是不是编辑fo
+  if (val) {
+    isEditKey.value = val
+    isEdit.value = true
+    await nextTick()
+    RemarkInp.value.focus()
+  }
+
+
 }
+
 const columns = [
   {
     title: 'ACL详情名称',

@@ -47,8 +47,10 @@
             <span class="select-option">
               <a-space>
                 <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
-                  <a-select-option value="0"> <rest-outlined />删除</a-select-option>
+                  <!--这是静态写法 <a-select-option value="0"> <rest-outlined />删除</a-select-option> -->
                   <!-- <a-select-option value="1">以后要加别的导出</a-select-option> -->
+                  <a-select-option v-for="option in options" :key="option.label" :value="option.label">{{ option.value
+                  }}</a-select-option>
                 </a-select>
               </a-space>
             </span>
@@ -310,6 +312,11 @@ const lists = ref([])
 const values = ref([])
 const number = ref(0)
 const selects = ref(0)
+
+const options = ref([
+  { label: '0', value: '删除' },
+
+])
 // 对象包数组 
 const commonEnty = ref({ values: [] })
 
@@ -460,7 +467,7 @@ const delFn = async (record) => {
 // 批量删除
 const handlChangeFn = async (val) => {
   // visibledel.value = true
-  // // console.log(val, 'val');
+  console.log(val, 'val');
   // console.log(allclusterId.value.length, 'allclusterId.value');
   // if (allclusterId.value.length == 0) {
   //   message.error('请勾选要删除的名称')
@@ -491,6 +498,7 @@ const handlChangeFn = async (val) => {
             getList()
             message.success('批量删除成功')
             number.value = 0
+            changevalue.value = '批量删除'
           })
           // console.log(res, 'allclusterId');
 
