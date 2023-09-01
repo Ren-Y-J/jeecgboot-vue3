@@ -6,7 +6,7 @@
           <a-form :model="formData" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
             <a-row :gutter="1">
               <a-col :md="6" :sm="24">
-                <a-form-item style="margin-bottom: 0px;" label="名称" name="aclRelName" :labelCol="{ span: 6 }"
+                <a-form-item style="margin-bottom: 0px;" label="ACL详情名称" name="aclRelName" :labelCol="{ span: 6 }"
                   :wrapperCol="{ span: 16 }">
                   <!-- -->
                   <a-input placeholder="请输入ACL详情名称" v-model:value="formData.aclRelName" />
@@ -19,7 +19,7 @@
                 </a-form-item>
               </a-col>
               <a-col :md="4" :sm="5">
-                <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
+                <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                     <search-outlined />搜索</a-button>
                   <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
@@ -36,8 +36,7 @@
       <a-card>
         <!-- <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加</a-button> -->
         <!-- :row-selection="rowSelection" -->
-        <a-table :columns="columns" :data-source="data" :pagination="false" borderednyaosha
-          :scroll="{ x: 'calc(700px + 50%)', y: 440 }">
+        <a-table :columns="columns" :data-source="data" :pagination="false" borderednyaosha>
 
           <template #bodyCell="{ column, record }">
 
@@ -69,15 +68,11 @@
 
                   点击编辑<edit-two-tone />
                 </a-button> -->
-                <!-- <div v-show="isShow && record.remark == ''"> -->
                 <a-button type="link" v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)"
                   class="editable-add-btn" style="margin-bottom: 8px">点击编辑<edit-two-tone /></a-button>
-                <!-- </div> -->
-                <!-- <div v-show="isShow"> -->
                 {{ record.remark }}
                 <a-input ref="RemarkInp" name="remark" @blur="save(record.id)" v-if="isEdit && (isEditKey == record.id)"
                   @pressEnter=" save(record.id)" v-model:value="fromaclRelNameinfo.remark" />
-                <!-- </div> -->
               </div>
 
 
@@ -132,7 +127,7 @@ import { CheckOutlined, EditOutlined, EditTwoTone } from '@ant-design/icons-vue'
 // import { is } from '/@/utils/is';
 // import { left } from 'inquirer/lib/utils/readline';
 import { getremark, updateremark } from './disposition'
-const isEdit = ref(true)
+const isEdit = ref(false)
 const isEditKey = ref(null)
 const editRemark = ref('')
 const RemarkInp = ref(null)
@@ -166,10 +161,6 @@ const fromaclRelNameinfo = ref({
 
 
 });
-const fage = ref(true)
-const isShow = () => {
-  fage.value = !fage
-}
 const save = async (val) => {
   console.log(val, 'val');
   // console.log(editRemark.value);
@@ -207,7 +198,7 @@ const handelClick = async (val) => {
 
 const columns = [
   {
-    title: '名称',
+    title: 'ACL详情名称',
     dataIndex: 'aclRelName',
     width: 220,
     align: 'center'
@@ -306,7 +297,7 @@ const AlldelFn = () => {
   formData.value.aclRelName = ""
   formData.value.remark = ""
   initData()
-  formData.value.pageNum = 1
+
 
 }
 </script>
@@ -335,16 +326,6 @@ const AlldelFn = () => {
       }
     }
 
-    .searchbtn {
-      display: flex;
-      flex-wrap: nowrap;
-    }
-
-    @media screen and (max-width: 800px) {
-      .searchbtn {
-        margin-top: 10px;
-      }
-    }
 
   }
 

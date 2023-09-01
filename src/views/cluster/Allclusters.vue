@@ -25,13 +25,16 @@
               </a-col>
               <a-col :md="4" :sm="5">
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
-                  <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
-                    <search-outlined />搜索</a-button>
-                  <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
+                  <div class="searchbtn">
+                    <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
+                      <search-outlined />搜索</a-button>
+                    <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
                     @click="AlldelFn"><reload-outlined />重置</a-button> -->
-                  <!-- <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
+                    <!-- <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
                    -->
-                  <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
+                    <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
+                  </div>
+
                 </span>
               </a-col>
             </a-row>
@@ -85,8 +88,9 @@
         <!-- <a-button type="primary" style="margin-bottom: 10px;" @click="delAllFn">批量删除</a-button> -->
         <!-- rowKey表格行 key 的取值，可以是字符串或一个函数 expand点击展开图标时触发 expandRowByClick通过点击行来展开子行 :expandedRowKeys="expandedRowKeys"   这个是负责控制行的展开与关闭，（这个变量是以数组的形式展示，谁的id在数组里就显示谁）-->
         <!-- :row-selection="rowSelection"   -->
-        <a-table :columns="columns" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
-          :data-source="data" :pagination="false" :rowKey="(record) => record.clusterId" bordered>
+        <a-table :scroll="{ x: 'calc(700px + 50%)', y: 440 }" :columns="columns"
+          :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :data-source="data"
+          :pagination="false" :rowKey="(record) => record.clusterId" bordered>
           <template #bodyCell="{ column, record }">
             <!-- expandedRowRender	额外的展开行 -->
             <template v-if="column.dataIndex === 'hostNum'">
@@ -95,7 +99,8 @@
                 <span v-if="selHostId === record.clusterId && AllHostNum.length"> <down-outlined /></span>
                 <span v-else> <left-outlined /></span>{{ record.hostNum }}台主机
               </p>
-              <ul v-if="selHostId === record.clusterId">
+              <!-- && record.hostNum != 0"主机是0的时候不展示列表 -->
+              <ul v-if="selHostId === record.clusterId && record.hostNum != 0">
                 <li v-for="(   item, index   ) in    AllHostNum   " :key="index"
                   style="display: flex;align-items: center;padding-left: 65px; ">
                   <!-- padding-left: 36px; -->
@@ -345,7 +350,7 @@ const AllHostNum = ref([])
 const buttonWidth = ref(70)
 
 const selHostFn = async (val) => {
-  // console.log(val, 'selHostId.value');
+  console.log(val, 'selHostId.value');
   if (selHostId.value === val) {
     selHostId.value = ''
     return AllHostNum.value = []
@@ -773,6 +778,16 @@ const AlldelFn = () => {
       // ::v-deep(.ant-card-body) {
       //   padding: 12px 10px 13px 10px !important;
       // }
+      .searchbtn {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+      @media screen and (max-width: 800px) {
+        .searchbtn {
+          margin-top: 10px;
+        }
+      }
     }
 
 

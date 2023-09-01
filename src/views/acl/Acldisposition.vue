@@ -12,7 +12,7 @@
               </a-form-item>
             </a-col>
             <a-col :md="4" :sm="5">
-              <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
+              <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                 <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                   <search-outlined />搜索</a-button>
                 <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
@@ -29,7 +29,7 @@
       <a-card>
         <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加</a-button>
         <!-- :row-selection="rowSelection" -->
-        <a-table :columns="columns" :data-source="data" :pagination="false">
+        <a-table :columns="columns" :data-source="data" :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 440 }">
           <template #bodyCell="{ column, record }">
             <!-- <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
@@ -488,7 +488,16 @@ function onGoToaclInfo(record) {
       padding: 12px 10px 6px 10px !important;
     }
 
+    .searchbtn {
+      display: flex;
+      flex-wrap: nowrap;
+    }
 
+    @media screen and (max-width: 800px) {
+      .searchbtn {
+        margin-top: 10px;
+      }
+    }
 
   }
 

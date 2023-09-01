@@ -10,6 +10,7 @@ enum RoleApi {
   delInfo = '/acl/details/delete',
   operator = '/acl/details/get/operator',
   district = '/acl/details/get/areas',
+  updateremark = '/acl/details/update',
 }
 export const acllist = (params) => defHttp.post({ url: RoleApi.list, params });
 /**
@@ -28,9 +29,11 @@ export const delcalList = (params) => defHttp.post({ url: RoleApi.del, params })
 // 新增Acl详情
 export const addInfo = (params) => defHttp.post({ url: RoleApi.addInfo, params });
 // 根据集群ID查询主机zhe
-// export const aclIdinfoList = (params) => defHttp.post({ url: '/cluster/manage/' + params });
 export const aclIdinfoList = (params) => defHttp.post({ url: RoleApi.aclIdinfoList, params });
 export const acldelInfo = (params) => defHttp.post({ url: RoleApi.delInfo, params });
 // 运营商
 export const getoperator = (params) => defHttp.post({ url: RoleApi.operator, params });
 export const getdistrict = (params) => defHttp.post({ url: RoleApi.district, params });
+// 回显单个详情
+export const getremark = (params) => defHttp.get({ url: '/acl/details/' + params });
+export const updateremark = (params) => defHttp.post({ url: RoleApi.updateremark, params });
