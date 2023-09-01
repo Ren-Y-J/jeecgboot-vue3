@@ -58,7 +58,7 @@ const transform: AxiosTransform = {
         //信息成功提示
         // createMessage.success(message);
       }
-      return result;
+      return result; 
     }
 
     // 在此处根据自己项目的实际情况对不同的code执行不同的操作
