@@ -47,16 +47,18 @@
             <span class="select-option">
               <a-space>
                 <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
-                  <a-select-option value="0"> <rest-outlined />删除</a-select-option>
+                  <!--这是静态写法 <a-select-option value="0"> <rest-outlined />删除</a-select-option> -->
                   <!-- <a-select-option value="1">以后要加别的导出</a-select-option> -->
+                  <a-select-option v-for="option in options" :key="option.label" :value="option.label">{{ option.value
+                  }}</a-select-option>
                 </a-select>
               </a-space>
             </span>
             <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加集群</a-button>
           </div>
           <div class="icon">
-            <span class="icon-sx" @click="AlldelFn">
-              <img src="../../assets/loginmini/icon/sx.png" alt="">
+            <span class="icon-sx">
+              <img src="../../assets/loginmini/icon/sx.png" alt="" @click="AlldelFn">
               <!-- <reload-outlined /> -->
             </span>
             <span class="icon-kz"><img src="../../assets/loginmini/icon/kz.png" alt=""></span>
@@ -95,12 +97,11 @@
               </p>
               <ul v-if="selHostId === record.clusterId">
                 <li v-for="(   item, index   ) in    AllHostNum   " :key="index"
-                  style="display: flex;align-items: center;padding-left: 62px; ">
+                  style="display: flex;align-items: center;padding-left: 65px; ">
                   <!-- padding-left: 36px; -->
                   <a v-if="item.status == 1" style="display: flex;align-items: center;">
 
-                    <img src="../../assets/loginmini/icon/status-ok.png" alt=""
-                      style="    margin-top: 5px;width:16px;height: 16px; margin-top: 0px;">
+                    <img src="../../assets/loginmini/icon/status-ok.png" alt="" style="width:16px;height: 16px;">
                     <!-- margin-top: 5px; -->
                     <!-- <check-circle-two-tone two-tone-color=" #52c41a" style="width:16px;height: 16px;" /> -->
                     <!-- {{ item }} -->
@@ -110,7 +111,7 @@
                   </a>
                   <a v-else style=" display: flex;  padding-left: 0px;">
                     <img src="../../assets/loginmini/icon/error.png" alt=""
-                      style="width:16px;height: 16px; margin-top: 0px;">
+                      style="width:16px;height: 16px; margin-top: 2px;">
                     <!-- margin-top: 5px; -->
                     <!-- {{ item }} -->
                     {{ item.ipAddress }}
@@ -133,14 +134,19 @@
               </a>
             </template>
             <template v-if="column.dataIndex === 'clusterName'">
-              <div :style="{ width: '100px' }">
-                <a-popover :style="{ width: '200px' }">
+              <div style="text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+">
+                <!-- a-popover宽度-->
+                <a-popover :overlayStyle="{ width: '50%' }" trigger="hover">
                   <template #content>
                     {{ record.clusterName }}
                   </template>
 
                   <p
-                    style="width: 228px;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
+                    style="width: 228;overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3;   -webkit-box-orient: vertical;">
                     {{ record.clusterName }}</p>
                 </a-popover>
               </div>
@@ -306,6 +312,11 @@ const lists = ref([])
 const values = ref([])
 const number = ref(0)
 const selects = ref(0)
+
+const options = ref([
+  { label: '0', value: '删除' },
+
+])
 // 对象包数组 
 const commonEnty = ref({ values: [] })
 
@@ -358,9 +369,12 @@ const state = reactive({
 });
 
 const rowSelection = async (selectedRowKeys, selectedRows) => {
+  // console.log(selectedRowKeys);
+  // console.log(selectedRows)
   state.selectedRowKeys = selectedRowKeys;
   // 对原数组元素进行运算后再赋值给新的数组
   allclusterId.value = selectedRows.map(it => it.clusterId)
+  // console.log(allclusterId.value);
   number.value = allclusterId.value.length
   //这个是勾选的id存放的位置 我点清空我id复空
 }
@@ -453,7 +467,7 @@ const delFn = async (record) => {
 // 批量删除
 const handlChangeFn = async (val) => {
   // visibledel.value = true
-  // // console.log(val, 'val');
+  console.log(val, 'val');
   // console.log(allclusterId.value.length, 'allclusterId.value');
   // if (allclusterId.value.length == 0) {
   //   message.error('请勾选要删除的名称')
@@ -483,6 +497,8 @@ const handlChangeFn = async (val) => {
             // console.log(res);
             getList()
             message.success('批量删除成功')
+            number.value = 0
+            changevalue.value = '批量删除'
           })
           // console.log(res, 'allclusterId');
 
@@ -561,6 +577,8 @@ const AlldelFn = () => {
   // console.log('1');
   queryParams.value.clusterName = ''
   changesearch.value = ''
+  queryParams.value.pageNum = 1
+  queryParams.value.pageSize = 10
   getList()
   changesearch.value = '请选择'
 }
@@ -613,7 +631,12 @@ const AlldelFn = () => {
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
     /deep/ .ant-table-tbody>tr>td {
-      padding: 13px !important;
+      padding: 8px !important;
+    }
+
+    /deep/ p {
+      margin-top: 0;
+      margin-bottom: 0em;
     }
 
     // 标题
@@ -626,6 +649,8 @@ const AlldelFn = () => {
       text-align: center;
     }
 
+
+
     .select {
       margin: 0 20px 0 0;
     }
@@ -636,21 +661,21 @@ const AlldelFn = () => {
       justify-content: flex-end;
     }
 
-    .ant-card-body {
-      padding: 6px !important;
-    }
+    // .ant-card-body {
+    //   padding: 6px !important;
+    // }
 
-    .ant-card-body {
-      padding: 6px !important;
-    }
+    // .ant-card-body {
+    //   padding: 6px !important;
+    // }
 
-    :deep(.ant-card-body) {
-      padding: 6px !important;
-    }
+    // :deep(.ant-card-body) {
+    //   padding: 6px !important;
+    // }
 
-    ::v-deep(.ant-card-body) {
-      padding: 6px !important;
-    }
+    // ::v-deep(.ant-card-body) {
+    //   padding: 6px !important;
+    // }
 
     .controls {
       display: flex;
