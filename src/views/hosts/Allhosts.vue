@@ -1,7 +1,7 @@
 <template>
 	<div class="allhostes">
 		<div class="hostes">
-			<a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
+			<a-form   autocomplete="off" >
 				<a-row :gutter="1">
 					<a-col span="3">
 						<a-form-item style="margin-bottom: 0px" label="状态" name="status" :labelCol="{ span: 7 }" :wrapperCol="{ span: 10 }">
@@ -114,8 +114,9 @@
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div>
-							<span :style="{ margin: '0px 8px ' }" @click="openmodal(record)" class="pointer" style="color: #2e7dff">编辑</span>
-							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff">删除</span>
+							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
+							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
+							<span class="pointer" style="color: #2e7dff">配置</span>
 						</div>
 					</template>
 				</template>
@@ -142,11 +143,13 @@
 					<a-input v-model:value="name" placeholder="请输入主机名称"></a-input>
 				</a-form-item>
 				<a-form-item name="ip" label="IP" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.ip">
-					<a-input v-model:value="ip" placeholder="请输入IP"></a-input>
+					<a-input @blur="changeinput" v-model:value="ip" placeholder="请输入IP"></a-input>
+					<span v-show="ruleshow" :class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
 				</a-form-item>
 
-				<a-form-item label="端口" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-					<a-input v-model:value="port" placeholder="请输入端口"></a-input>
+				<a-form-item label="端口" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.port">
+					<a-input @blur="changeinput_2" v-model:value="port" placeholder="请输入端口"></a-input>
+					<span v-show="ruleshow_1" :class="{ success: rulesstatus_1, error: !rulesstatus_1 }">{{ rulesmessage_1 }}</span>
 				</a-form-item>
 				<a-form-item label="root密码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 					<a-input v-model:value="rootpwd" placeholder="请输入root密码"></a-input>
@@ -176,10 +179,10 @@
 		<!-- 删除 -->
 		<div class="addcomputer">
 			<a-form-item label="确认服务器IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input v-model:value="okIP"></a-input>
+				<a-input placeholder="请输入服务器IP" v-model:value="okIP"></a-input>
 			</a-form-item>
 			<a-form-item label="当前用户密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input v-model:value="okpwd"></a-input>
+				<a-input placeholder="请输入当前用户密码" v-model:value="okpwd"></a-input>
 			</a-form-item>
 		</div>
 	</a-modal>
@@ -217,7 +220,7 @@
 <script name="Two-hosts" setup>
 	import { message } from 'ant-design-vue';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
-	import { reactive, toRefs } from 'vue';
+	import { reactive, toRefs, ref } from 'vue';
 	import { addlist, getlist, dellist, showlist, editlist, grouplist } from './hosts.ts';
 	const data = reactive({
 		visible: false,
@@ -245,9 +248,6 @@
 		floor: '',
 		groupData: '',
 		hostId: '',
-		formRules: {
-			ip: [{ required: true, message: '请输入ip' }],
-		},
 	});
 
 	const {
@@ -272,7 +272,6 @@
 		floor,
 		groupData,
 		hostId,
-		formRules,
 		delselect,
 		status,
 		clusterName,
@@ -281,10 +280,43 @@
 	const getgrouplist = () => {
 		grouplist().then((res) => {
 			groupData.value = res;
-			console.log(groupData.value, 'getgrouplist');
 		});
 	};
 	getgrouplist();
+	const formRules = {
+		ip: [{ required: true, message: () => rulesmessage }],
+		port: [{ required: true, message: () => rulesmessage }],
+	};
+	const rulesmessage = ref('');
+	const rulesstatus = ref(false);
+	const ruleshow = ref(false);
+	const changeinput = () => {
+		const reg = /^(\d{1,3}\.){3}\d{1,3}$/;
+		if (ip.value == '') {
+			rulesmessage.value = 'IP不能为空';
+			ruleshow.value = true;
+		} else if (!reg.test(ip.value)) {
+			rulesmessage.value = 'IP输入错误';
+			ruleshow.value = true;
+		} else {
+			ruleshow.value = false;
+		}
+	};
+	const rulesmessage_1 = ref('');
+	const rulesstatus_1 = ref(false);
+	const ruleshow_1 = ref(false);
+	const changeinput_2 = () => {
+		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
+		if (port.value == '') {
+			rulesmessage_1.value = '端口不能为空';
+			ruleshow_1.value = true;
+		} else if (!reg.test(port.value)) {
+			rulesmessage_1.value = '端口输入错误';
+			ruleshow_1.value = true;
+		} else {
+			ruleshow_1.value = false;
+		}
+	};
 	const columns = [
 		{
 			title: '状态',
@@ -339,7 +371,7 @@
 		{
 			title: 'CPU使用',
 			dataIndex: 'cpuUsed',
-			width: 150,
+			width: 100,
 			align: 'center',
 		},
 		{
@@ -387,8 +419,6 @@
 				item.physDiskUsed = physDiskUsed;
 				item.physMemUsed = physMemUsed;
 			});
-
-			console.log(initdata.value, '66');
 		});
 	};
 	getData();
@@ -460,7 +490,6 @@
 		visible_edit.value = true;
 
 		showlist(`${record.hostId}`).then((res) => {
-			console.log(res, '回显');
 			hostId.value = res.hostId;
 			ipAddress.value = res.ipAddress;
 			port.value = res.port;
@@ -573,5 +602,11 @@
 
 	.pointer {
 		cursor: pointer;
+	}
+	.success {
+		color: green;
+	}
+	.error {
+		color: red;
 	}
 </style>
