@@ -305,8 +305,9 @@ const handleQuery = () => {
 const AlldelFn = () => {
   formData.value.aclRelName = ""
   formData.value.remark = ""
-  initData()
   formData.value.pageNum = 1
+  initData()
+
 
 }
 </script>

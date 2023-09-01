@@ -12,7 +12,7 @@
               </a-form-item>
             </a-col>
             <a-col :md="4" :sm="5">
-              <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
+              <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; ">
                 <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                   <search-outlined />搜索</a-button>
                 <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
@@ -446,7 +446,9 @@ const handleQuery = () => {
 };
 const AlldelFn = () => {
   formData.value.aclName = ""
+  formData.value.pageNum = 1
   initData()
+
 }
 function onGoToaclInfo(record) {
   console.log(record);
