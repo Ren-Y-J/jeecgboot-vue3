@@ -123,8 +123,9 @@
             <a-form-item label="策略" name="status" style='margin-top: 26px'>
               <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <a-radio-group v-model:value="value" name="radioGroup" @change="changstatusFn(value)">
-                <a-radio value="0">禁用</a-radio>
                 <a-radio value="1">启用</a-radio>
+                <a-radio value="0">禁用</a-radio>
+
               </a-radio-group>
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.aclRelName" label="地理位置" name="aclRelName" style='margin-top: 26px'>
@@ -141,7 +142,7 @@ v你现在看看
 
 -->
               <a-cascader v-model:value="aclInfoData.aclRelName" :options="getdistrictList"
-                :fieldNames="{ label: 'name', value: 'code', children: 'child' }" placeholder="请选择"
+                :fieldNames="{ label: 'name', value: 'name', children: 'child' }" placeholder="请选择"
                 @change="changecodeFn" />
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.remark" label="备注" name="remark" style='margin-top: 26px'>
@@ -153,8 +154,8 @@ v你现在看看
             <a-form-item label="策略" name="status" style='margin-top: 26px'>
               <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <a-radio-group v-model:value="value" name="radioGroup" @change="changstatusFn(value)">
-                <a-radio value="0">禁用</a-radio>
                 <a-radio value="1">启用</a-radio>
+                <a-radio value="0">禁用</a-radio>
               </a-radio-group>
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.aclRelName" label="运营商" name="aclRelName" style='margin-top: 26px'>
@@ -220,7 +221,7 @@ const aclInfoData = ref({
   createTime: "",
   createUserId: 0,
   remark: "",
-  status: "0",
+  status: "1",
   updateTime: "",
   updateUserId: 0
 })
@@ -245,7 +246,7 @@ const commonEnty = ref({ values: [] })//// 对象包数组
 //---------
 // import { defineComponent, reactive, ref } from 'vue';
 const radiovalue = ref(0);
-const value = ref('0');
+const value = ref('1');
 const isShow = ref(false);
 const isShownetwork = ref(false); //网络
 const isShowGeography = ref(false);//地理
@@ -292,6 +293,19 @@ const changeradioFn = (value) => {
   // radiovalue.value = value
   console.log(radiovalue.value, value)
   aclInfoData.value.aclType = radiovalue.value
+  if (aclInfoData.value.aclType == 0) {
+    aclInfoData.value.aclRelName = ""
+    // aclInfoData.value.status = '1'
+    // valueradio.value = '1'
+  } else if (aclInfoData.value.aclType == 1) {
+    aclInfoData.value.aclRelName = ""
+    // aclInfoData.value.status = '1'
+    // valueradio.value = '1'
+  } else {
+    aclInfoData.value.aclRelName = ""
+    // aclInfoData.value.status = '1'
+    // valueradio.value = '1'
+  }
   // console.log(value, 'value');
   // // isShow.value = values
   // console.log(typeof value, 'value');
