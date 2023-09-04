@@ -9,7 +9,7 @@
                 <a-form-item style="margin-bottom: 0px;" label="名称" name="aclRelName" :labelCol="{ span: 6 }"
                   :wrapperCol="{ span: 16 }">
                   <!-- -->
-                  <a-input placeholder="请输入ACL详情名称" v-model:value="formData.aclRelName" />
+                  <a-input placeholder="请输入名称" v-model:value="formData.aclRelName" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -37,7 +37,7 @@
         <!-- <a-button type="primary" style="margin-bottom: 10px;" @click="isOpen"><plus-outlined />添加</a-button> -->
         <!-- :row-selection="rowSelection" -->
         <a-table :columns="columns" :data-source="data" :pagination="false" borderednyaosha
-          :scroll="{ x: 'calc(700px + 50%)', y: 440 }">
+          :scroll="{ x: 'calc(700px + 50%)', y: 510 }">
 
           <template #bodyCell="{ column, record }">
 
@@ -66,24 +66,19 @@
               <div>
                 <!-- <a-button v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)"
                   class="editable-add-btn" style="margin-bottom: 8px">
-
                   点击编辑<edit-two-tone />
                 </a-button> -->
                 <!-- <div v-show="isShow && record.remark == ''"> -->
                 <a-button type="link" v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)"
-                  class="editable-add-btn" style="margin-bottom: 8px">点击编辑<edit-two-tone /></a-button>
+                  class="editable-add-btn" style="margin-bottom: 8px">请输入名称</a-button>
                 <!-- </div> -->
                 <!-- <div v-show="isShow"> -->
                 {{ record.remark }}
+                <edit-two-tone />
                 <a-input ref="RemarkInp" name="remark" @blur="save(record.id)" v-if="isEdit && (isEditKey == record.id)"
                   @pressEnter=" save(record.id)" v-model:value="fromaclRelNameinfo.remark" />
                 <!-- </div> -->
               </div>
-
-
-              <!--
-                fromaclRelNameinfo
-               -->
             </template>
             <template v-if="column.dataIndex === 'aclType'">
               <span v-if="record.aclType == 0">
