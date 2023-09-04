@@ -1,13 +1,13 @@
 <template>
 	<div class="allhostes">
 		<div class="hostes">
-			<a-form   autocomplete="off" >
+			<a-form autocomplete="off">
 				<a-row :gutter="1">
 					<a-col span="3">
 						<a-form-item style="margin-bottom: 0px" label="状态" name="status" :labelCol="{ span: 7 }" :wrapperCol="{ span: 10 }">
 							<a-space>
 								<a-select
-									placeholder="选择状态"
+									placeholder="请选择"
 									ref="select"
 									style="width: 120px"
 									@focus="focus"
@@ -24,7 +24,7 @@
 						<a-form-item style="margin-bottom: 0px" label="集群名称" name="status" :labelCol="{ span: 8 }" :wrapperCol="{ span: 10 }">
 							<a-space>
 								<a-select
-									placeholder="选择集群名称"
+									placeholder="请选择"
 									ref="select"
 									style="width: 150px"
 									@focus="focus"
@@ -48,18 +48,37 @@
 			</a-form>
 		</div>
 		<div class="hostes" style="margin-top: 10px">
-			<a-space>
-				<a-select ref="select" style="width: 120px" @focus="focus" @change="handleChange" v-model="delselect" placeholder="批量操作">
-					<a-select-option value="1">删除</a-select-option>
-				</a-select>
-			</a-space>
-			<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="openadd"><plus-outlined />添加主机</a-button>
-			<a-alert show-icon class="alert" style="margin-top: 8px" type="info">
+			<div style="display: flex; justify-content: space-between">
+				<div class="icon">
+					<a-space>
+						<a-select
+							ref="select"
+							style="width: 120px; margin-right: 10px"
+							@focus="focus"
+							@change="handleChange"
+							v-model="delselect"
+							placeholder="批量操作"
+						>
+							<a-select-option value="1">删除</a-select-option>
+						</a-select>
+					</a-space>
+					<a-button type="primary" @click="openadd"><plus-outlined />添加主机</a-button>
+				</div>
+				<div class="icon">
+					<span class="icon-sx">
+						<img src="../../assets/loginmini/icon/sx.png" alt="" @click="resetbtn" />
+						<!-- <reload-outlined /> -->
+					</span>
+					<!-- <span class="icon-kz"><img src="../../assets/loginmini/icon/kz.png" alt="" /></span> -->
+				</div>
+			</div>
+
+			<a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
 				<template #message>
 					<template v-if="number > 0">
 						<span>已选定 {{ number }} 条记录(可跨页)</span>
 						<a-divider type="vertical" />
-						<a @click="fn">清空</a>
+						<a @click="clearbtn">清空</a>
 						<a-divider type="vertical" />
 					</template>
 					<template v-else>
@@ -68,7 +87,15 @@
 				</template>
 			</a-alert>
 			<!-- 表格 -->
-			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 440 }" :columns="columns" :data-source="initdata" bordered>
+			<a-table
+				:rowKey="(record) => record.hostId"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+				:pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 440 }"
+				:columns="columns"
+				:data-source="initdata"
+				bordered
+			>
 				<template #bodyCell="{ column, record }">
 					<!-- 状态 -->
 					<template v-if="column.dataIndex === 'statusName'">
@@ -84,16 +111,16 @@
 							alt=""
 							style="width: 16px; height: 16px; margin-left: 30%"
 						/>
-						<span v-if="record.status == null"> 数据缺失</span>
+						<span v-if="record.status == null"> 空</span>
 					</template>
 
 					<template v-if="column.dataIndex === 'clusterName'">
 						<span v-if="record.clusterName !== ''"> {{ record.clusterName }} </span>
-						<span v-if="record.clusterName == null"> 数据缺失</span>
+						<span v-if="record.clusterName == null"> 空</span>
 					</template>
 					<!-- 磁盘使用情况 -->
 					<template v-if="column.dataIndex === 'diskstatus'">
-						<div class="pointer">
+						<div class="pointer" @click="goboard(record)">
 							<span> {{ record.physDiskUsed }}G/{{ record.physDiskTotal }}G</span>
 							<a-progress :percent="record.psy" size="small" strokeColor="#3CD275" :show-info="false" />
 						</div>
@@ -108,7 +135,15 @@
 					<!-- cpu使用 -->
 					<template v-if="column.dataIndex === 'cpuUsed'">
 						<div class="pointer">
-							<span> {{ record.cpuUsed }}%</span>
+							<span v-if="record.cpuUsed"> {{ record.cpuUsed }}%</span>
+							<span v-else>空</span>
+						</div>
+					</template>
+					<!-- 數據更新時間 -->
+					<template v-if="column.dataIndex === 'dataUpdateTime'">
+						<div class="pointer">
+							<span v-if="record.dataUpdateTime"> {{ record.dataUpdateTime }}</span>
+							<span v-else>空</span>
 						</div>
 					</template>
 					<!-- 操作 -->
@@ -116,7 +151,7 @@
 						<div>
 							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
 							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
-							<span class="pointer" style="color: #2e7dff">配置</span>
+							<span  class="pointer" style="color: #2e7dff">配置</span>
 						</div>
 					</template>
 				</template>
@@ -139,10 +174,11 @@
 		<!-- 添加 -->
 		<div class="addcomputer">
 			<a-form ref="formRef" validateTrigger="blur">
-				<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-					<a-input v-model:value="name" placeholder="请输入主机名称"></a-input>
+				<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.name">
+					<a-input @blur="changename" v-model:value="name" placeholder="请输入主机名称"></a-input>
+					<span v-show="ruleshow_name" :class="{ success: rulesstatus_name, error: !rulesstatus_name }">{{ rulesmessage_name }}</span>
 				</a-form-item>
-				<a-form-item name="ip" label="IP" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.ip">
+				<a-form-item label="IP" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.name">
 					<a-input @blur="changeinput" v-model:value="ip" placeholder="请输入IP"></a-input>
 					<span v-show="ruleshow" :class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
 				</a-form-item>
@@ -151,17 +187,20 @@
 					<a-input @blur="changeinput_2" v-model:value="port" placeholder="请输入端口"></a-input>
 					<span v-show="ruleshow_1" :class="{ success: rulesstatus_1, error: !rulesstatus_1 }">{{ rulesmessage_1 }}</span>
 				</a-form-item>
-				<a-form-item label="root密码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-					<a-input v-model:value="rootpwd" placeholder="请输入root密码"></a-input>
+				<a-form-item label="root密码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.rootpwd">
+					<a-input @blur="change_rootpwd" v-model:value="rootpwd" placeholder="请输入root密码"></a-input>
+					<span v-show="ruleshow_rootpwd" :class="{ success: rulesstatus_rootpwd, error: !rulesstatus_rootpwd }">{{
+						rulesmessage_rootpwd
+					}}</span>
 				</a-form-item>
-				<a-form-item label="所属集群" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }">
+				<a-form-item label="所属集群" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" :rules="formRules.clusterId">
 					<a-select v-model:value="clusterId" placeholder="请选择集群">
 						<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{
 							item.clusterName
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="角色" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }">
+				<a-form-item label="角色" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" :rules="formRules.role">
 					<a-select v-model:value="role" @change="handleChange" placeholder="请选择角色">
 						<a-select-option value="1">权威</a-select-option>
 						<a-select-option value="2">递归</a-select-option>
@@ -178,40 +217,49 @@
 	<a-modal v-model:visible="visible_del" title="删除节点" @ok="btnOK_del">
 		<!-- 删除 -->
 		<div class="addcomputer">
-			<a-form-item label="确认服务器IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="请输入服务器IP" v-model:value="okIP"></a-input>
+			<a-form-item label="确认服务器IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" :rules="formRules.role">
+				<a-input @blur="changeinput" placeholder="请输入服务器IP" v-model:value="ip"></a-input>
+				<span v-show="ruleshow" :class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
 			</a-form-item>
-			<a-form-item label="当前用户密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="请输入当前用户密码" v-model:value="okpwd"></a-input>
+			<a-form-item label="当前用户密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" :rules="formRules.role">
+				<a-input @blur="change_rootpwd" placeholder="请输入当前用户密码" v-model:value="okpwd"></a-input>
+				<span v-show="ruleshow_rootpwd" :class="{ success: rulesstatus_rootpwd, error: !rulesstatus_rootpwd }">{{
+					rulesmessage_rootpwd
+				}}</span>
 			</a-form-item>
 		</div>
 	</a-modal>
 	<!-- 模态框编辑 -->
 	<a-modal v-model:visible="visible_edit" title="编辑服务器" @ok="btnOK_edit">
 		<div class="addcomputer">
-			<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input v-model:value="ipAddress"></a-input>
+			<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" :rules="formRules.ip">
+				<a-input @blur="changeinput" placeholder="请输入IP" v-model:value="ip"></a-input>
+				<span v-show="ruleshow" :class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
 			</a-form-item>
-			<a-form-item label="端口" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input v-model:value="port"></a-input>
+			<a-form-item label="端口" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" :rules="formRules.port">
+				<a-input @blur="changeinput_2" placeholder="请输入端口" v-model:value="port"></a-input>
+				<span v-show="ruleshow_1" :class="{ success: rulesstatus_1, error: !rulesstatus_1 }">{{ rulesmessage_1 }}</span>
 			</a-form-item>
-			<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input v-model:value="okpwd" placeholder="请输入root密码"></a-input>
+			<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" :rules="formRules.rootpwd">
+				<a-input @blur="change_rootpwd" v-model:value="okpwd" placeholder="请输入root密码"></a-input>
+				<span v-show="ruleshow_rootpwd" :class="{ success: rulesstatus_rootpwd, error: !rulesstatus_rootpwd }">{{
+					rulesmessage_rootpwd
+				}}</span>
 			</a-form-item>
-			<a-form-item label="所属集群" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }">
-				<a-select v-model:value="clusterId">
+			<a-form-item label="所属集群" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" :rules="formRules.clusterId">
+				<a-select placeholder="请选择集群" v-model:value="clusterId">
 					<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{ item.clusterName }}</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="角色" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }">
-				<a-select v-model:value="role" @change="handleChange">
+			<a-form-item label="角色" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" :rules="formRules.role">
+				<a-select placeholder="请选择角色" v-model:value="role" @change="handleChange">
 					<a-select-option value="1">权威</a-select-option>
 					<a-select-option value="2">递归</a-select-option>
 					<a-select-option value="3">权威+递归</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="机架" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
-				<a-input v-model:value="floor"></a-input>
+				<a-input placeholder="请输入机架" v-model:value="floor"></a-input>
 			</a-form-item>
 		</div>
 	</a-modal>
@@ -220,8 +268,9 @@
 <script name="Two-hosts" setup>
 	import { message } from 'ant-design-vue';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
-	import { reactive, toRefs, ref } from 'vue';
+	import { reactive, toRefs, ref, watchEffect, defineComponent, onMounted } from 'vue';
 	import { addlist, getlist, dellist, showlist, editlist, grouplist } from './hosts.ts';
+	import { router } from '/@/router';
 	const data = reactive({
 		visible: false,
 		visible_del: false,
@@ -241,13 +290,14 @@
 		okIP: '',
 		okpwd: '',
 		pageNum: 1,
-		pageSize: 50,
+		pageSize: 10,
 		total: '',
 		ipAddress: '',
 		port: '',
 		floor: '',
 		groupData: '',
 		hostId: '',
+		number: 0,
 	});
 
 	const {
@@ -275,6 +325,7 @@
 		delselect,
 		status,
 		clusterName,
+		number,
 	} = toRefs(data);
 
 	const getgrouplist = () => {
@@ -282,11 +333,17 @@
 			groupData.value = res;
 		});
 	};
+
 	getgrouplist();
 	const formRules = {
-		ip: [{ required: true, message: () => rulesmessage }],
 		port: [{ required: true, message: () => rulesmessage }],
+		ip: [{ required: true, message: () => rulesmessage }],
+		name: [{ required: true, message: () => rulesmessage }],
+		rootpwd: [{ required: true, message: () => rulesmessage }],
+		clusterId: [{ required: true, message: () => rulesmessage }],
+		role: [{ required: true, message: () => rulesmessage }],
 	};
+
 	const rulesmessage = ref('');
 	const rulesstatus = ref(false);
 	const ruleshow = ref(false);
@@ -305,6 +362,7 @@
 	const rulesmessage_1 = ref('');
 	const rulesstatus_1 = ref(false);
 	const ruleshow_1 = ref(false);
+
 	const changeinput_2 = () => {
 		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
 		if (port.value == '') {
@@ -317,6 +375,27 @@
 			ruleshow_1.value = false;
 		}
 	};
+	const ruleshow_name = ref(false);
+	const rulesmessage_name = ref('');
+	const changename = () => {
+		if (name.value == '') {
+			rulesmessage_name.value = '名称不能为空';
+			ruleshow_name.value = true;
+		} else {
+			ruleshow_name.value = false;
+		}
+	};
+	const ruleshow_rootpwd = ref(false);
+	const rulesmessage_rootpwd = ref('');
+	const change_rootpwd = () => {
+		if (okpwd.value == '') {
+			rulesmessage_rootpwd.value = 'root密码不能为空';
+			ruleshow_rootpwd.value = true;
+		} else {
+			ruleshow_rootpwd.value = false;
+		}
+	};
+
 	const columns = [
 		{
 			title: '状态',
@@ -391,7 +470,7 @@
 			title: '操作',
 			dataIndex: 'operation',
 
-			width: 180,
+			width: 160,
 			align: 'center',
 		},
 	];
@@ -402,6 +481,7 @@
 		}).then((res) => {
 			initdata.value = res.records;
 			total.value = res.total;
+			console.log(res, '数据');
 			var result = [];
 			initdata.value.forEach((item) => {
 				var percentage = (item.physDiskUsed / item.physDiskTotal) * 100;
@@ -424,28 +504,36 @@
 	getData();
 	const openadd = () => {
 		visible.value = true;
+		name.value = '';
+		ip.value = '';
+		port.value = '';
+		rootpwd.value = '';
+		clusterId.value = undefined;
+		role.value = undefined;
+		rack.value = '';
 	};
 
 	const btnOK = () => {
 		// 添加
+		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
+		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
+
 		if (name.value == '') {
 			message.error('请输入主机名称');
 		} else if (ip.value == '') {
-			message.error('请输入IP');
-		} else if (ip.value.length != 5) {
-			message.error('请输入5位数IP');
-		} else if (port.value.length != 5) {
-			message.error('请输入5位数端口');
+			message.error('IP不能为空');
+		} else if (!reg1.test(ip.value)) {
+			message.error('IP输入错误');
 		} else if (port.value == '') {
-			message.error('请输入端口');
+			message.error('端口不能为空');
+		} else if (!reg.test(port.value)) {
+			message.error('端口输入错误');
 		} else if (rootpwd.value == '') {
 			message.error('请输入root密码');
 		} else if (clusterId.value == '') {
 			message.error('请选择所属集群');
 		} else if (role.value == '') {
 			message.error('请选择角色');
-		} else if (rack.value == '') {
-			message.error('请输入机架');
 		} else {
 			addlist({
 				hostName: name.value,
@@ -459,6 +547,10 @@
 				.then((res) => {
 					message.success('添加成功');
 					visible.value = false;
+					rulesmessage_name.value = '';
+					rulesmessage.value = '';
+					rulesmessage_1.value = '';
+					rulesmessage_rootpwd.value = '';
 					clearData();
 					getData();
 					modaltype.value = '';
@@ -470,30 +562,39 @@
 	};
 	// 删除
 	const btnOK_del = () => {
-		dellist({
-			hostId: recordID.value,
-			ipAddress: okIP.value,
-			rootSec: okpwd.value,
-		})
-			.then((res) => {
-				message.success('删除成功');
-				visible_del.value = false;
-				clearData();
-				getData();
+		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
+		if (ip.value == '') {
+			message.error('IP不能为空');
+		} else if (!reg1.test(ip.value)) {
+			message.error('IP输入错误');
+		} else if (okpwd.value == '') {
+			message.error('密码不能为空');
+		} else {
+			dellist({
+				hostId: recordID.value,
+				ipAddress: ip.value,
+				rootSec: okpwd.value,
 			})
-			.catch((error) => {
-				console.log(error, 'error');
-			});
+				.then((res) => {
+					message.success('删除成功');
+					visible_del.value = false;
+					rulesmessage.value = '';
+					rulesmessage_rootpwd.value = '';
+					clearData();
+					getData();
+				})
+				.catch((error) => {
+					console.log(error, 'error');
+				});
+		}
 	};
 	// 编辑框回显
 	const openmodal = (record) => {
 		visible_edit.value = true;
-
 		showlist(`${record.hostId}`).then((res) => {
 			hostId.value = res.hostId;
-			ipAddress.value = res.ipAddress;
+			ip.value = res.ipAddress;
 			port.value = res.port;
-
 			clusterId.value = res.clusterId;
 			if (res.role == 1) {
 				role.value = '权威';
@@ -507,11 +608,25 @@
 	};
 	// 编辑框提交
 	const btnOK_edit = () => {
-		if ((okpwd.value = '')) {
+		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
+		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
+		if (ip.value == '') {
+			message.error('请输入ip');
+		} else if (!reg1.test(ip.value)) {
+			message.error('IP输入错误');
+		} else if (port.value == '') {
+			message.error('端口不能为空');
+		} else if (!reg.test(port.value)) {
+			message.error('端口输入错误');
+		} else if (okpwd.value == '') {
 			message.error('请输入root密码');
+		} else if (clusterId.value == undefined) {
+			message.error('请选择集群');
+		} else if (role.value == undefined) {
+			message.error('请选择角色');
 		} else {
 			editlist({
-				ipAddress: ipAddress.value,
+				ipAddress: ip.value,
 				port: port.value,
 				rootSec: okpwd.value,
 				clusterId: clusterId.value,
@@ -522,6 +637,9 @@
 				.then((res) => {
 					message.success('修改成功');
 					visible_edit.value = false;
+					rulesmessage.value = '';
+					rulesmessage_1.value = '';
+					rulesmessage_rootpwd.value = '';
 					clearData();
 					getData();
 				})
@@ -532,6 +650,8 @@
 	};
 	const Delbtn = (record) => {
 		recordID.value = record.hostId;
+		ip.value = '';
+		okpwd.value = '';
 		visible_del.value = true;
 	};
 	// 字段初始化
@@ -545,7 +665,8 @@
 		clusterId.value = '';
 		okIP.value = '';
 		okpwd.value = '';
-		(ipAddress.value = ''), (floor.value = '');
+		ipAddress.value = '';
+		floor.value = '';
 	};
 	const onShowSizeChange = (current, pageSize) => {
 		pageSize = pageSize.value;
@@ -558,6 +679,8 @@
 	const resetbtn = () => {
 		status.value = undefined;
 		clusterName.value = undefined;
+		pageNum.value = 1;
+		pageSize.value = 10;
 		getData();
 	};
 	const seachbtn = () => {
@@ -571,6 +694,56 @@
 			total.value = res.total;
 		});
 	};
+
+	watchEffect(() => {
+		if (visible.value == false) {
+			rulesmessage_name.value = '';
+			rulesmessage.value = '';
+			rulesmessage_1.value = '';
+			rulesmessage_rootpwd.value = '';
+			clusterId.value = undefined;
+			role.value = undefined;
+		}
+		if (visible_del.value == false) {
+			rulesmessage.value = '';
+			rulesmessage_rootpwd.value = '';
+		}
+		if (visible_edit.value == false) {
+			rulesmessage.value = '';
+			rulesmessage_1.value = '';
+			rulesmessage_rootpwd.value = '';
+		}
+	});
+
+	// 多选
+	const state = reactive({
+		selectedRowKeys: [],
+	});
+	const allclusterId = ref([]);
+	const rowSelection = (selectedRowKeys, selectedRows) => {
+		state.selectedRowKeys = selectedRowKeys;
+		console.log(selectedRowKeys, 'allclusterId');
+		// 对原数组元素进行运算后再赋值给新的数组
+
+		allclusterId.value = selectedRows.map((item) => item.hostId);
+
+		number.value = allclusterId.value.length;
+	};
+	const clearbtn = () => {
+		allclusterId.value = [];
+		number.value = 0;
+		state.selectedRowKeys = [];
+	};
+	
+	const goboard =(record)=>{
+		let id =record.hostId
+		  router.push(`/hosts/host_board?${id}`)
+		console.log(record,'record')
+	}
+	
+	
+	
+	
 </script>
 
 <style scoped lang="less">
@@ -608,5 +781,42 @@
 	}
 	.error {
 		color: red;
+	}
+
+	.icon {
+		height: 32px;
+		display: flex;
+		align-items: center;
+		margin-top: 4px;
+
+		.icon-sx {
+			width: 22px;
+			height: 16px;
+			display: inline-block;
+
+			img {
+				width: 100%;
+				height: 100%;
+			}
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+
+		.icon-kz {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+
+			img {
+				width: 100%;
+				height: 100%;
+			}
+		}
+
+		span:nth-child(1) {
+			padding-right: 7px;
+		}
 	}
 </style>
