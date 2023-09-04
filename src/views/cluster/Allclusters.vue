@@ -650,6 +650,10 @@ const AlldelFn = () => {
       padding: 7.5px !important;
     }
 
+    /deep/ .ant-card-body {
+      padding: 7.5px !important;
+    }
+
     th.class-center-sum,
     td.class-center-sum {
       text-align: center;

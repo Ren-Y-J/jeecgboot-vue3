@@ -70,11 +70,11 @@
                 </a-button> -->
                 <!-- <div v-show="isShow && record.remark == ''"> -->
                 <a-button type="link" v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)"
-                  class="editable-add-btn" style="margin-bottom: 8px">请输入名称</a-button>
+                  class="editable-add-btn" style="margin-bottom: 8px"> <edit-two-tone /></a-button>
                 <!-- </div> -->
                 <!-- <div v-show="isShow"> -->
                 {{ record.remark }}
-                <edit-two-tone />
+
                 <a-input ref="RemarkInp" name="remark" @blur="save(record.id)" v-if="isEdit && (isEditKey == record.id)"
                   @pressEnter=" save(record.id)" v-model:value="fromaclRelNameinfo.remark" />
                 <!-- </div> -->

@@ -28,11 +28,11 @@
               </a-popconfirm>
             </div>
           </template>
-          <template v-if="column.dataIndex === 'aclId'">
+          <!-- <template v-if="column.dataIndex === 'aclId'">
             <div v-if="record.aclId == []">
               {{ '' }}
             </div>
-          </template>
+          </template> -->
         </template>
       </a-table>
       <div class="pagination">
@@ -42,7 +42,7 @@
     </a-card>
     <div>
 
-      <a-modal v-model:visible="visible" title="Basic Modal" @ok="handleOk">
+      <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk">
         <!-- :model="aclInfoData" -->
         <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
@@ -52,36 +52,32 @@
           </a-form-item>
           <!-- :rules="fromaclinfoRules.aclType" -->
           <a-form-item label="类型" name="aclType" style='margin-top: 26px'>
-            <a-radio-group v-model:value="radiovalue" name="radioGroup" @change="changeradioFn(value)">
+            <a-radio-group v-model:value="radiovalue" name="radioGroup" @change="changeradioFn">
               <!-- 这是strig 这是数字类型 -->
               <a-radio :value="0">所有地址</a-radio>
               <a-radio :value="1">ACL选择</a-radio>
             </a-radio-group>
           </a-form-item>
-          <div v-show="radiovalue === 1">
-            <!-- <a-space> -->
-            <!-- <a-select ref="select" v-model:value="formState.aclId" style="width: 120px" @focus="focus"
-                @change="handleChange">
-                <a-select-option :value="item.hostName" v-for="item in aclId" :key="item.type
-                  ">{{ item.hostName }}</a-select-option>
-              </a-select> -->
-            <!-- </a-space> -->
-            <a-form-item name="" style='margin-top: 10px'>
+          <div v-show="radiovalue == 1">
 
-              <a-space label="ACL名称">
-                <a-select placeholder="请选择" ref="select" v-model:value="formState.aclId" style="width: 120px"
-                  @focus="focus" @change="handleChange" mode="tags" :size="size">
-                  <a-select-option :value="item.aclId" v-for="item in allaclId" :key="item.aclId
-                    ">{{ item.aclName }}</a-select-option>
-                </a-select>
-              </a-space>
-            </a-form-item>
+            <div style="margin-left:130px ;">
+              <a-form-item label="" name="" style='margin-top: 10px'>
+                <a-space>
+                  <a-select placeholder="请选择" ref="select" v-model:value="formState.aclId" style="width: 160px"
+                    @focus="focus" @change="handleChange" mode="tags" :size="size">
+                    <a-select-option :value="item.aclId" v-for="item in allaclId" :key="item.aclId
+                      ">{{ item.aclName }}</a-select-option>
+                  </a-select>
+                </a-space>
+              </a-form-item>
+            </div>
+
           </div>
           <a-form-item label="所属主机" name="" style='margin-top: 26px'>
             <a-space>
-              <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 120px" @focus="focus"
+              <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
                 @change="handleChange">
-                <a-select-option :value="item.clusterId" v-for="item in allhostId" :key="item.clusterId
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
@@ -140,6 +136,7 @@ const allhostId = ref([])
 const allaclId = ref([])
 const visible = ref(false)
 const opTitle = ref('新增线路配置')
+
 // -------------------
 const radiovalue = ref(0);
 
@@ -154,9 +151,9 @@ const formState = ref({
 const changeradioFn = (value) => {
   console.log(value, 'value');
   // radiovalue.value = value
-  console.log(radiovalue.value, value)
-  // formState.value.aclId = 
-  if (radiovalue.value = 0) {
+  // console.log(radiovalue.value, 'value')
+  formState.value.aclId = radiovalue.value
+  if (formState.value.aclId == 0) {
     formState.value.aclId = JSON.stringify([])
   }
 
@@ -179,8 +176,6 @@ const initData = () => {
     console.log(res, 'res11');
     console.log(res.records, '#######');
     data.value = res.records
-
-
     totals.value = res.total
   });
 }
@@ -208,7 +203,7 @@ getaclId()
 const isOpen = async (record) => {
   console.log(record, 'record');
   visible.value = true
-  // opTitle.value = '新增名称'
+  opTitle.value = '新增线路配置'
   // if (record.aclId) {
   //   let res = await aclnameInfo(`${record.aclId}`)
   //   formState.value = res
@@ -221,7 +216,7 @@ const isOpen = async (record) => {
 }
 const handleOk = async () => {
   formState.value.aclId = JSON.stringify(formState.value.aclId);
-  console.log(formState.value.aclId)
+  // console.log(formState.value.aclId)
   let res = await addaclIdAll(formState.value)
   console.log(res, 'resdata');
   initData()
