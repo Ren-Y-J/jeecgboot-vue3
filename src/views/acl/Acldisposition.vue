@@ -29,7 +29,7 @@
       <a-card>
         <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加</a-button>
         <!-- :row-selection="rowSelection" -->
-        <a-table :columns="columns" :data-source="data" :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 440 }">
+        <a-table :columns="columns" :data-source="data" :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 510 }">
           <template #bodyCell="{ column, record }">
             <!-- <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
@@ -128,17 +128,13 @@
 
               </a-radio-group>
             </a-form-item>
-            <a-form-item :rules="fromaclinfoRules.aclRelName" label="地理位置" name="aclRelName" style='margin-top: 26px'>
+            <a-form-item :rules="fromaclinfoRules.Geography" label="地理位置" name="aclRelName" style='margin-top: 26px'>
               <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <!-- <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入地理位置" 你要打字z/> 
              在之内别动嗯嗯这个我没定义刚刚那个是selsed的value 现在没问题了有我这v-model要绑定的是最后一个字段name
 : 
 "石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端 -->
               <!-- 这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端 
-你再看看吧
-那个没赋值我都没拿到code咋赋值了刚刚是selse的value
-v你现在看看
-好了我要130110数组最后一个
 
 -->
               <a-cascader v-model:value="aclInfoData.aclRelName" :options="getdistrictList"
@@ -146,19 +142,17 @@ v你现在看看
                 @change="changecodeFn" />
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.remark" label="备注" name="remark" style='margin-top: 26px'>
-              <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <a-input v-model:value="aclInfoData.remark" placeholder="备注" />
             </a-form-item>
           </div>
           <div v-show="radiovalue === 2">
             <a-form-item label="策略" name="status" style='margin-top: 26px'>
-              <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <a-radio-group v-model:value="value" name="radioGroup" @change="changstatusFn(value)">
                 <a-radio value="1">启用</a-radio>
                 <a-radio value="0">禁用</a-radio>
               </a-radio-group>
             </a-form-item>
-            <a-form-item :rules="fromaclinfoRules.aclRelName" label="运营商" name="aclRelName" style='margin-top: 26px'>
+            <a-form-item :rules="fromaclinfoRules.operator" label="运营商" name="aclRelName" style='margin-top: 26px'>
               <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <a-space>
                 <a-select ref="select" v-model:value="aclInfoData.aclRelName" style="width: 120px" @focus="focus"
@@ -204,7 +198,10 @@ const formRules = {
   aclName: [{ required: true, message: "请输入ACL名称" }]
 }
 const fromaclinfoRules = {
-  aclRelName: [{ required: true, message: "请输入内容" }]
+  aclRelName: [{ required: true, message: "请输入网络地址" }],
+  Geography: [{ required: true, message: "请选择地理位置" }],
+  operator: [{ required: true, message: "请选择运营商" }]
+
 }
 
 const formData = ref({

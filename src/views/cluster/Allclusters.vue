@@ -88,7 +88,7 @@
         <!-- <a-button type="primary" style="margin-bottom: 10px;" @click="delAllFn">批量删除</a-button> -->
         <!-- rowKey表格行 key 的取值，可以是字符串或一个函数 expand点击展开图标时触发 expandRowByClick通过点击行来展开子行 :expandedRowKeys="expandedRowKeys"   这个是负责控制行的展开与关闭，（这个变量是以数组的形式展示，谁的id在数组里就显示谁）-->
         <!-- :row-selection="rowSelection"   -->
-        <a-table :scroll="{ x: 'calc(700px + 50%)', y: 440 }" :columns="columns"
+        <a-table :scroll="{ x: 'calc(700px + 50%)', y: 510 }" :columns="columns"
           :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :data-source="data"
           :pagination="false" :rowKey="(record) => record.clusterId" bordered>
           <template #bodyCell="{ column, record }">
@@ -487,6 +487,7 @@ const handlChangeFn = async (val) => {
   selects.value = val//select点击删除的的value字段0字符串类型
   if (number.value == 0) { //number.value个数数字类型  allclusterId.value.length勾选的id是几个字符串类型
     message.error('请勾选需要删除的集群')
+    changevalue.value = '批量删除'
   } else {
     // visibledel.value = true
     Modal.confirm({
