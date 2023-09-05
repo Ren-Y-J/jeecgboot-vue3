@@ -244,14 +244,14 @@ const state = reactive({
   selectedRowKeys: [],
 });
 
-const initData = async () => {
+const initData = async (val) => {
   // console.log('搜索11111');这是formData
-  let { records, total } = await list(formData.value)
+  let { records, total } = await list(val)
 
   data.value = records
   totals.value = total
 }
-initData()
+initData(formData.value)
 const handleChangeFn = async (value) => {
   // console.log(formState.host, 'value');
   // console.log(value, '66');
@@ -259,7 +259,7 @@ const handleChangeFn = async (value) => {
   // console.log(formData.value, ' formData.value.host');
   // initData(formData.value)
   // let cloneArr = JSON.parse(JSON.stringify(data.value))
-  await initData()
+  await initData(formData.value)
   data.value = data.value.filter(it => {
     return it.host == value
   })
@@ -326,7 +326,7 @@ const handleOk = async () => {
   // 那个我这块要是判断是配置还是新增，你看这样有问题嘛formState.value.aclId == [] 走新增或者走配置编辑我注释掉了，因为当时老报数据重复
   let res = await addaclIdAll(formState.value)
   console.log(res, 'resdata');
-  initData()
+  initData(formData.value)
   visible.value = false
   message.success('添加成功')
 }
@@ -361,14 +361,14 @@ const delFn = async (record) => {
   console.log(commonEnty.value, 'lists.value');
   await delline(commonEnty.value)
   // 更新列表
-  initData()
+  initData(formData.value)
   message.success('删除成功')
 
 }
 const confirm = (record) => {
   console.log(record, 'record2');
   delFn(record.lineId)
-  initData()
+  initData(formData.value)
 };
 
 const rowSelection = async (selectedRowKeys, selectedRows) => {
@@ -384,12 +384,12 @@ const rowSelection = async (selectedRowKeys, selectedRows) => {
 //分页功能
 const changeFn = (P, Ps) => {
   formData.value.pageNum = P
-  initData()
+  initData(formData.value)
 }
 const onShowSizeChange = (current, pageSize) => {
   // console.log(pageSize, 'pageSize');
   formData.value.pageSize = pageSize
-  initData()
+  initData(formData.value)
 };
 // 这块是配置(编辑的弹出层提交事件)-------------------
 const editvisible = ref(false) //
@@ -436,7 +436,7 @@ const edithandleOk = async () => {
   editformState.value.aclId = JSON.stringify(editformState.value.aclId);
   let res = await editline(editformState.value)
   console.log(res, 'resdata');
-  initData()
+  initData(formData.value)
   editvisible.value = false
   message.success('修改成功')
 }

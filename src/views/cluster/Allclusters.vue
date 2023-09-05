@@ -756,6 +756,9 @@ const AlldelFn = () => {
       border-radius: 2px;
     }
 
+    .allclustersBox .contion[data-v-d1549cac] .ant-table-tbody>tr>td {
+      padding: 0px !important;
+    }
 
   }
 
