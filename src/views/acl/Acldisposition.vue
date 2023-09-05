@@ -138,7 +138,7 @@
 
 -->
               <a-cascader v-model:value="aclInfoData.aclRelName" :options="getdistrictList"
-                :fieldNames="{ label: 'name', value: 'name', children: 'child' }" placeholder="请选择"
+                :fieldNames="{ label: 'name', value: 'code', children: 'child' }" placeholder="请选择"
                 @change="changecodeFn" />
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.remark" label="备注" name="remark" style='margin-top: 26px'>
@@ -157,7 +157,7 @@
               <a-space>
                 <a-select ref="select" v-model:value="aclInfoData.aclRelName" style="width: 120px" @focus="focus"
                   @change="handleChange">
-                  <a-select-option :value="item.name" v-for="item in getoperatorList" :key="item.type
+                  <a-select-option :value="item.type" v-for="item in getoperatorList" :key="item.type
                     ">{{ item.name }}</a-select-option>
                 </a-select>
 

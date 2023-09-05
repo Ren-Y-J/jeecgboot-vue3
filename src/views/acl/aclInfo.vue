@@ -47,7 +47,9 @@
                 <!-- a-popover宽度-->
                 <a-popover :overlayStyle="{ width: '30%' }" trigger="hover">
                   <template #content>
-                    {{ record.aclRelName }}
+                    <!-- {{ record.aclRelName }} -->
+                    {{ record }}
+
                   </template>
 
                   <p
