@@ -534,9 +534,11 @@ function onGoToaclInfo(record) {
     }
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
-    /deep/ .ant-table-tbody>tr>td {
-      padding: 6px !important;
-    }
+    // /deep/ .ant-table-tbody>tr>td {
+    //   padding: 6px !important;
+    // }
+
+
 
     /deep/ p {
       margin-top: 0;
@@ -549,6 +551,10 @@ function onGoToaclInfo(record) {
     .ant-table tfoot>tr>th,
     .ant-table tfoot>tr>td {
       padding: 7.5px 16px;
+    }
+
+    /deep/ .ant-table-tbody>tr>td {
+      padding: 6px !important;
     }
 
     .edit {
