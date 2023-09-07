@@ -91,7 +91,7 @@
 				:rowKey="(record) => record.hostId"
 				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
 				:pagination="false"
-				:scroll="{ x: 'calc(700px + 50%)', y: 440 }"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
 				:columns="columns"
 				:data-source="initdata"
 				bordered
@@ -111,39 +111,35 @@
 							alt=""
 							style="width: 16px; height: 16px; margin-left: 30%"
 						/>
-						<span v-if="record.status == null"> 空</span>
 					</template>
 
 					<template v-if="column.dataIndex === 'clusterName'">
-						<span v-if="record.clusterName !== ''"> {{ record.clusterName }} </span>
-						<span v-if="record.clusterName == null"> 空</span>
+						<span> {{ record.clusterName }} </span>
 					</template>
 					<!-- 磁盘使用情况 -->
 					<template v-if="column.dataIndex === 'diskstatus'">
-						<div class="pointer" @click="goboard(record)">
+						<div class="pointer" >
 							<span> {{ record.physDiskUsed }}G/{{ record.physDiskTotal }}G</span>
 							<a-progress :percent="record.psy" size="small" strokeColor="#3CD275" :show-info="false" />
 						</div>
 					</template>
 					<!-- 物理内存 -->
 					<template v-if="column.dataIndex === 'storage'">
-						<div class="pointer">
+						<div class="pointer"  @click="goboard_stor(record)">
 							<span> {{ record.physMemUsed }}G/{{ record.physMemTotal }}G</span>
 							<a-progress :percent="record.psy" size="small" strokeColor="#3CD275" :show-info="false" />
 						</div>
 					</template>
 					<!-- cpu使用 -->
 					<template v-if="column.dataIndex === 'cpuUsed'">
-						<div class="pointer">
-							<span v-if="record.cpuUsed"> {{ record.cpuUsed }}%</span>
-							<span v-else>空</span>
+						<div class="pointer" @click="goboard_cpu(record)">
+							<span > {{ record.cpuUsed }}%</span>
 						</div>
 					</template>
 					<!-- 數據更新時間 -->
 					<template v-if="column.dataIndex === 'dataUpdateTime'">
 						<div class="pointer">
-							<span v-if="record.dataUpdateTime"> {{ record.dataUpdateTime }}</span>
-							<span v-else>空</span>
+							<span > {{ record.dataUpdateTime }}</span>
 						</div>
 					</template>
 					<!-- 操作 -->
@@ -207,8 +203,11 @@
 						<a-select-option value="3">权威+递归</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-					<a-input v-model:value="rack" placeholder="请输入机架"></a-input>
+				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="formRules.clusterId">
+					<a-input @blur="change_rack" v-model:value="rack" placeholder="请输入机架"></a-input>
+					<span v-show="ruleshow_rack" :class="{ success: rulesstatus_rack, error: !rulesstatus_rack }">{{
+						rulesmessage_rack
+					}}</span>
 				</a-form-item>
 			</a-form>
 		</div>
@@ -396,6 +395,21 @@
 		}
 	};
 
+const ruleshow_rack = ref(false);
+	const rulesmessage_rack = ref('');
+	const change_rack = () => {
+		if (rack.value == '') {
+			rulesmessage_rack.value = '机架不能为空';
+			ruleshow_rack.value = true;
+		} else {
+			ruleshow_rack.value = false;
+		}
+	};
+
+
+
+
+
 	const columns = [
 		{
 			title: '状态',
@@ -411,7 +425,7 @@
 			align: 'center',
 		},
 		{
-			title: 'ip',
+			title: 'IP',
 			dataIndex: 'ipAddress',
 
 			width: 150,
@@ -735,12 +749,16 @@
 		state.selectedRowKeys = [];
 	};
 	
-	const goboard =(record)=>{
+	const goboard_cpu =(record)=>{
 		let id =record.hostId
 		  router.push(`/hosts/host_board?${id}`)
 		console.log(record,'record')
 	}
-	
+	const goboard_stor =(record)=>{
+		let id =record.hostId
+		  router.push(`/hosts/host_board_storage?${id}`)
+		console.log(record,'record')
+	}
 	
 	
 	
