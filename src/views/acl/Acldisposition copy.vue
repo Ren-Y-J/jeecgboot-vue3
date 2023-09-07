@@ -137,7 +137,7 @@
               <!-- 这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端 
 
 -->
-              <a-cascader v-model:value="activeAere" :options="getdistrictList"
+              <a-cascader v-model:value="aclInfoData.aclRelName" :options="getdistrictList"
                 :fieldNames="{ label: 'name', value: 'code', children: 'child' }" placeholder="请选择"
                 @change="changecodeFn" />
             </a-form-item>
@@ -210,7 +210,6 @@ const formData = ref({
   pageNum: 1,
   pageSize: 10,
 });
-const activeAere = ref('')
 const aclInfoData = ref({
   aclId: 0,
   aclName: "",
@@ -277,11 +276,10 @@ const getdistrictintData = async () => {
 getdistrictintData()
 
 const changecodeFn = (value) => {
-  console.log(value[2], '地区');
-  // let lastElement = value.pop();
-  // console.log(lastElement);
-  aclInfoData.value.aclRelName = value[2]
-  console.log(aclInfoData.value.aclRelName);
+  console.log(value, '地区');
+  let lastElement = value.pop();
+  console.log(lastElement);
+  aclInfoData.value.aclRelName = lastElement
 }
 const handleChange = (value) => {
   console.log(value, '运营商');
@@ -534,11 +532,9 @@ function onGoToaclInfo(record) {
     }
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
-    // /deep/ .ant-table-tbody>tr>td {
-    //   padding: 6px !important;
-    // }
-
-
+    /deep/ .ant-table-tbody>tr>td {
+      padding: 6px !important;
+    }
 
     /deep/ p {
       margin-top: 0;
@@ -551,10 +547,6 @@ function onGoToaclInfo(record) {
     .ant-table tfoot>tr>th,
     .ant-table tfoot>tr>td {
       padding: 7.5px 16px;
-    }
-
-    /deep/ .ant-table-tbody>tr>td {
-      padding: 6px !important;
     }
 
     .edit {

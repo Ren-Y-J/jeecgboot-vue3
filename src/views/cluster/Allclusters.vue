@@ -583,6 +583,7 @@ const AlldelFn = () => {
   // console.log('1');
   queryParams.value.clusterName = ''
   changesearch.value = ''
+  queryParams.value.status = ''
   queryParams.value.pageNum = 1
   queryParams.value.pageSize = 10
   getList()
@@ -636,9 +637,6 @@ const AlldelFn = () => {
     }
 
     // 行高变高，一定是内容撑起来的 ，请检查 slot 插槽时有没有行高很高的组件或元素。
-    /deep/ .ant-table-tbody>tr>td {
-      padding: 8px !important;
-    }
 
     /deep/ p {
       margin-top: 0;
@@ -648,6 +646,22 @@ const AlldelFn = () => {
     // 标题
     /deep/ .ant-table.ant-table-bordered>.ant-table-container>.ant-table-content>table>thead>tr>th {
       padding: 7.5px !important;
+    }
+
+    // 标题
+    /deep/.ant-table-thead>tr>th,
+    .ant-table-tbody>tr>td,
+    .ant-table tfoot>tr>th,
+    .ant-table tfoot>tr>td {
+      padding: 7.5px 16px;
+    }
+
+    // /deep/ .ant-card-body {
+    //   padding: 7.5px !important;
+    // }
+
+    /deep/ .ant-table-tbody>tr>td {
+      padding: 6px !important;
     }
 
     th.class-center-sum,
@@ -751,6 +765,7 @@ const AlldelFn = () => {
       word-wrap: break-word;
       border-radius: 2px;
     }
+
 
 
   }
