@@ -467,11 +467,7 @@ function onGoToaclInfo(record) {
   console.log(record);
   console.log(record.aclId);
   let aclId = record.aclId
-  router.push(`/acl/AclInfos?${aclId}`)
-  // router.push(`/acl/aclInfos?${aclId}`)
-  // /acl/AclInfos
-  // /acl/aclInfos
-  // router.push('/acl/aclInfo')
+  router.push(`/acl/aclInfo?${aclId}`)
   ///acl/aclInfo?1697083862184730626
 }
 </script>
