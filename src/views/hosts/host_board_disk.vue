@@ -37,7 +37,7 @@
 <script setup>
 	import { router } from '/@/router';
 	import { reactive, toRefs, ref, computed } from 'vue';
-	import { getStor } from './host_board.ts';
+	import { getDisk } from './host_board.ts';
 	import { message } from 'ant-design-vue';
 	import 'echarts/lib/component/tooltip'; // 导入tooltip组件
 	const data = reactive({
@@ -265,7 +265,7 @@
 
 	const initdata = () => {
 		getdate();
-		getStor({
+		getDisk({
 			hostId: id.value,
 			timeType: 0,
 			startTime: startDate_day.value,
@@ -325,7 +325,7 @@
 	initdata();
 	const initdata_week = () => {
 		getdate();
-		getStor({
+		getDisk({
 			hostId: id.value,
 			timeType: 1,
 			startTime: startDate_week.value,
@@ -905,7 +905,7 @@
 		endData_all.value = dateString[1];
 		Xdata_all.value = [];
 		Ydata_all.value = [];
-		getStor({
+		getDisk({
 			hostId: id.value,
 			timeType: 4,
 			startTime: startData_all.value,
@@ -968,7 +968,7 @@
 	};
 	const getAlldata = () => {
 		getdate();
-		getStor({
+		getDisk({
 			hostId: id.value,
 			timeType: 4,
 			startTime: startData_all.value,

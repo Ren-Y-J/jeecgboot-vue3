@@ -47,13 +47,13 @@
 				</a-row>
 			</a-form>
 		</div>
-		<div class="hostes" style="margin-top: 10px">
+		<div class="hostes" style="margin-top: 8px">
 			<div style="display: flex; justify-content: space-between">
 				<div class="icon">
 					<a-space>
 						<a-select
 							ref="select"
-							style="width: 120px; margin-right: 10px"
+							style="width: 120px; margin-right: 8px"
 							@focus="focus"
 							@change="handleChange"
 							v-model="delselect"
@@ -118,7 +118,7 @@
 					</template>
 					<!-- 磁盘使用情况 -->
 					<template v-if="column.dataIndex === 'diskstatus'">
-						<div class="pointer" >
+						<div class="pointer" @click="goboard_disk(record)" >
 							<span> {{ record.physDiskUsed }}G/{{ record.physDiskTotal }}G</span>
 							<a-progress :percent="record.psy" size="small" strokeColor="#3CD275" :show-info="false" />
 						</div>
@@ -759,7 +759,11 @@ const ruleshow_rack = ref(false);
 		  router.push(`/hosts/host_board_storage?${id}`)
 		console.log(record,'record')
 	}
-	
+	const goboard_disk =(record)=>{
+		let id =record.hostId
+		  router.push(`/hosts/host_board_disk?${id}`)
+		console.log(record,'record')
+	}
 	
 	
 </script>
@@ -771,23 +775,28 @@ const ruleshow_rack = ref(false);
 	.hostes {
 		width: 100%;
 		background-color: #fff;
-		padding: 10px;
+		padding: 8px;
 	}
 	.addcomputer {
-		padding: 10px;
+		padding: 8px;
 	}
 
 	:deep(.ant-alert-info) {
 		background-color: #e6f7ff;
 		border: 1px solid #91d5ff;
 	}
+	:deep(.ant-table-selection-column) {
+		height:30px
+	}
+	
+	
 	.searchbtn {
 		display: flex;
 		flex-wrap: nowrap;
 	}
 	@media screen and (max-width: 800px) {
 		.searchbtn {
-			margin-top: 10px;
+			margin-top: 8px;
 		}
 	}
 
@@ -805,7 +814,6 @@ const ruleshow_rack = ref(false);
 		height: 32px;
 		display: flex;
 		align-items: center;
-		margin-top: 4px;
 
 		.icon-sx {
 			width: 22px;

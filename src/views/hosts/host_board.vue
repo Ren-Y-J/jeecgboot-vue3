@@ -107,7 +107,7 @@
 		startData_all,
 	} = toRefs(data);
 	const btn = () => {
-		router.push(`/hosts/Allhosts`);
+		router.push(`/hosts/allhosts`);
 	};
 	const getID = () => {
 		let url = location.search;
@@ -162,7 +162,7 @@
 			maxUsed_day.value = res.maxUsed;
 			minUsed_day.value = res.minUsed;
 			const jsonData = JSON.parse(JSON.stringify(res.data)); // 将JSON数据解析为JavaScript对象
-			jsonData.forEach((item) => {
+			jsonData.forEach((item) => { 
 				const date = new Date(item.date); // 转换日期字符串为日期对象
 				const month = date.getMonth() + 1; // 获取月份，注意月份是从0开始计数的，所以需要加1
 				const day = date.getDate(); // 获取日期
@@ -214,19 +214,29 @@
 			intervalValue = 0;
 		}
 		return {
+			
 			tooltip: {
-				trigger: 'axis', // show tooltip when hovering over the series
-				axisPointer: {
-					type: 'cross', // show a crosshair pointer
-					label: {
-						show: false,
-					},
-				},
-				formatter: function (params) {
-					let xAxisData = params[0].name;
-					let yAxisData = params[0].data;
-					return ` ${xAxisData}<br>${yAxisData}%`;
-				},
+			    trigger: 'axis',
+			    axisPointer: {
+			        type: 'cross',
+			        label: {
+			            show: false,
+			        },
+			    },
+			  formatter: function (params) {
+			      let xAxisData = params[0].name;
+			      let dotHtml = '';
+			      let spanColors = ['#21cbbf', '#6889ed', '#47b0f4', '#90d426']; // 定义每个span的颜色数组
+			  
+			      for (let i = 0; i < params.length; i++) {
+			          let spanStyle = `display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${spanColors[i]}`;
+			          dotHtml += `<span style="${spanStyle}"></span>`;
+			          dotHtml += params[i].seriesName + params[i].data + 'G<br>';
+			      }
+			  
+			      return `${xAxisData}<br>${dotHtml}`;
+			  }
+			
 			},
 			grid: {
 				left: '5%',
@@ -256,6 +266,11 @@
 						color: '#1f98d3',
 					},
 				},
+				axisLabel: {
+				       formatter: function (value) {
+				           return value + '%'; // 在刻度数字后面添加GB字段
+				       },
+				   },
 			},
 
 			series: [
@@ -284,25 +299,34 @@
 
 		if (window.matchMedia('(max-width: 600px)').matches) {
 			// If media query matches
-			intervalValue = 3;
+			intervalValue = 8;
 		} else {
-			intervalValue = 1;
+			intervalValue = 3;
 		}
 		return {
+			
 			tooltip: {
-				trigger: 'axis', // show tooltip when hovering over the series
-				axisPointer: {
-					type: 'cross', // show a crosshair pointer
-					label: {
-						show: false,
-					},
-				},
-				formatter: function (params) {
-					// customize the tooltip content
-					let xAxisData = params[0].name;
-					let yAxisData = params[0].data;
-					return ` ${xAxisData}<br>${yAxisData}%`;
-				},
+			    trigger: 'axis',
+			    axisPointer: {
+			        type: 'cross',
+			        label: {
+			            show: false,
+			        },
+			    },
+			  formatter: function (params) {
+			      let xAxisData = params[0].name;
+			      let dotHtml = '';
+			      let spanColors = ['#21cbbf', '#6889ed', '#47b0f4', '#90d426']; // 定义每个span的颜色数组
+			  
+			      for (let i = 0; i < params.length; i++) {
+			          let spanStyle = `display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${spanColors[i]}`;
+			          dotHtml += `<span style="${spanStyle}"></span>`;
+			          dotHtml += params[i].seriesName + params[i].data + 'G<br>';
+			      }
+			  
+			      return `${xAxisData}<br>${dotHtml}`;
+			  }
+			
 			},
 			grid: {
 				left: '5%',
@@ -332,6 +356,11 @@
 						color: '#1f98d3',
 					},
 				},
+				axisLabel: {
+				       formatter: function (value) {
+				           return value + '%'; // 在刻度数字后面添加GB字段
+				       },
+				   },
 			},
 
 			series: [
@@ -364,21 +393,29 @@
 			intervalValue = 1;
 		}
 		return {
-			tooltip: {
-				trigger: 'axis', // show tooltip when hovering over the series
-				axisPointer: {
-					type: 'cross', // show a crosshair pointer
-					label: {
-						show: false,
-					},
-				},
-				formatter: function (params) {
-					// customize the tooltip content
-					let xAxisData = params[0].name;
-					let yAxisData = params[0].data;
-					return ` ${xAxisData}<br>${yAxisData}%`;
-				},
-			},
+		tooltip: {
+		    trigger: 'axis',
+		    axisPointer: {
+		        type: 'cross',
+		        label: {
+		            show: false,
+		        },
+		    },
+		  formatter: function (params) {
+		      let xAxisData = params[0].name;
+		      let dotHtml = '';
+		      let spanColors = ['#21cbbf', '#6889ed', '#47b0f4', '#90d426']; // 定义每个span的颜色数组
+		  
+		      for (let i = 0; i < params.length; i++) {
+		          let spanStyle = `display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${spanColors[i]}`;
+		          dotHtml += `<span style="${spanStyle}"></span>`;
+		          dotHtml += params[i].seriesName + params[i].data + 'G<br>';
+		      }
+		  
+		      return `${xAxisData}<br>${dotHtml}`;
+		  }
+		
+		},
 			grid: {
 				left: '5%',
 				right: '5%',
@@ -407,6 +444,11 @@
 						color: '#1f98d3',
 					},
 				},
+				axisLabel: {
+				       formatter: function (value) {
+				           return value + '%'; // 在刻度数字后面添加GB字段
+				       },
+				   },
 			},
 
 			series: [
