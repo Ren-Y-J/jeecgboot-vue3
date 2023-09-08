@@ -554,12 +554,14 @@
 	.chart_day {
 		padding: 10px;
 		background-color: #fff;
+		box-shadow: 2px 2px 2px 2px #c5c6c8;
 		margin-right: 10px;
 		flex: 1;
 	}
 	.chart_week {
 		padding: 10px;
 		background-color: #fff;
+		box-shadow: 2px 2px 2px 2px #c5c6c8;
 		flex: 1;
 		margin-bottom: 10px;
 	}
@@ -568,6 +570,7 @@
 		margin-top: 10px;
 		padding: 10px;
 		background-color: #fff;
+		box-shadow: 2px 2px 2px 2px #c5c6c8;
 		
 	}
 	.echart_all {

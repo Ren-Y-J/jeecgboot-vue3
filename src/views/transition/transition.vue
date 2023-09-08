@@ -26,7 +26,19 @@
 		</div>
 		<!-- 表格 -->
 		<div class="page" style="margin-top: 10px">
-			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 440 }" :columns="columns" :data-source="initdata" bordered> </a-table>
+			<a-table
+				:rowKey="(record) => record.hostId"
+				:pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
+				:columns="columns"
+				:data-source="initdata"
+				bordered
+			>
+				<template v-if="column.dataIndex === 'operation'">
+					<div> 阿诗丹顿洒点水 </div>
+				</template>
+			</a-table>
+
 			<!-- 分页 -->
 			<div style="padding: 10px; display: flex; justify-content: flex-end">
 				<a-pagination
@@ -40,43 +52,139 @@
 				/>
 			</div>
 		</div>
+		<!-- 添加弹窗 -->
+		 <a-modal v-model:visible="add_visible" title="添加转发服务器" @ok="handleOk">
+			   <a-form
+			      ref="formRef"
+			      :model="formState"
+			      name="basic"
+			      :label-col="{ span: 6 }"
+			      :wrapper-col="{ span: 16 }"
+			      autocomplete="off"
+			      @finish="onFinish"
+			      @finishFailed="onFinishFailed"
+			    >
+			      <a-form-item
+			        label="Username"
+			        name="username"
+			        :rules="[{ required: true, message: 'Please input your username!' }]"
+			      >
+			        <a-input v-model:value="formState.username" />
+			      </a-form-item>
+			  
+			      <a-form-item
+			        label="Password"
+			        name="password"
+			        :rules="[{ required: true, message: 'Please input your password!' }]"
+			      >
+			        <a-input-password v-model:value="formState.password" />
+			      </a-form-item>
+			  
+			    </a-form>
+			 
+			 
+		    </a-modal>
 	</div>
 </template>
 
-<script>
+<script setup>
 	import { reactive, toRefs, ref } from 'vue';
+	import { getlist,addlist } from './transition.ts';
 	const data = reactive({
 		initdata: '',
+		pageNum: 1,
+		pageSize: 10,
+		total:'',
+		add_visible:false,
+		formState:{
+			   username: '',
+			      password: '',
+		}
 	});
-	const { initdata } = toRefs(data);
+	const { initdata,pageNum,pageSize,total,add_visible,formState } = toRefs(data);
+	 const onFinish = values => {
+	      console.log('Success:', values);
+	    };
+	    const onFinishFailed = errorInfo => {
+	      console.log('Failed:', errorInfo);
+	    };
+const getData = () =>{
+	getlist({
+		pageNum:pageNum.value,
+		pageSize:pageSize.value
+	}).then(res=>{
+		initdata.value=res.records
+		total.value=res.total
+	})
+}
+	getData()
 	const columns = [
 		{
-			title: '状态',
-			dataIndex: 'statusName',
-			width: 70,
+			title: '名称',
+			dataIndex: 'name',
+
+			width: 80,
 			align: 'center',
 		},
 		{
-			title: '名称',
-			dataIndex: 'hostName',
-
+			title: '备注',
+			dataIndex: 'note',
 			width: 100,
 			align: 'center',
 		},
 		{
-			title: 'ip',
-			dataIndex: 'ipAddress',
+			title: 'IP列表',
+			dataIndex: 'ipList',
 
-			width: 150,
+			width: 500,
+			align: 'center',
+		},
+		{
+			title: '操作',
+			dataIndex: 'operation',
+
+			width: 160,
 			align: 'center',
 		},
 	];
+	const seachbtn = () =>{
+		add_visible.value=true
+		
+		
+	}
+	const formRef = ref(null)
+	const handleOk = async () => {
+		
+		try {
+		  await formRef.value.validate()
+		} catch (error) {
+		  // console.log(error);
+		  return console.log(error)
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 </script>
 
 <style>
 	.page {
-		padding: 10px;
+		padding: 8px;
 		background-color: #fff;
 		width: 100%;
+	}
+	.pointer {
+		cursor: pointer;
+	}
+	.searchbtn {
+		display: flex;
+		flex-wrap: nowrap;
 	}
 </style>

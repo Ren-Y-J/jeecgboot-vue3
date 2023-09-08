@@ -3,14 +3,14 @@
 		<a-button @click="btn">返回上一级页面</a-button>
 		<!-- v-scale="{ target: 'width', origin: 'top left' }" 页面缩放 -->
 		<div>
-			<div class="top" style="">
+			<div class="top" >
 				<!-- 日图 -->
 				<div class="chart_day" style="margin-bottom: 10px">
 					日图
 					<e-charts class="chart" :option="option" />
 				</div>
 				<!-- 周图 -->
-				<div class="chart_week" style="">
+				<div class="chart_week" >
 					周图
 					<e-charts class="weekchart" :option="option_week" />
 				</div>
@@ -55,11 +55,10 @@
 		Ydata_cacheData_week: [],
 	
 	Xdata_all: [],
-		Ydata_buffData_all: [],
+	Ydata_buffData_all: [],
 	Ydata_usedData_all:[],
 	Ydata_freeData_all: [],
 	Ydata_cacheData_all: [],
-	
 	legendData_day:[],
 	
 		averUsed_day: '', //	占用内存-平均
@@ -112,8 +111,6 @@
 		minBuff_all:'',//高速缓冲-最小
 		averBuff_all:'',//高速缓冲-平均
 		curBuff_all: '', //	高速缓冲-当前
-		
-		
 		
 		endDate: '',
 		startDate_day: '',
@@ -271,6 +268,7 @@
 			startTime: startDate_day.value,
 			endTime: endDate.value,
 		}).then((res) => {
+			console.log()
 			// 占用内存
 			averUsed_day.value =( res.averUsed/100000000).toFixed(2)
 			curUsed_day.value = (res.curUsed/100000000).toFixed(2);
@@ -281,33 +279,6 @@
 			minFree_day.value=(res.minFree/100000000).toFixed(2)
 			averFree_day.value = (res.averFree/1000000000).toFixed(2);
 			curFree_day.value = (res.curFree/100000000).toFixed(2);
-			// 缓存内存
-			maxCache_day.value=(res.maxCache/100000000).toFixed(2)
-			minCache_day.value=(res.minCache/100000000).toFixed(2)
-			averCache_day.value = (res.averCache/1000000000).toFixed(2);
-			curCache_day.value = (res.curCache/100000000).toFixed(2);
-			// 高速缓冲
-			maxBuff_day.value=(res.maxBuff/100000000).toFixed(2)
-			minBuff_day.value=(res.minBuff/100000000).toFixed(2)
-			averBuff_day.value = (res.averBuff/1000000000).toFixed(2);
-			curBuff_day.value = (res.curBuff/100000000).toFixed(2);
-			
-			const jsonData = JSON.parse(JSON.stringify(res.buffData)); // 将JSON数据解析为JavaScript对象
-			jsonData.forEach((item) => {
-			  const date = new Date(item.date);
-			  const formattedTime = date.toLocaleTimeString('en-US', { hour12: false });
-			  const month = date.getMonth() + 1;
-			  const day = date.getDate();
-			  const formattedDate = `${month}-${day} ${formattedTime}`;
-			  Xdata.value.push(formattedDate);
-			  Ydata_buffData.value.push(item.value / 1000000000).toFixed(2);
-			});
-			// 缓存内存
-			const jsonData_cace = JSON.parse(JSON.stringify(res.cacheData));
-			jsonData_cace.forEach((item)=>{
-				Ydata_cacheData.value.push(item.value/1000000000).toFixed(2);
-			})
-			
 			// 空闲内存
 			const jsonData_free = JSON.parse(JSON.stringify(res.freeData));
 			jsonData_free.forEach((item)=>{
@@ -341,32 +312,7 @@
 			minFree_week.value=(res.minFree/100000000).toFixed(2)
 			averFree_week.value = (res.averFree/1000000000).toFixed(2);
 			curFree_week.value = (res.curFree/100000000).toFixed(2);
-			// 缓存内存
-			maxCache_week.value=(res.maxCache/100000000).toFixed(2)
-			minCache_week.value=(res.minCache/100000000).toFixed(2)
-			averCache_week.value = (res.averCache/1000000000).toFixed(2);
-			curCache_week.value = (res.curCache/100000000).toFixed(2);
-			// 高速缓冲
-			maxBuff_week.value=(res.maxBuff/100000000).toFixed(2)
-			minBuff_week.value=(res.minBuff/100000000).toFixed(2)
-			averBuff_week.value = (res.averBuff/1000000000).toFixed(2);
-			curBuff_week.value = (res.curBuff/100000000).toFixed(2);
 			
-			const jsonData = JSON.parse(JSON.stringify(res.buffData)); // 将JSON数据解析为JavaScript对象
-			jsonData.forEach((item) => {
-			  const date = new Date(item.date);
-			  const formattedTime = date.toLocaleTimeString('en-US', { hour12: false });
-			  const month = date.getMonth() + 1;
-			  const day = date.getDate();
-			  const formattedDate = `${month}-${day} ${formattedTime}`;
-			  Xdata_week.value.push(formattedDate);
-			  Ydata_buffData_week.value.push(item.value / 1000000000).toFixed(2);
-			});
-			// 缓存内存
-			const jsonData_cace = JSON.parse(JSON.stringify(res.cacheData));
-			jsonData_cace.forEach((item)=>{
-				Ydata_cacheData_week.value.push(item.value/1000000000).toFixed(2);
-			})
 			
 			// 空闲内存
 			const jsonData_free = JSON.parse(JSON.stringify(res.freeData));
@@ -403,18 +349,12 @@
 			         data: [ 
 			{name:'占用内存', textStyle: {color: '#000'}},
 			{name:'空闲内存', textStyle: {color: '#000'}},
-			{name:'缓存内存',  textStyle: {color: '#000'}},
-			{name:'高速缓冲',  textStyle: {color: '#000'}},
 			],
 			  formatter: function (name) {
 			          if (name === '占用内存') {
 			                         return name + ' '.repeat(25) + '最大'+maxUsed_all.value+'GB'+ ' '.repeat(25) + '最小'+minUsed_all.value+'GB'+ ' '.repeat(25) + '平均'+ averUsed_all.value+'GB' +' '.repeat(25) + '当前'+  curUsed_all.value+'GB';
 			                     } else if (name === '空闲内存') {
 			                        return name + ' '.repeat(25) + '最大'+maxFree_all.value+'GB'+ ' '.repeat(25) + '最小'+minFree_all.value+'GB'+ ' '.repeat(25) + '平均'+ averFree_all.value+'GB' +' '.repeat(25) + '当前'+  curFree_all.value+'GB';
-			                     } else if (name === '缓存内存') {
-			                        return name + ' '.repeat(25) + '最大'+maxCache_all.value+'GB'+ ' '.repeat(25) + '最小'+minCache_all.value+'GB'+ ' '.repeat(25) + '平均'+ averCache_all.value+'GB' +' '.repeat(25) + '当前'+  curCache_all.value+'GB';
-			                     } else if (name === '高速缓冲') {
-			                         return name + ' '.repeat(25) + '最大'+maxBuff_all.value+'GB'+ ' '.repeat(25) + '最小'+minBuff_all.value+'GB'+ ' '.repeat(25) + '平均'+ averBuff_all.value+'GB' +' '.repeat(25) + '当前'+  curBuff_all.value+'GB';
 			                     }
 			        },
 			},
@@ -510,38 +450,6 @@
 					symbol: 'none', // 去除锚点
 					data:Ydata_freeData_all.value,
 				},
-				{
-					name: '缓存内存',
-					type: 'line',
-					stack: 'Total',
-					areaStyle: {
-						normal: {
-							color: '#74c3f6', // 改变区域颜色
-							opacity: 0.7, // 改变区域透明度
-						},
-					},
-					lineStyle: {
-						color: '#47b0f4', // 设置线条颜色
-					},
-					symbol: 'none', // 去除锚点
-					data:Ydata_cacheData_all.value,
-				},
-				{
-					name: '高速缓冲',
-					type: 'line',
-					stack: 'Total',
-					areaStyle: {
-						normal: {
-							color: '#aadc5c', // 改变区域颜色
-							opacity: 0.7, // 改变区域透明度
-						},
-					},
-					lineStyle: {
-						color: '#90d426', // 设置线条颜色
-					},
-					symbol: 'none', // 去除锚点
-					data:Ydata_buffData_all.value,
-				},
 			],
 		};
 	});
@@ -567,19 +475,13 @@
 		         data: [ 
 		{name:'占用内存', textStyle: {color: '#000'}},
 		{name:'空闲内存', textStyle: {color: '#000'}},
-		{name:'缓存内存',  textStyle: {color: '#000'}},
-		{name:'高速缓冲',  textStyle: {color: '#000'}},
 		],
 		  formatter: function (name) {
 		          if (name === '占用内存') {
 		                         return name + ' '.repeat(25) + '最大'+maxUsed_week.value+'GB'+ ' '.repeat(25) + '最小'+minUsed_week.value+'GB'+ ' '.repeat(25) + '平均'+ averUsed_week.value+'GB' +' '.repeat(25) + '当前'+  curUsed_week.value+'GB';
 		                     } else if (name === '空闲内存') {
 		                        return name + ' '.repeat(25) + '最大'+maxFree_week.value+'GB'+ ' '.repeat(25) + '最小'+minFree_week.value+'GB'+ ' '.repeat(25) + '平均'+ averFree_week.value+'GB' +' '.repeat(25) + '当前'+  curFree_week.value+'GB';
-		                     } else if (name === '缓存内存') {
-		                        return name + ' '.repeat(25) + '最大'+maxCache_week.value+'GB'+ ' '.repeat(25) + '最小'+minCache_week.value+'GB'+ ' '.repeat(25) + '平均'+ averCache_week.value+'GB' +' '.repeat(25) + '当前'+  curCache_week.value+'GB';
-		                     } else if (name === '高速缓冲') {
-		                         return name + ' '.repeat(25) + '最大'+maxBuff_week.value+'GB'+ ' '.repeat(25) + '最小'+minBuff_week.value+'GB'+ ' '.repeat(25) + '平均'+ averBuff_week.value+'GB' +' '.repeat(25) + '当前'+  curBuff_week.value+'GB';
-		                     }
+		                     } 
 		        },
 		},
 		tooltip: {
@@ -674,38 +576,6 @@
 				symbol: 'none', // 去除锚点
 				data:Ydata_freeData_week.value,
 			},
-			{
-				name: '缓存内存',
-				type: 'line',
-				stack: 'Total',
-				areaStyle: {
-					normal: {
-						color: '#74c3f6', // 改变区域颜色
-						opacity: 0.7, // 改变区域透明度
-					},
-				},
-				lineStyle: {
-					color: '#47b0f4', // 设置线条颜色
-				},
-				symbol: 'none', // 去除锚点
-				data:Ydata_cacheData_week.value,
-			},
-			{
-				name: '高速缓冲',
-				type: 'line',
-				stack: 'Total',
-				areaStyle: {
-					normal: {
-						color: '#aadc5c', // 改变区域颜色
-						opacity: 0.7, // 改变区域透明度
-					},
-				},
-				lineStyle: {
-					color: '#90d426', // 设置线条颜色
-				},
-				symbol: 'none', // 去除锚点
-				data:Ydata_buffData_week.value,
-			},
 		],
 	};
 	});
@@ -731,19 +601,13 @@
 			         data: [ 
 			{name:'占用内存', textStyle: {color: '#000'}},
             {name:'空闲内存', textStyle: {color: '#000'}},
-            {name:'缓存内存',  textStyle: {color: '#000'}},
-            {name:'高速缓冲',  textStyle: {color: '#000'}},
 			],
 			  formatter: function (name) {
 			          if (name === '占用内存') {
 			                         return name + ' '.repeat(25) + '最大'+maxUsed_day.value+'GB'+ ' '.repeat(25) + '最小'+minUsed_day.value+'GB'+ ' '.repeat(25) + '平均'+ averUsed_day.value+'GB' +' '.repeat(25) + '当前'+  curUsed_day.value+'GB';
 			                     } else if (name === '空闲内存') {
 			                        return name + ' '.repeat(25) + '最大'+maxFree_day.value+'GB'+ ' '.repeat(25) + '最小'+minFree_day.value+'GB'+ ' '.repeat(25) + '平均'+ averFree_day.value+'GB' +' '.repeat(25) + '当前'+  curFree_day.value+'GB';
-			                     } else if (name === '缓存内存') {
-			                        return name + ' '.repeat(25) + '最大'+maxCache_day.value+'GB'+ ' '.repeat(25) + '最小'+minCache_day.value+'GB'+ ' '.repeat(25) + '平均'+ averCache_day.value+'GB' +' '.repeat(25) + '当前'+  curCache_day.value+'GB';
-			                     } else if (name === '高速缓冲') {
-			                         return name + ' '.repeat(25) + '最大'+maxBuff_day.value+'GB'+ ' '.repeat(25) + '最小'+minBuff_day.value+'GB'+ ' '.repeat(25) + '平均'+ averBuff_day.value+'GB' +' '.repeat(25) + '当前'+  curBuff_day.value+'GB';
-			                     }
+			                     } 
 			        },
 			},
 			tooltip: {
@@ -844,44 +708,6 @@
 					symbol: 'none', // 去除锚点
 					data:Ydata_freeData.value,
 				},
-				{
-					name: '缓存内存',
-					type: 'line',
-					stack: 'Total',
-					areaStyle: {
-						normal: {
-							color: '#74c3f6', // 改变区域颜色
-							opacity: 0.7, // 改变区域透明度
-						},
-					},
-					lineStyle: {
-						color: '#47b0f4', // 设置线条颜色
-					},
-					itemStyle: {
-					               color: '#47b0f4',
-					           },
-					symbol: 'none', // 去除锚点
-					data:Ydata_cacheData.value,
-				},
-				{
-					name: '高速缓冲',
-					type: 'line',
-					stack: 'Total',
-					areaStyle: {
-						normal: {
-							color: '#aadc5c', // 改变区域颜色
-							opacity: 0.7, // 改变区域透明度
-						},
-					},
-					lineStyle: {
-						color: '#90d426', // 设置线条颜色
-					},
-					itemStyle: {
-					               color: '#90d426',
-					           },
-					symbol: 'none', // 去除锚点
-					data:Ydata_buffData.value,
-				},
 			],
 		};
 	});
@@ -927,32 +753,6 @@
 			minFree_all.value=(res.minFree/100000000).toFixed(2)
 			averFree_all.value = (res.averFree/1000000000).toFixed(2);
 			curFree_all.value = (res.curFree/100000000).toFixed(2);
-			// 缓存内存
-			maxCache_all.value=(res.maxCache/100000000).toFixed(2)
-			minCache_all.value=(res.minCache/100000000).toFixed(2)
-			averCache_all.value = (res.averCache/1000000000).toFixed(2);
-			curCache_all.value = (res.curCache/100000000).toFixed(2);
-			// 高速缓冲
-			maxBuff_all.value=(res.maxBuff/100000000).toFixed(2)
-			minBuff_all.value=(res.minBuff/100000000).toFixed(2)
-			averBuff_all.value = (res.averBuff/1000000000).toFixed(2);
-			curBuff_all.value = (res.curBuff/100000000).toFixed(2);
-			
-			const jsonData = JSON.parse(JSON.stringify(res.buffData)); // 将JSON数据解析为JavaScript对象
-			jsonData.forEach((item) => {
-			  const date = new Date(item.date);
-			  const formattedTime = date.toLocaleTimeString('en-US', { hour12: false });
-			  const month = date.getMonth() + 1;
-			  const day = date.getDate();
-			  const formattedDate = `${month}-${day} ${formattedTime}`;
-			  Xdata_all.value.push(formattedDate);
-			  Ydata_buffData_all.value.push(item.value / 1000000000).toFixed(2);
-			});
-			// 缓存内存
-			const jsonData_cace = JSON.parse(JSON.stringify(res.cacheData));
-			jsonData_cace.forEach((item)=>{
-				Ydata_cacheData_all.value.push(item.value/1000000000).toFixed(2);
-			})
 			
 			// 空闲内存
 			const jsonData_free = JSON.parse(JSON.stringify(res.freeData));
@@ -985,32 +785,7 @@
 			minFree_all.value=(res.minFree/100000000).toFixed(2)
 			averFree_all.value = (res.averFree/1000000000).toFixed(2);
 			curFree_all.value = (res.curFree/100000000).toFixed(2);
-			// 缓存内存
-			maxCache_all.value=(res.maxCache/100000000).toFixed(2)
-			minCache_all.value=(res.minCache/100000000).toFixed(2)
-			averCache_all.value = (res.averCache/1000000000).toFixed(2);
-			curCache_all.value = (res.curCache/100000000).toFixed(2);
-			// 高速缓冲
-			maxBuff_all.value=(res.maxBuff/100000000).toFixed(2)
-			minBuff_all.value=(res.minBuff/100000000).toFixed(2)
-			averBuff_all.value = (res.averBuff/1000000000).toFixed(2);
-			curBuff_all.value = (res.curBuff/100000000).toFixed(2);
 			
-			const jsonData = JSON.parse(JSON.stringify(res.buffData)); // 将JSON数据解析为JavaScript对象
-			jsonData.forEach((item) => {
-			  const date = new Date(item.date);
-			  const formattedTime = date.toLocaleTimeString('en-US', { hour12: false });
-			  const month = date.getMonth() + 1;
-			  const day = date.getDate();
-			  const formattedDate = `${month}-${day} ${formattedTime}`;
-			  Xdata_all.value.push(formattedDate);
-			  Ydata_buffData_all.value.push(item.value / 1000000000).toFixed(2);
-			});
-			// 缓存内存
-			const jsonData_cace = JSON.parse(JSON.stringify(res.cacheData));
-			jsonData_cace.forEach((item)=>{
-				Ydata_cacheData_all.value.push(item.value/1000000000).toFixed(2);
-			})
 			
 			// 空闲内存
 			const jsonData_free = JSON.parse(JSON.stringify(res.freeData));
@@ -1051,22 +826,26 @@
 		background-color: #fff;
 		margin-right: 10px;
 		flex: 1;
+		box-shadow: 2px 2px 2px 2px #c5c6c8;
 	}
 	.chart_week {
 		padding: 10px;
 		background-color: #fff;
 		flex: 1;
 		margin-bottom: 10px;
+		box-shadow: 2px 2px 2px 2px #c5c6c8;
 	}
 	.chart_all {
 		width: 100%;
 		margin-top: 10px;
 		padding: 10px;
 		background-color: #fff;
+		box-shadow: 2px 2px 2px 2px #c5c6c8;
 	}
 	.echart_all {
 		height: 400px;
 		width: 100%;
+		
 	}
 
 	.charttxt {

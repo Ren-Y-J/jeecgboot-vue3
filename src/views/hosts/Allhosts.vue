@@ -406,10 +406,6 @@ const ruleshow_rack = ref(false);
 		}
 	};
 
-
-
-
-
 	const columns = [
 		{
 			title: '状态',
@@ -770,7 +766,7 @@ const ruleshow_rack = ref(false);
 
 <style scoped lang="less">
 	.allhostes {
-		padding: 10px;
+		padding: 8px;
 	}
 	.hostes {
 		width: 100%;
