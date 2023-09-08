@@ -63,11 +63,11 @@
 				@finishFailed="onFinishFailed"
 			>
 				<a-form-item label="名称" name="username" :rules="[{ required: true, message: '请输入名称!' }]">
-					<a-input/>
+					<a-input v-model:value="name" />
 				</a-form-item>
 
 				<a-form-item label="备注">
-					<a-input  />
+					<a-input  v-model:value="note" />
 				</a-form-item>
 
 				<a-form-item label="IP列表">
@@ -88,7 +88,7 @@
 								<a-input v-model:value="IPlists.ip" />
 							</div>
 							<div class="iplist_title_IP">
-							<a-input v-model:value="IPlists.remark" />
+							<a-input v-model:value="IPlists.note" />
 							</div>
 							<div class='pointer' @click='del(index)' style='margin-right:15px'>
 								<close-outlined :style="{color: 'red'}" />
@@ -106,6 +106,7 @@
 	import { reactive, toRefs, ref } from 'vue';
 	import { getlist, addlist } from './transition.ts';
 	import{ CloseOutlined} from '@ant-design/icons-vue'
+	import { message } from 'ant-design-vue';
 	const data = reactive({
 		initdata: '',
 		pageNum: 1,
@@ -115,12 +116,14 @@
 		 IPlists:[
 			 {
 		        ip:" ",
-		        remark:" ",
+		        note:" ",
 		      },
 			  
-			  ]
+			  ],
+			  name:'',
+			  note:''
 	});
-	const { initdata, pageNum, pageSize, total, add_visible, IPlists } = toRefs(data);
+	const { initdata, pageNum, pageSize, total, add_visible, IPlists,name,note } = toRefs(data);
 	const onFinish = (values) => {
 		console.log('Success:', values);
 	};
@@ -177,10 +180,18 @@
 			// console.log(error);
 			return console.log(error);
 		}
-		// IPlists.value = IPlists.value.filter(item => item.ip !== undefined);
-		// console.log(IPlists.value,'IPlists')
-		
-		
+		IPlists.value = IPlists.value.filter(item => item.ip !== undefined);
+		addlist({
+			ipList:IPlists.value,
+			name:name.value,
+			note:note.value
+		}).then((res)=>{
+			message.success('添加成功');
+				getData();
+			add_visible.value=false
+			
+			
+		})
 		
 		
 		
@@ -189,28 +200,15 @@
 		
 	};
 	const del = (index)=>{
-		console.log(index,'index')
-		
-		
-		
 		     IPlists.value.splice(index,1);
 		    
 	}
-	
 	const pushbtn = () =>{
 		let cope = {
         ip:IPlists.value.ip,
-        remark:IPlists.value.remark
+        note:IPlists.value.note
       }
 		IPlists.value.push(cope)
-		
-		// IPlists.value.forEach(item=>{
-		// 	console.log(item,'6')
-			
-			
-		// })
-		// IPlists.value = IPlists.value.filter(item => item.ip !== undefined);
-console.log(IPlists.value,'9--')
 		
 	}
 	
