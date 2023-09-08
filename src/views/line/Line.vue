@@ -1,9 +1,9 @@
 <template>
   <div class="line">
     <div class="btn">
-      <!-- type="success" -->
+      <!-- type="success"style="color: #fff;background:#44b363"  -->
       <div class="left">
-        <a-button style="color: #fff;background:#44b363" @click="isOpen">添加线路</a-button>
+        <a-button type="primary" @click="isOpen">添加线路</a-button>
         <a-button type="primary">线路排序</a-button>
       </div>
       <div class="right">
