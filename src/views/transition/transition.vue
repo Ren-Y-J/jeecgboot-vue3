@@ -34,9 +34,6 @@
 				:data-source="initdata"
 				bordered
 			>
-				<template v-if="column.dataIndex === 'operation'">
-					<div> 阿诗丹顿洒点水 </div>
-				</template>
 			</a-table>
 
 			<!-- 分页 -->
@@ -53,71 +50,93 @@
 			</div>
 		</div>
 		<!-- 添加弹窗 -->
-		 <a-modal v-model:visible="add_visible" title="添加转发服务器" @ok="handleOk">
-			   <a-form
-			      ref="formRef"
-			      :model="formState"
-			      name="basic"
-			      :label-col="{ span: 6 }"
-			      :wrapper-col="{ span: 16 }"
-			      autocomplete="off"
-			      @finish="onFinish"
-			      @finishFailed="onFinishFailed"
-			    >
-			      <a-form-item
-			        label="Username"
-			        name="username"
-			        :rules="[{ required: true, message: 'Please input your username!' }]"
-			      >
-			        <a-input v-model:value="formState.username" />
-			      </a-form-item>
-			  
-			      <a-form-item
-			        label="Password"
-			        name="password"
-			        :rules="[{ required: true, message: 'Please input your password!' }]"
-			      >
-			        <a-input-password v-model:value="formState.password" />
-			      </a-form-item>
-			  
-			    </a-form>
-			 
-			 
-		    </a-modal>
+		<a-modal width="1000px" v-model:visible="add_visible" title="添加转发服务器" @ok="handleOk">
+			<a-form
+			style='margin-top: 10px;'
+				ref="formRef"
+				:model="formState"
+				name="basic"
+				:label-col="{ span: 3 }"
+				:wrapper-col="{ span: 20 }"
+				autocomplete="off"
+				@finish="onFinish"
+				@finishFailed="onFinishFailed"
+			>
+				<a-form-item label="名称" name="username" :rules="[{ required: true, message: '请输入名称!' }]">
+					<a-input/>
+				</a-form-item>
+
+				<a-form-item label="备注">
+					<a-input  />
+				</a-form-item>
+
+				<a-form-item label="IP列表">
+					<div class="iplist">
+						<div class="iplist_title">
+							<div class="iplist_title_IP">
+								<span style="font-weight: 700">IP</span>
+							</div>
+							<div class="iplist_title_IP">
+								<span style="font-weight: 700">备注</span>
+							</div>
+							<div class="iplist_title_IP">
+								<span style="font-weight: 700;margin-right:15px">操作</span>
+							</div>
+						</div>
+						<div class="iplist_input" v-for="(IPlists,index) in IPlists">
+							<div class="iplist_title_IP">
+								<a-input v-model:value="IPlists.ip" />
+							</div>
+							<div class="iplist_title_IP">
+							<a-input v-model:value="IPlists.remark" />
+							</div>
+							<div class='pointer' @click='del(index)' style='margin-right:15px'>
+								<close-outlined :style="{color: 'red'}" />
+							</div>
+						</div>
+					</div>
+					<a-button style='margin-top:8px;wdith:100%' @click="pushbtn"> <search-outlined />添加</a-button>
+				</a-form-item>
+			</a-form>
+		</a-modal>
 	</div>
 </template>
 
 <script setup>
 	import { reactive, toRefs, ref } from 'vue';
-	import { getlist,addlist } from './transition.ts';
+	import { getlist, addlist } from './transition.ts';
+	import{ CloseOutlined} from '@ant-design/icons-vue'
 	const data = reactive({
 		initdata: '',
 		pageNum: 1,
 		pageSize: 10,
-		total:'',
-		add_visible:false,
-		formState:{
-			   username: '',
-			      password: '',
-		}
+		total: '',
+		add_visible: false,
+		 IPlists:[
+			 {
+		        ip:" ",
+		        remark:" ",
+		      },
+			  
+			  ]
 	});
-	const { initdata,pageNum,pageSize,total,add_visible,formState } = toRefs(data);
-	 const onFinish = values => {
-	      console.log('Success:', values);
-	    };
-	    const onFinishFailed = errorInfo => {
-	      console.log('Failed:', errorInfo);
-	    };
-const getData = () =>{
-	getlist({
-		pageNum:pageNum.value,
-		pageSize:pageSize.value
-	}).then(res=>{
-		initdata.value=res.records
-		total.value=res.total
-	})
-}
-	getData()
+	const { initdata, pageNum, pageSize, total, add_visible, IPlists } = toRefs(data);
+	const onFinish = (values) => {
+		console.log('Success:', values);
+	};
+	const onFinishFailed = (errorInfo) => {
+		console.log('Failed:', errorInfo);
+	};
+	const getData = () => {
+		getlist({
+			pageNum: pageNum.value,
+			pageSize: pageSize.value,
+		}).then((res) => {
+			initdata.value = res.records;
+			total.value = res.total;
+		});
+	};
+	getData();
 	const columns = [
 		{
 			title: '名称',
@@ -147,30 +166,53 @@ const getData = () =>{
 			align: 'center',
 		},
 	];
-	const seachbtn = () =>{
-		add_visible.value=true
-		
-		
-	}
-	const formRef = ref(null)
+	const seachbtn = () => {
+		add_visible.value = true;
+	};
+	const formRef = ref(null);
 	const handleOk = async () => {
-		
 		try {
-		  await formRef.value.validate()
+			await formRef.value.validate();
 		} catch (error) {
-		  // console.log(error);
-		  return console.log(error)
+			// console.log(error);
+			return console.log(error);
 		}
+		// IPlists.value = IPlists.value.filter(item => item.ip !== undefined);
+		// console.log(IPlists.value,'IPlists')
 		
 		
+		
+		
+		
+		
+		
+		
+	};
+	const del = (index)=>{
+		console.log(index,'index')
+		
+		
+		
+		     IPlists.value.splice(index,1);
+		    
 	}
 	
-	
-	
-	
-	
-	
-	
+	const pushbtn = () =>{
+		let cope = {
+        ip:IPlists.value.ip,
+        remark:IPlists.value.remark
+      }
+		IPlists.value.push(cope)
+		
+		// IPlists.value.forEach(item=>{
+		// 	console.log(item,'6')
+			
+			
+		// })
+		// IPlists.value = IPlists.value.filter(item => item.ip !== undefined);
+console.log(IPlists.value,'9--')
+		
+	}
 	
 </script>
 
@@ -186,5 +228,34 @@ const getData = () =>{
 	.searchbtn {
 		display: flex;
 		flex-wrap: nowrap;
+	}
+
+	.iplist {
+		width: 100%;
+		
+	}
+	.iplist_title {
+		width: 100%;
+		background-color: #eff2f7;
+		padding: 10px;
+		display: flex;
+		justify-content: space-between;
+	border: 1px solid #eaeef3;
+	border-top: none;
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	.iplist_input{
+		width: 100%;
+		padding: 10px;
+		display: flex;
+		justify-content: space-between;
+		border: 1px solid #eaeef3;
 	}
 </style>
