@@ -4,7 +4,7 @@
       <!-- type="success"style="color: #fff;background:#44b363"  -->
       <div class="left">
         <a-button type="primary" @click="isOpen">添加线路</a-button>
-        <a-button type="primary">线路排序</a-button>
+        <a-button type="primary" @click="sorthandleOk">线路排序</a-button>
       </div>
       <div class="right">
         <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
@@ -95,7 +95,7 @@
           <a-form-item label="所属主机" name="" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
-                @change="handleChangehost">
+                @change="handleChange">
                 <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
@@ -105,7 +105,6 @@
       </a-modal>
       <!-- 编辑 -->
       <a-modal v-model:visible="editvisible" :title="editopTitle" @ok="edithandleOk" @cancel="editonCloseaclFn">
-
         <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
 
@@ -147,13 +146,42 @@
           </a-form-item>
         </a-form>
       </a-modal>
+      <!-- 线路排序 -->
+      <a-modal v-model:visible="sortvisible" :title="sorttopTitle" @ok="sorthandleOk" @cancel="sortCloseaclFn">
+        <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <a-form-item label="所属主机" name="" style='margin-top: 26px'>
+            <a-space>
+              <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
+                @focus="focus" @change="handleChangsort">
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
+                  ">{{ item.ipAddress }} </a-select-option>
+                <!-- <div>
+                  <span>{{ item.hostName }}</span>
+                </div> -->
+              </a-select>
+
+            </a-space>
+
+          </a-form-item>
+          <a-orm-item>
+            <ul v-for="item in lineNameList" :key="item.lineId">
+              <li>{{ item.lineName }} <a-button type="primary" @click="moveup(item)">上移</a-button>
+                <a-button @click="moveDown(item)">下移</a-button>
+              </li>
+            </ul>
+          </a-orm-item>
+
+        </a-form>
+      </a-modal>
     </div>
   </div>
 </template>
 <script name='line' setup>
 import { ref, defineComponent, reactive } from 'vue'
-import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline } from './line'
+import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName } from './line'
 import { message } from 'ant-design-vue';
+
 // 我没引入
 const columns = [{
   title: '顺序',
@@ -266,10 +294,11 @@ const handleChangeFn = async (value) => {
   totals.value = data.value.length
 
 }
+//所有主机
 const gethost = async () => {
   // console.log('搜索11111');
   let res = await gethostsAll()
-  // console.log(res, 'res主机');
+  console.log(res, 'res主机');
   // allhostId.value = res.map(item => item.hostId)
   allhostId.value = res
   // console.log(allhostId.value);
@@ -277,12 +306,14 @@ const gethost = async () => {
 
 }
 gethost()
+// resACL选择
 const getaclId = async () => {
   // console.log('搜索11111');
   let res = await getaclIdAll()
   console.log(res, 'resACL选择1111');
   // allaclId.value = res.map(item => item.aclId)
   allaclId.value = res
+
 
 
 }
@@ -446,7 +477,48 @@ const editchangeradioFn = (value) => {
     editformState.value.aclId = []
   }
 }
+// 这块写的是线路排序
+const sortvisible = ref(false)
+const sorttopTitle = ref('排序')
+const sortformState = ref({
+  hostName: "",
+  ipAddress: "",
+  port: "",
+  rootSec: "",
+  clusterId: "",
+  role: "",
+  floor: ""
+})
+const lineNameList = ref([])
+const sorthandleOk = () => {
+  console.log('1');
+  sortvisible.value = true
+}
+const sortCloseaclFn = () => {
 
+}
+const handleChangsort = async (value) => {
+  console.log(value, 'ipAddress');
+  let id = value
+  let res = await getinfolineName({ value })
+  console.log(res, 'res518');
+  lineNameList.value = res
+  // let res1 = allhostId.value.map(item => {
+  //   console.log(item);
+  //   if (allhostId.value.find(val => val == id)) {
+  //     console.log(val);
+  //   }
+  //   // if (id.find(val => val == item.hostId)) {
+  //   //   return item
+  //   // }
+  // })
+  // console.log(res1);
+}
+const moveup = async (item) => {
+  // console.log(item.lineId);
+  // let index = item.lineId
+  // lineNameList.value.splice(index - 1, 1, ...lineNameList.value.splice(index, 1, lineNameList.value[index - 1]))
+}
 </script>
 <style scoped lang="less">
 .line {
