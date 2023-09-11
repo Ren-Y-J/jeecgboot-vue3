@@ -34,16 +34,30 @@
 				:data-source="initdata"
 				bordered
 			>
-			
-			<template #bodyCell="{ column, record }">
-				<template v-if="columns.dataIndex === 'ipList'">
-					<div class="pointer"> 000 </div>
-				</template>
 
-				<template v-if="columns.dataIndex === 'operation'">
-			 <a-table-column key="age" title="Age" data-index="ipList" />
+				<template #bodyCell="{ column, record }">
+					<!-- IP列表 -->
+					<template v-if="column.dataIndex === 'ipList'">
+						<div  v-for="(item, index) in record.ipList" key="index" class='iplist_data' style="margin-right:10px">
+							<span>
+							{{item.ip}}({{item.note}})
+							</span>
+						</div>
+					</template>
+					<!-- 操作 -->
+					<template v-if="column.dataIndex === 'operation'">
+						
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div class='pointer' style="margin-right:5px" @click='editBtn(record)' >
+								<form-outlined style="color:#1b9ef3" />
+							</div>
+							<div class='pointer' >
+								<delete-outlined style="color:#f15d48"  />
+							</div>
+						</div>
+						
+					</template>
 				</template>
-			</template>
 			</a-table>
 
 			<!-- 分页 -->
@@ -115,7 +129,7 @@
 <script setup>
 	import { reactive, toRefs, ref } from 'vue';
 	import { getlist, addlist } from './transition.ts';
-	import { CloseOutlined } from '@ant-design/icons-vue';
+	import { CloseOutlined,FormOutlined,DeleteOutlined } from '@ant-design/icons-vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
 		initdata: '',
@@ -217,6 +231,16 @@
 		// }
 		IPlists.value.push(cope);
 	};
+	const editBtn = (record) =>{
+		console.log(record,'record')
+		getlist({
+			id:1700076376495853570,
+			pageNum: pageNum.value,
+			pageSize: pageSize.value,
+		}).then((res) => {
+		console.log(res,'res')
+		});
+	}
 </script>
 
 <style>
@@ -251,5 +275,15 @@
 		display: flex;
 		justify-content: space-between;
 		border: 1px solid #eaeef3;
+	}
+	.iplist_data{
+		width: 1400;
+		padding:3px;
+		border: 1px solid #249ff3;
+		display: flex;
+	float:left;
+	span{
+		color:#249ff3
+	}
 	}
 </style>
