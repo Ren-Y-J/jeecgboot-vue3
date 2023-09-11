@@ -34,6 +34,16 @@
 				:data-source="initdata"
 				bordered
 			>
+			
+			<template #bodyCell="{ column, record }">
+				<template v-if="columns.dataIndex === 'ipList'">
+					<div class="pointer"> 000 </div>
+				</template>
+
+				<template v-if="columns.dataIndex === 'operation'">
+			 <a-table-column key="age" title="Age" data-index="ipList" />
+				</template>
+			</template>
 			</a-table>
 
 			<!-- 分页 -->
@@ -52,7 +62,7 @@
 		<!-- 添加弹窗 -->
 		<a-modal width="1000px" v-model:visible="add_visible" title="添加转发服务器" @ok="handleOk">
 			<a-form
-			style='margin-top: 10px;'
+				style="margin-top: 10px"
 				ref="formRef"
 				:model="formState"
 				name="basic"
@@ -67,7 +77,7 @@
 				</a-form-item>
 
 				<a-form-item label="备注">
-					<a-input  v-model:value="note" />
+					<a-input v-model:value="note" />
 				</a-form-item>
 
 				<a-form-item label="IP列表">
@@ -80,22 +90,22 @@
 								<span style="font-weight: 700">备注</span>
 							</div>
 							<div class="iplist_title_IP">
-								<span style="font-weight: 700;margin-right:15px">操作</span>
+								<span style="font-weight: 700; margin-right: 15px">操作</span>
 							</div>
 						</div>
-						<div class="iplist_input" v-for="(IPlists,index) in IPlists">
+						<div class="iplist_input" v-for="(IPlists, index) in IPlists">
 							<div class="iplist_title_IP">
 								<a-input v-model:value="IPlists.ip" />
 							</div>
 							<div class="iplist_title_IP">
-							<a-input v-model:value="IPlists.note" />
+								<a-input v-model:value="IPlists.note" />
 							</div>
-							<div class='pointer' @click='del(index)' style='margin-right:15px'>
-								<close-outlined :style="{color: 'red'}" />
+							<div class="pointer" @click="del(index)" style="margin-right: 15px">
+								<close-outlined :style="{ color: 'red' }" />
 							</div>
 						</div>
 					</div>
-					<a-button style='margin-top:8px;wdith:100%' @click="pushbtn"> <search-outlined />添加</a-button>
+					<a-button style="margin-top: 8px; wdith: 100%" @click="pushbtn"> <search-outlined />添加</a-button>
 				</a-form-item>
 			</a-form>
 		</a-modal>
@@ -105,7 +115,7 @@
 <script setup>
 	import { reactive, toRefs, ref } from 'vue';
 	import { getlist, addlist } from './transition.ts';
-	import{ CloseOutlined} from '@ant-design/icons-vue'
+	import { CloseOutlined } from '@ant-design/icons-vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
 		initdata: '',
@@ -113,17 +123,16 @@
 		pageSize: 10,
 		total: '',
 		add_visible: false,
-		 IPlists:[
-			 {
-		        ip:" ",
-		        note:" ",
-		      },
-			  
-			  ],
-			  name:'',
-			  note:''
+		IPlists: [
+			{
+				ip: ' ',
+				note: ' ',
+			},
+		],
+		name: '',
+		note: '',
 	});
-	const { initdata, pageNum, pageSize, total, add_visible, IPlists,name,note } = toRefs(data);
+	const { initdata, pageNum, pageSize, total, add_visible, IPlists, name, note } = toRefs(data);
 	const onFinish = (values) => {
 		console.log('Success:', values);
 	};
@@ -174,44 +183,40 @@
 	};
 	const formRef = ref(null);
 	const handleOk = async () => {
-		try {
-			await formRef.value.validate();
-		} catch (error) {
-			// console.log(error);
-			return console.log(error);
-		}
-		IPlists.value = IPlists.value.filter(item => item.ip !== undefined);
+		// try {
+		// 	await formRef.value.validate();
+		// } catch (error) {
+		// 	// console.log(error);
+		// 	return console.log(error);
+		// }
+		IPlists.value = IPlists.value.filter((item) => item.ip !== undefined);
 		addlist({
-			ipList:IPlists.value,
-			name:name.value,
-			note:note.value
-		}).then((res)=>{
+			ipList: IPlists.value,
+			name: name.value,
+			note: note.value,
+		}).then((res) => {
 			message.success('添加成功');
-				getData();
-			add_visible.value=false
-			
-			
-		})
-		
-		
-		
-		
-		
-		
+			getData();
+			add_visible.value = false;
+		});
 	};
-	const del = (index)=>{
-		     IPlists.value.splice(index,1);
-		    
-	}
-	const pushbtn = () =>{
+	const del = (index) => {
+		IPlists.value.splice(index, 1);
+	};
+	const pushbtn = () => {
 		let cope = {
-        ip:IPlists.value.ip,
-        note:IPlists.value.note
-      }
-		IPlists.value.push(cope)
-		
-	}
-	
+			ip: IPlists.value.ip,
+			note: IPlists.value.note,
+		};
+		console.log(cope, 'cope');
+		// if(cope.ip==undefined){
+		// 	message.error('请输入IP');
+
+		// }else{
+
+		// }
+		IPlists.value.push(cope);
+	};
 </script>
 
 <style>
@@ -230,7 +235,6 @@
 
 	.iplist {
 		width: 100%;
-		
 	}
 	.iplist_title {
 		width: 100%;
@@ -238,18 +242,10 @@
 		padding: 10px;
 		display: flex;
 		justify-content: space-between;
-	border: 1px solid #eaeef3;
-	border-top: none;
-		
-		
-		
-		
-		
-		
-		
-		
+		border: 1px solid #eaeef3;
+		border-top: none;
 	}
-	.iplist_input{
+	.iplist_input {
 		width: 100%;
 		padding: 10px;
 		display: flex;
