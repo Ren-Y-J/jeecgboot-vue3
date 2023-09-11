@@ -147,7 +147,7 @@
 						<div>
 							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
 							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
-							<span  class="pointer" style="color: #2e7dff">配置</span>
+							<span  class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span>
 						</div>
 					</template>
 				</template>
@@ -748,19 +748,19 @@ const ruleshow_rack = ref(false);
 	const goboard_cpu =(record)=>{
 		let id =record.hostId
 		  router.push(`/hosts/host_board?${id}`)
-		console.log(record,'record')
 	}
 	const goboard_stor =(record)=>{
 		let id =record.hostId
 		  router.push(`/hosts/host_board_storage?${id}`)
-		console.log(record,'record')
 	}
 	const goboard_disk =(record)=>{
 		let id =record.hostId
 		  router.push(`/hosts/host_board_disk?${id}`)
-		console.log(record,'record')
 	}
-	
+	const GoDep = (record)=>{
+		let id =record.hostId
+		  router.push(`/hosts/deploy?${id}`)
+	}
 	
 </script>
 

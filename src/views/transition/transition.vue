@@ -11,7 +11,7 @@
 					</a-col>
 					<a-col span="5">
 						<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 20 }">
-							<a-input v-model:value="name" placeholder="请输入备注"></a-input>
+							<a-input v-model:value="note" placeholder="请输入备注"></a-input>
 						</a-form-item>
 					</a-col>
 					<a-col span="5">
@@ -21,7 +21,7 @@
 						</div>
 					</a-col>
 				</a-row>
-				<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="seachbtn"> <search-outlined />添加转发服务器</a-button>
+				<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="addOpen"> <search-outlined />添加转发服务器</a-button>
 			</a-form>
 		</div>
 		<!-- 表格 -->
@@ -34,28 +34,25 @@
 				:data-source="initdata"
 				bordered
 			>
-
 				<template #bodyCell="{ column, record }">
 					<!-- IP列表 -->
 					<template v-if="column.dataIndex === 'ipList'">
-						<div  v-for="(item, index) in record.ipList" key="index" class='iplist_data' style="margin-right:10px">
-							<span>
-							{{item.ip}}({{item.note}})
-							</span>
+						<div v-for="(item, index) in record.ipList" key="index" class="iplist_data" style="margin-right: 10px">
+							<span> {{ item.ip }}({{ item.note }}) </span>
 						</div>
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
-						
-						<div style="display: flex; justify-content: center; align-items: center;">
-							<div class='pointer' style="margin-right:5px" @click='editBtn(record)' >
-								<form-outlined style="color:#1b9ef3" />
+						<div style="display: flex; justify-content: center; align-items: center">
+							<div class="pointer" style="margin-right: 5px" @click="editBtn(record)">
+								<form-outlined style="color: #1b9ef3" />
 							</div>
-							<div class='pointer' >
-								<delete-outlined style="color:#f15d48"  />
+							<div class="pointer">
+								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
+									<delete-outlined style="color: #f15d48" />
+								</a-popconfirm>
 							</div>
 						</div>
-						
 					</template>
 				</template>
 			</a-table>
@@ -83,15 +80,13 @@
 				:label-col="{ span: 3 }"
 				:wrapper-col="{ span: 20 }"
 				autocomplete="off"
-				@finish="onFinish"
-				@finishFailed="onFinishFailed"
 			>
-				<a-form-item label="名称" name="username" :rules="[{ required: true, message: '请输入名称!' }]">
-					<a-input v-model:value="name" />
+				<a-form-item label="名称" name="name" :rules="[{ required: true, message: '请输入名称!' }]">
+					<a-input v-model:value="formState.name" />
 				</a-form-item>
 
 				<a-form-item label="备注">
-					<a-input v-model:value="note" />
+					<a-input v-model:value="formState.note" />
 				</a-form-item>
 
 				<a-form-item label="IP列表">
@@ -127,9 +122,9 @@
 </template>
 
 <script setup>
-	import { reactive, toRefs, ref } from 'vue';
-	import { getlist, addlist } from './transition.ts';
-	import { CloseOutlined,FormOutlined,DeleteOutlined } from '@ant-design/icons-vue';
+	import { reactive, toRefs, ref, watchEffect } from 'vue';
+	import { getlist, addlist, editlist, dellist } from './transition.ts';
+	import { CloseOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
 		initdata: '',
@@ -145,14 +140,21 @@
 		],
 		name: '',
 		note: '',
+		modelType: '', // 弹窗类型  0添加 1修改
+		recordID: '',
+		formState: {
+			name: '',
+			note: '',
+		},
 	});
-	const { initdata, pageNum, pageSize, total, add_visible, IPlists, name, note } = toRefs(data);
+	const { initdata, pageNum, pageSize, total, add_visible, IPlists, name, note, modelType, recordID, formState } = toRefs(data);
 	const onFinish = (values) => {
 		console.log('Success:', values);
 	};
 	const onFinishFailed = (errorInfo) => {
-		console.log('Failed:', errorInfo);
+		console.log('Fail123ed:', errorInfo);
 	};
+
 	const getData = () => {
 		getlist({
 			pageNum: pageNum.value,
@@ -192,55 +194,123 @@
 			align: 'center',
 		},
 	];
-	const seachbtn = () => {
+	const addOpen = () => {
+		modelType.value = 0;
+
 		add_visible.value = true;
 	};
 	const formRef = ref(null);
 	const handleOk = async () => {
-		// try {
-		// 	await formRef.value.validate();
-		// } catch (error) {
-		// 	// console.log(error);
-		// 	return console.log(error);
-		// }
-		IPlists.value = IPlists.value.filter((item) => item.ip !== undefined);
-		addlist({
-			ipList: IPlists.value,
-			name: name.value,
-			note: note.value,
-		}).then((res) => {
-			message.success('添加成功');
-			getData();
-			add_visible.value = false;
-		});
+		console.log(formState.value, 'formState');
+		try {
+			await formRef.value.validate();
+		} catch (error) {
+			console.log(error);
+			return;
+		}
+
+		if (modelType.value == 0) {
+			IPlists.value = IPlists.value.filter((item) => item.ip !== undefined);
+			addlist({
+				ipList: IPlists.value,
+				name: formState.value.name,
+				note: formState.value.note,
+			}).then((res) => {
+				message.success('添加成功');
+				getData();
+				add_visible.value = false;
+			});
+		}
+		if (modelType.value == 1) {
+			editlist({
+				id: recordID.value,
+				ipList: IPlists.value,
+				name: formState.value.name,
+				note: formState.value.note,
+			}).then((res) => {
+				message.success('修改成功');
+				getData();
+				add_visible.value = false;
+			});
+		}
 	};
 	const del = (index) => {
-		IPlists.value.splice(index, 1);
+		console.log(index, 'index');
+		if (index !== 0) {
+			IPlists.value.splice(index, 1);
+		}
 	};
 	const pushbtn = () => {
 		let cope = {
 			ip: IPlists.value.ip,
 			note: IPlists.value.note,
 		};
-		console.log(cope, 'cope');
-		// if(cope.ip==undefined){
-		// 	message.error('请输入IP');
-
-		// }else{
-
-		// }
-		IPlists.value.push(cope);
+		if (IPlists.value[0].ip == '') {
+			message.error('请输入IP');
+		} else {
+			IPlists.value.push(cope);
+		}
+		console.log(IPlists.value[0].ip, 'cope');
 	};
-	const editBtn = (record) =>{
-		console.log(record,'record')
+	const editBtn = (record) => {
+		recordID.value = record.id;
+		modelType.value = 1;
+		add_visible.value = true;
+		let foundData = initdata.value.find((data) => data.id === record.id);
+		formState.value.name = foundData.name;
+		formState.value.note = foundData.note;
+		IPlists.value = foundData.ipList;
+	};
+	const delBtn = (record) => {
+		console.log(record, 'recordrecord');
+		dellist({
+			id: record.id,
+		}).then((res) => {
+			message.success('删除成功');
+			getData();
+		});
+	};
+
+	const seachbtn = () => {
 		getlist({
-			id:1700076376495853570,
+			name: formState.value.name,
+			note: formState.value.note,
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
 		}).then((res) => {
-		console.log(res,'res')
+			initdata.value = res.records;
+			total.value = res.total;
 		});
-	}
+	};
+	const resetbtn = () => {
+		name.value = '';
+		note.value = '';
+		pageNum.value = 1;
+		pageSize.value = 10;
+		formState.value.name = '';
+		formState.value.note = '';
+		getData();
+	};
+	const onShowSizeChange = (current, pageSize) => {
+		pageSize = pageSize.value;
+		getData();
+	};
+	const changeFn = (P, Ps) => {
+		P = pageNum.value;
+		getData();
+	};
+	watchEffect(() => {
+		if (add_visible.value == false) {
+			name.value = '';
+			note.value = '';
+			IPlists.value = [
+				{
+					ip: '',
+					note: '',
+				},
+			];
+		}
+	});
 </script>
 
 <style>
@@ -276,14 +346,14 @@
 		justify-content: space-between;
 		border: 1px solid #eaeef3;
 	}
-	.iplist_data{
-		width: 1400;
-		padding:3px;
+	.iplist_data {
+		cursor: pointer;
+		padding: 3px;
 		border: 1px solid #249ff3;
 		display: flex;
-	float:left;
-	span{
-		color:#249ff3
-	}
+		float: left;
+		span {
+			color: #249ff3;
+		}
 	}
 </style>
