@@ -4,7 +4,7 @@
       <!-- type="success"style="color: #fff;background:#44b363"  -->
       <div class="left">
         <a-button type="primary" @click="isOpen">添加线路</a-button>
-        <a-button type="primary" @click="sorthandleOk">线路排序</a-button>
+        <a-button type="primary" @click="isOpensort">线路排序</a-button>
       </div>
       <div class="right">
         <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
@@ -165,9 +165,10 @@
 
           </a-form-item>
           <a-orm-item>
-            <ul v-for="item in lineNameList" :key="item.lineId">
-              <li>{{ item.lineName }} <a-button type="primary" @click="moveup(item)">上移</a-button>
-                <a-button @click="moveDown(item)">下移</a-button>
+            <ul v-for="(item, index) in lineNameList" :key="index">
+              <li>{{ item.lineName }} <a-button type="primary" @click="moveup(index)"
+                  :disabled="index === 0">上移</a-button>
+                <a-button @click="moveDown(index)" :disabled="index === lineNameList.length - 1">下移</a-button>
               </li>
             </ul>
           </a-orm-item>
@@ -179,7 +180,7 @@
 </template>
 <script name='line' setup>
 import { ref, defineComponent, reactive } from 'vue'
-import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName } from './line'
+import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName } from './line'
 import { message } from 'ant-design-vue';
 
 // 我没引入
@@ -428,9 +429,10 @@ const editradiovalue = ref(0);
 const editopTitle = ref('修改线路配置')
 const editformState = ref({
   aclId: [],
-  host: null,//主机
+  host: undefined,//主机
   lineName: "",
 })
+
 const editisOpen = async (record) => {
   editvisible.value = true
   console.log(record, 'record');
@@ -490,13 +492,8 @@ const sortformState = ref({
   floor: ""
 })
 const lineNameList = ref([])
-const sorthandleOk = () => {
-  console.log('1');
-  sortvisible.value = true
-}
-const sortCloseaclFn = () => {
 
-}
+
 const handleChangsort = async (value) => {
   console.log(value, 'ipAddress');
   let id = value
@@ -514,10 +511,45 @@ const handleChangsort = async (value) => {
   // })
   // console.log(res1);
 }
-const moveup = async (item) => {
+const lineObjects = ref([])
+const isOpensort = () => {
+  sortvisible.value = true
+}
+const sorthandleOk = async () => {
+  console.log('1');
+  let res = await sortlineName(lineObjects.value)
+  console.log(res, 'res531s');
+  initData()
+  sortvisible.value = false
+  delAll()
+}
+const moveup = async (index) => {
+  console.log(index);
   // console.log(item.lineId);
   // let index = item.lineId
-  // lineNameList.value.splice(index - 1, 1, ...lineNameList.value.splice(index, 1, lineNameList.value[index - 1]))
+  lineNameList.value.splice(index - 1, 1, ...lineNameList.value.splice(index, 1, lineNameList.value[index - 1]))
+  lineObjects.value = lineNameList.value.map((line, index) => ({
+    lineId: line.lineId,
+    sort: index + 1,
+  }));
+
+}
+const moveDown = async (index) => {
+  console.log(index);
+  lineNameList.value.splice(index, 1, ...lineNameList.value.splice(index + 1, 1, lineNameList.value[index]))
+  console.log(lineNameList.value, '下');
+  lineObjects.value = lineNameList.value.map((line, index) => ({
+    lineId: line.lineId,
+    sort: index - 1,
+  }));
+}
+const sortCloseaclFn = () => {
+  delAll()
+}
+const delAll = () => {
+  editformState.value.host = ""
+  lineNameList.value = []
+  initData()
 }
 </script>
 <style scoped lang="less">
