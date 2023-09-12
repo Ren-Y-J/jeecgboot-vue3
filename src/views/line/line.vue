@@ -4,7 +4,7 @@
       <!-- type="success"style="color: #fff;background:#44b363"  -->
       <div class="left">
         <a-button type="primary" @click="isOpen">添加线路</a-button>
-        <a-button type="primary">线路排序</a-button>
+        <a-button type="primary" @click="isOpensort">线路排序</a-button>
       </div>
       <div class="right">
         <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
@@ -95,7 +95,7 @@
           <a-form-item label="所属主机" name="" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
-                @change="handleChangehost">
+                @change="handleChange">
                 <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
@@ -105,7 +105,6 @@
       </a-modal>
       <!-- 编辑 -->
       <a-modal v-model:visible="editvisible" :title="editopTitle" @ok="edithandleOk" @cancel="editonCloseaclFn">
-
         <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
 
@@ -147,13 +146,43 @@
           </a-form-item>
         </a-form>
       </a-modal>
+      <!-- 线路排序 -->
+      <a-modal v-model:visible="sortvisible" :title="sorttopTitle" @ok="sorthandleOk" @cancel="sortCloseaclFn">
+        <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <a-form-item label="所属主机" name="" style='margin-top: 26px'>
+            <a-space>
+              <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
+                @focus="focus" @change="handleChangsort">
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
+                  ">{{ item.ipAddress }} </a-select-option>
+                <!-- <div>
+                  <span>{{ item.hostName }}</span>
+                </div> -->
+              </a-select>
+
+            </a-space>
+
+          </a-form-item>
+          <a-orm-item>
+            <ul v-for="(item, index) in lineNameList" :key="index">
+              <li>{{ item.lineName }} <a-button type="primary" @click="moveup(index)"
+                  :disabled="index === 0">上移</a-button>
+                <a-button @click="moveDown(index)" :disabled="index === lineNameList.length - 1">下移</a-button>
+              </li>
+            </ul>
+          </a-orm-item>
+
+        </a-form>
+      </a-modal>
     </div>
   </div>
 </template>
 <script name='line' setup>
 import { ref, defineComponent, reactive } from 'vue'
-import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline } from './line'
+import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName } from './line'
 import { message } from 'ant-design-vue';
+
 // 我没引入
 const columns = [{
   title: '顺序',
@@ -266,10 +295,11 @@ const handleChangeFn = async (value) => {
   totals.value = data.value.length
 
 }
+//所有主机
 const gethost = async () => {
   // console.log('搜索11111');
   let res = await gethostsAll()
-  // console.log(res, 'res主机');
+  console.log(res, 'res主机');
   // allhostId.value = res.map(item => item.hostId)
   allhostId.value = res
   // console.log(allhostId.value);
@@ -277,12 +307,14 @@ const gethost = async () => {
 
 }
 gethost()
+// resACL选择
 const getaclId = async () => {
   // console.log('搜索11111');
   let res = await getaclIdAll()
   console.log(res, 'resACL选择1111');
   // allaclId.value = res.map(item => item.aclId)
   allaclId.value = res
+
 
 
 }
@@ -397,9 +429,10 @@ const editradiovalue = ref(0);
 const editopTitle = ref('修改线路配置')
 const editformState = ref({
   aclId: [],
-  host: null,//主机
+  host: undefined,//主机
   lineName: "",
 })
+
 const editisOpen = async (record) => {
   editvisible.value = true
   console.log(record, 'record');
@@ -446,7 +479,78 @@ const editchangeradioFn = (value) => {
     editformState.value.aclId = []
   }
 }
+// 这块写的是线路排序
+const sortvisible = ref(false)
+const sorttopTitle = ref('排序')
+const sortformState = ref({
+  hostName: "",
+  ipAddress: "",
+  port: "",
+  rootSec: "",
+  clusterId: "",
+  role: "",
+  floor: ""
+})
+const lineNameList = ref([])
 
+
+const handleChangsort = async (value) => {
+  console.log(value, 'ipAddress');
+  let id = value
+  let res = await getinfolineName({ value })
+  console.log(res, 'res518');
+  lineNameList.value = res
+  // let res1 = allhostId.value.map(item => {
+  //   console.log(item);
+  //   if (allhostId.value.find(val => val == id)) {
+  //     console.log(val);
+  //   }
+  //   // if (id.find(val => val == item.hostId)) {
+  //   //   return item
+  //   // }
+  // })
+  // console.log(res1);
+}
+const lineObjects = ref([])
+const isOpensort = () => {
+  sortvisible.value = true
+}
+const sorthandleOk = async () => {
+  console.log('1');
+  let res = await sortlineName(lineObjects.value)
+  console.log(res, 'res531s');
+  initData()
+  sortvisible.value = false
+  delAll()
+}
+const moveup = async (index) => {
+  console.log(index);
+  // console.log(item.lineId);
+  // let index = item.lineId
+  lineNameList.value.splice(index - 1, 1, ...lineNameList.value.splice(index, 1, lineNameList.value[index - 1]))
+  lineObjects.value = lineNameList.value.map((line, index) => ({
+    lineId: line.lineId,
+    sort: index + 1,
+  }));
+
+}
+const moveDown = async (index) => {
+  console.log(index);
+  lineNameList.value.splice(index, 1, ...lineNameList.value.splice(index + 1, 1, lineNameList.value[index]))
+  console.log(lineNameList.value, '下');
+  lineObjects.value = lineNameList.value.map((line, index) => ({
+    lineId: line.lineId,
+    sort: index - 1,
+  }));
+}
+const sortCloseaclFn = () => {
+  delAll()
+}
+const delAll = () => {
+  editformState.value.host = ""
+  lineNameList.value = []
+  initData()
+}
 </script>
 <style scoped lang="less">
 .line {

@@ -47,8 +47,8 @@
                 <!-- a-popover宽度-->
                 <a-popover :overlayStyle="{ width: '30%' }" trigger="hover">
                   <template #content>
-                    <!-- {{ record.aclRelName }} -->
-                    {{ record }}
+                    {{ record.aclRelName }}
+                    <!-- {{ record }} -->
 
                   </template>
 
@@ -70,16 +70,13 @@
                   class="editable-add-btn" style="margin-bottom: 8px">
                   点击编辑<edit-two-tone />
                 </a-button> -->
-                <!-- <div v-show="isShow && record.remark == ''"> -->
-                <a-button type="link" v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)"
-                  class="editable-add-btn" style="margin-bottom: 8px"> <edit-two-tone /></a-button>
-                <!-- </div> -->
-                <!-- <div v-show="isShow"> -->
-                {{ record.remark }}
 
+                {{ record.remark }}
                 <a-input ref="RemarkInp" name="remark" @blur="save(record.id)" v-if="isEdit && (isEditKey == record.id)"
                   @pressEnter=" save(record.id)" v-model:value="fromaclRelNameinfo.remark" />
-                <!-- </div> -->
+                <a-button type="link" v-if="!isEdit || isEditKey !== record.id" @click="handelClick(record.id)"
+                  class="editable-add-btn" style="margin-bottom: 8px"> <edit-two-tone /></a-button>
+
               </div>
             </template>
             <template v-if="column.dataIndex === 'aclType'">
@@ -150,6 +147,7 @@ const commonEnty = ref({ values: [] })//// 对象包数组   dengyixia wokankan 
 //   status: "0",
 //   updateTime: "",
 //   updateUserId: 0
+// 
 // })
 const fromaclRelNameinfo = ref({
   // remark: '星星',
@@ -198,7 +196,7 @@ const handelClick = async (val) => {
   await nextTick()
   RemarkInp.value.focus()
   // }
- }
+}
 
 const columns = [
   {

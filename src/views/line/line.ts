@@ -7,6 +7,8 @@ enum RoleApi {
   del = '/line/manage/delete',
   aclIdAll = '/acl/manage/listAll',
   hostsAll = '/hosts/get/hostsAll',
+  infolineName = '/line/manage/getLineByHostId',
+  sortlineName = '/line/manage/sort',
 }
 export const list = (params) => defHttp.post({ url: RoleApi.list, params });
 export const gethostsAll = (params) => defHttp.post({ url: RoleApi.hostsAll, params });
@@ -21,3 +23,5 @@ export const editline = (params) => defHttp.post({ url: RoleApi.edit, params });
 export const lineInfo = (params) => defHttp.get({ url: '/line/manage/' + params });
 //删除
 export const delline = (params) => defHttp.post({ url: RoleApi.del, params });
+export const getinfolineName = (params) => defHttp.post({ url: RoleApi.infolineName, params });
+export const sortlineName = (params) => defHttp.post({ url: RoleApi.sortlineName, params });
