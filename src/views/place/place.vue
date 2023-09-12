@@ -7,12 +7,16 @@
 			</a-tabs>
 			<div class="search">
 				<a-form-item :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
-					<a-input v-model:value="note" placeholder="按名称搜索"></a-input>
+					<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
 				</a-form-item>
-				<a-button type="primary">搜索</a-button>
+				<a-button @click="searchBtn" type="primary" style="margin-right: 10px"><search-outlined />搜索</a-button>
+				<a-button @click="resetbtn">
+					<reload-outlined />
+					重置
+				</a-button>
 			</div>
 			<div style="margin-bottom: 8px">
-				<a-button @click="addBtn" type="primary">添加</a-button>
+				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
 			</div>
 
 			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
@@ -20,19 +24,38 @@
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div style="display: flex; justify-content: center; align-items: center">
-							<div class="pointer">
+							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<span style="color: red">删除</span>
+									<span style="color: #1890ff">删除</span>
+								</a-popconfirm>
+							</div>
+							<div class="pointer" style="margin-right: 10px" @click="Godeploy(record)">
+								<span style="color: #1890ff">配置</span>
+							</div>
+							<div class="pointer" style="margin-right: 10px">
+								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
+									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 						</div>
 					</template>
 				</template>
 			</a-table>
+			<div style="padding: 10px; display: flex; justify-content: flex-end">
+				<a-pagination
+					:show-total="(total) => `共 ${total} 条数据`"
+					v-model:current="pageNum"
+					:total="total"
+					v-model:pageSize="pageSize"
+					show-size-changer
+					@showSizeChange="onShowSizeChange"
+					@change="changeFn"
+				/>
+			</div>
 		</div>
 	</div>
-	<a-modal v-model:visible="visible" title="添加域" @ok="handleOk"> 
-	<div v-if="activeKey=='0'">
+	<a-modal v-model:visible="visible" title="添加域" @ok="handleOk">
 		<a-form
 			style="margin-top: 10px"
 			ref="formRef"
@@ -41,39 +64,86 @@
 			:label-col="{ span: 3 }"
 			:wrapper-col="{ span: 20 }"
 			autocomplete="off"
+			validateTrigger='blur'
 		>
-			<a-form-item label="名称" name="name" :rules="[{ required: true, message: '请输入名称!' }]">
-				<a-input v-model:value="formState.name" />
+			<a-form-item v-show="placetype === '0'" label="域名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" :rules="[{ required: true, message: '请输入域名!' }]" name="name">
+				<a-input   placeholder="不要包含主机名，如www" v-model:value="formState.name" /> 
+			</a-form-item>
+
+			<a-form-item v-show="placetype === '0'" label="线路选择" :labelCol="{ span: 5 }">
+				<a-select
+					v-model:value="formState.lineId"
+					mode="multiple"
+					style="width: 150px"
+					placeholder="请选择"
+					:options="groupData"
+					@change="handleChange"
+				></a-select>
+			</a-form-item>
+			<a-form-item v-show="placetype === '0'" label="子域名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="请输入子域名" v-model:value="formState.childZone" />
+			</a-form-item>
+			<a-form-item v-show="placetype === '1'" label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-select
+					ref="select"
+					v-model:value="formState.type"
+					style="width: 150px"
+					placeholder="请选择类型"
+					@focus="focus"
+					@change="handleChange"
+				>
+					<a-select-option value="3">v4反向解析</a-select-option>
+					<a-select-option value="4">v6反向解析</a-select-option>
+				</a-select>
+			</a-form-item>
+			<a-form-item v-show="placetype === '1'" label="网络地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="请输入网络地址" v-model:value="formState.IP" />
+			</a-form-item>
+			<a-form-item v-show="placetype === '1'" label="所属域" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="所属域" v-model:value="formState.childZone" />
+			</a-form-item>
+			<a-form-item v-show="placetype === '1'" label="应用线路" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-select
+					v-model:value="formState.lineId"
+					mode="multiple"
+					style="width: 150px"
+					placeholder="请选择"
+					:options="groupData"
+					@change="handleChange"
+				></a-select>
+			</a-form-item>
+			<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-textarea v-model:value="formState.remark" placeholder="备注" :rows="4" />
 			</a-form-item>
 		</a-form>
-		
-	</div>
-	
-	
-	
-	
 	</a-modal>
 </template>
-
 <script setup>
-	import { GetList } from './place.ts';
-	import { reactive, ref, toRefs } from 'vue';
+	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus } from './place.ts';
+	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
+	import { reactive, ref, toRefs, watchEffect } from 'vue';
+	import { message } from 'ant-design-vue';
+	import { router } from '/@/router';
 	const columns = [
 		{
 			title: '名称',
 			dataIndex: 'zoneName',
+			align: 'center',
 		},
 		{
 			title: '线路',
 			dataIndex: 'lineId',
+			align: 'center',
 		},
 		{
 			title: '备注',
 			dataIndex: 'remark',
+			align: 'center',
 		},
 		{
 			title: '操作',
 			dataIndex: 'operation',
+			align: 'center',
 		},
 	];
 	const data = reactive({
@@ -85,31 +155,194 @@
 		visible: false,
 		formState: {
 			name: '',
+			lineId: [],
+			childZone: '',
+			remark: '',
+			tyle: undefined,
+			IP: '',
 		},
+		groupData: [],
+		search: '',
+		placetype: '0',
+		total: '',
+		status: 1,
 	});
-	const { type, activeKey, pageNum, pageSize, initdata, visible,formState } = toRefs(data);
+	const { type, activeKey, pageNum, pageSize, initdata, visible, formState, groupData, search, placetype, total, status } = toRefs(data);
 	const changetabs = () => {
-		type.value = activeKey.value;
-		GetList({
-			type: type.value,
-			pageNum: pageNum.value,
-			pageSize: pageSize.value,
-		}).then((res) => {
-			initdata.value = res.records;
-		});
+		placetype.value = activeKey.value;
+		if (placetype.value == '0') {
+			GetList({
+				type: 0,
+				pageNum: pageNum.value,
+				pageSize: pageSize.value,
+			}).then((res) => {
+				initdata.value = res.records;
+			});
+		}
+		if (placetype.value == '1') {
+			GetReverseList({
+				type: 0,
+				pageNum: pageNum.value,
+				pageSize: pageSize.value,
+			}).then((res) => {
+				initdata.value = res.records;
+			});
+		}
 	};
 	const getData = () => {
-		GetList({
-			type: type.value,
-			pageNum: pageNum.value,
-			pageSize: pageSize.value,
-		}).then((res) => {
-			initdata.value = res.records;
-		});
+		if (placetype.value == '0') {
+			GetList({
+				type: 0,
+				pageNum: pageNum.value,
+				pageSize: pageSize.value,
+			}).then((res) => {
+				initdata.value = res.records;
+				total.value = res.total;
+			});
+		}
+		if (placetype.value == '1') {
+			GetReverseList({
+				type: 0,
+				pageNum: pageNum.value,
+				pageSize: pageSize.value,
+			}).then((res) => {
+				initdata.value = res.records;
+				total.value = res.total;
+			});
+		}
 	};
 	getData();
+	//分页功能
+	const changeFn = (P, Ps) => {
+		pageNum.value = P;
+		getData();
+	};
+	const resetbtn = () => {
+		pageNum.value = 1;
+		pageSize.value = 10;
+		search.value = '';
+		getData();
+	};
+	const onShowSizeChange = (current, pageSize) => {
+		console.log(pageSize, 'pageSize');
+		pageSize.value = pageSize;
+		getData();
+	};
 	const addBtn = () => {
+		// 获取线路
+		GetLine({}).then((res) => {
+			const transformedData = res.map(({ lineId: value, lineName: label }) => ({ value, label }));
+			groupData.value = transformedData;
+		});
+
 		visible.value = true;
+	};
+	const searchBtn = () => {
+		if (placetype.value == '0') {
+			GetList({
+				zoneName: search.value,
+				pageNum: pageNum.value,
+				pageSize: pageSize.value,
+			}).then((res) => {
+				initdata.value = res.records;
+			});
+		}
+		if (placetype.value == '1') {
+			GetReverseList({
+				zoneName: search.value,
+				pageNum: pageNum.value,
+				pageSize: pageSize.value,
+			}).then((res) => {
+				initdata.value = res.records;
+			});
+		}
+	};
+const formRef = ref(null)
+	const handleOk = async () => {
+		// 校验表单
+		try {
+		  await formRef.value.validate()
+		} catch (error) {
+		  // console.log(error);
+		  console.log(error)
+		  return 
+		}
+		if (placetype.value == '0') {
+			AddLine({
+				type: 0,
+				zoneName: formState.value.name,
+				lineId: JSON.stringify(formState.value.lineId),
+				childZone: formState.value.childZone,
+				remark: formState.value.remark,
+			}).then((res) => {
+				visible.value = false;
+				message.success('添加成功');
+				clearData();
+				getData();
+			})
+		}
+		if (placetype.value == '1') {
+			AddReverseList({
+				type: formState.value.type,
+				reverseIpAddr: formState.value.IP,
+				lineId: JSON.stringify(formState.value.lineId),
+				remark: formState.value.remark,
+				childZone: formState.value.childZone,
+			}).then((res) => {
+				visible.value = false;
+				message.success('添加成功');
+				clearData();
+				getData();
+			});
+		}
+	};
+
+	const clearData = () => {
+		formState.value.name = '';
+		formState.value.lineId = [];
+		formState.value.childZone = '';
+		formState.value.remark = '';
+	};
+	const delBtn = (record) => {
+		console.log(record, 'record');
+		let values1 = [record.zoneId];
+		DelLine({
+			values: values1,
+		}).then((res) => {
+			message.success('删除成功');
+			getData();
+		});
+	};
+	watchEffect(() => {
+		if (visible.value == false) {
+			clearData();
+		}
+	});
+	const Godeploy = (record) => {
+		console.log(record, 'record');
+		let id = record.zoneId;
+		router.push(`/place/deploy?${id}`);
+	};
+
+	const stopBtn = (record) => {
+		if (record.status == 1) {
+			stopStatus({
+				status: 0,
+				zoneId: record.zoneId,
+			}).then((res) => {
+				message.success('操作成功');
+				getData();
+			});
+		}
+		if (record.status == 0) {
+			stopStatus({
+				status: 1,
+				zoneId: record.zoneId,
+			}).then((res) => {
+				message.success('操作成功');
+				getData();
+			});
+		}
 	};
 </script>
 
