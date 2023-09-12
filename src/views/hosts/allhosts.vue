@@ -485,6 +485,7 @@ const ruleshow_rack = ref(false);
 		},
 	];
 	const getData = () => {
+	
 		getlist({
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
