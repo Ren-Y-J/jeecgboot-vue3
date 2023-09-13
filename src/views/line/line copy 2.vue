@@ -1,133 +1,71 @@
 <template>
   <div class="line">
-    <div class="nav">
-      <a-card class="nav">
-        <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-          @finish="onFinish" @finishFailed="onFinishFailed">
-          <a-row :gutter="1">
-            <a-col :md="6" :sm="24">
-              <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }"
-                :wrapper-col="{ span: 16 }">
-                <a-space>
-                  <a-select placeholder="请选择" ref="select" v-model:value="formData.host" style="width: 160px"
-                    @focus="focus" @change="handleChangeFn">
-                    <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                      ">{{ item.ipAddress }}</a-select-option>
-                  </a-select>
-                </a-space>
-              </a-form-item>
-              <!-- <a-form-item style="margin-bottom: 0px;" label="名称" name="aclName" :labelCol="{ span: 6 }"
-                :wrapperCol="{ span: 16 }">
-                <a-input v-model:value="formData.aclName" placeholder="请输入ACL名称" />
-              </a-form-item> -->
-            </a-col>
-            <a-col :md="4" :sm="5">
-              <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; ">
-                <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
-                  <search-outlined />搜索</a-button>
-                <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
-                  @click="AlldelFn"><reload-outlined />重置</a-button> -->
-                <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </a-card>
+    <div class="btn">
+      <!-- type="success"style="color: #fff;background:#44b363"  -->
+      <div class="left">
+        <a-button type="primary" @click="isOpen">添加线路</a-button>
+        <a-button type="primary" @click="isOpensort">线路排序</a-button>
+      </div>
+      <div class="right">
+        <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+          <a-space>
+            <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
+              @change="handleChangeFn">
+              <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
+                ">{{ item.ipAddress }}</a-select-option>
+            </a-select>
+          </a-space>
+        </a-form-item>
+      </div>
 
     </div>
     <!-- :row-selection="rowSelection" -->
-    <div class="contion">
-      <a-card>
-        <div class="btn">
-          <!-- type="success"style="color: #fff;background:#44b363"  -->
-          <div class="left">
-            <a-button type="primary" @click="isOpen">添加线路</a-button>
-            <a-button type="primary" @click="isOpensort">线路排序</a-button>
-          </div>
-          <div class="right">
-            <div class="icon">
-              <span class="icon-sx">
-                <img src="../../assets/loginmini/icon/sx.png" alt="" @click="AlldelFn">
-                <!-- <reload-outlined /> -->
-              </span>
-              <span class="icon-kz"><img src="../../assets/loginmini/icon/kz.png" alt=""></span>
-            </div>
-          </div>
-          <!-- <div class="right">
-            <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
-              <a-space>
-                <a-select placeholder="请选择" ref="select" v-model:value="formData.host" style="width: 160px" @focus="focus"
-                  @change="handleChangeFn">
-                  <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                    ">{{ item.ipAddress }}</a-select-option>
-                </a-select>
-              </a-space>
-            </a-form-item>
-          </div> -->
+    <a-card>
+      <a-table :columns="columns" :data-source="data"
+        :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
+        :rowKey="(record) => record.lineId" bordered>
+        <template #bodyCell="{ column, record }">
 
-        </div>
-        <a-alert show-icon class="alert" style="margin-bottom: 8px" type="info">
-          <!-- Ant Design Vue 的Alert使用 z这块我点清空我那些勾选的东西都取消 number是勾选的个数 type="info"-->
-          <template #message>
-            <template v-if="number > 0">
-              <span>已选定 {{ number }} 条记录(可跨页)</span>
-              <a-divider type="vertical" />
-              <a @click="fn" style="color:#4D85E1;">清空</a>
-            </template>
-            <template v-else>
-              <span>未选中任何数据</span>
-            </template>
-          </template>
-
-        </a-alert>
-        <a-table :columns="columns" :data-source="data"
-          :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
-          :rowKey="(record) => record.lineId" bordered>
-          <template #bodyCell="{ column, record }">
-
-            <!-- <template v-if="column.dataIndex === 'index'">
+          <!-- <template v-if="column.dataIndex === 'index'">
             {{ record }}
           </template> -->
-            <template v-if="column.dataIndex === 'status'">
+          <template v-if="column.dataIndex === 'status'">
 
-              <div v-if='record.status == 1'
-                style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                <a-tag color="green">已启用</a-tag>
-              </div>
-              <div v-if='record.status == 0'
-                style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                <a-tag color="green">警用</a-tag>
-              </div>
-            </template>
-            <template v-if="column.dataIndex === 'operation'">
-              <div>
-                <a-button type="link" @click="editisOpen(record)">配置</a-button>
-                <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="isOpen(record)">编辑</a-button> -->
-                <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
-                  @cancel="cancel">
-                  <a-button type="link">删除</a-button>
-                </a-popconfirm>
-              </div>
-            </template>
-
+            <div v-if='record.status == 1'
+              style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
+              <a-tag color="green">已启用</a-tag>
+            </div>
+            <div v-if='record.status == 0'
+              style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
+              <a-tag color="green">警用</a-tag>
+            </div>
           </template>
-        </a-table>
-        <div class="pagination">
-          <a-pagination :show-total="total => `共 ${total} 条数据`" v-model:current="formData.pageNum" :total="totals"
-            v-model:pageSize="formData.pageSize" show-size-changer @showSizeChange="onShowSizeChange"
-            @change="changeFn" />
-        </div>
-      </a-card>
-    </div>
+          <template v-if="column.dataIndex === 'operation'">
+            <div>
+              <a-button type="link" @click="editisOpen(record)">配置</a-button>
+              <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="isOpen(record)">编辑</a-button> -->
+              <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
+                @cancel="cancel">
+                <a-button type="link">删除</a-button>
+              </a-popconfirm>
+            </div>
+          </template>
 
+        </template>
+      </a-table>
+      <div class="pagination">
+        <a-pagination :show-total="total => `共 ${total} 条数据`" v-model:current="formData.pageNum" :total="totals"
+          v-model:pageSize="formData.pageSize" show-size-changer @showSizeChange="onShowSizeChange" @change="changeFn" />
+      </div>
+    </a-card>
     <div>
       <!-- 新增弹出层 -->
-      <a-modal ref='formlineRef' v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onCloseaclFn">
+      <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onCloseaclFn">
         <!-- :model="aclInfoData" -->
-        <a-form :model="formState" ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
-          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <!--  -->
-          <a-form-item label="线路名称" :rules="fromlineRules.lineName" name="lineName" style='margin-top: 26px'>
+        <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <!-- :rules="fromaclinfoRules.lineName" -->
+          <a-form-item label="线路名称" name="lineName" style='margin-top: 26px'>
             <a-input v-model:value="formState.lineName" placeholder="请输入线路名称" />
           </a-form-item>
           <!-- :rules="fromaclinfoRules.aclType" -->
@@ -141,8 +79,7 @@
           <div v-show="radiovalue == 1">
             <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
             <div style="margin-left:130px ;">
-              <!--  -->
-              <a-form-item :rules="fromlineRules.aclId" label="" name="aclId" style='margin-top: 10px'>
+              <a-form-item label="" name="" style='margin-top: 10px'>
                 <a-space>
                   <a-select placeholder="请选择" ref="select" v-model:value="formState.aclId" style="width: 160px"
                     @focus="focus" @change="handleChange" mode="tags" :size="size" :options="allaclId"
@@ -155,7 +92,7 @@
             </div>
 
           </div>
-          <a-form-item label="所属主机" :rules="fromlineRules.host" name="hostId" style='margin-top: 26px'>
+          <a-form-item label="所属主机" name="" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
                 @change="handleChange">
@@ -290,13 +227,6 @@ const columns = [{
 },
 
 ];
-const formlineRef = ref(null)
-const fromlineRules = {
-  lineName: [{ required: true, message: "请输入线路名称" }],
-  host: [{ required: true, message: "请选择" }],
-  aclId: [{ required: true, message: "请选择" }]
-
-}
 const data = ref([])
 const totals = ref(0)
 const allclusterId = ref([])
@@ -336,7 +266,7 @@ const commonEnty = ref({ values: [] })//// 对象包数组
 const formData = ref({
   pageNum: 1,
   pageSize: 10,
-  host: undefined
+  host: 0
 
 });
 const state = reactive({
@@ -352,27 +282,17 @@ const initData = async () => {
 }
 initData()
 const handleChangeFn = async (value) => {
+  // console.log(formState.host, 'value');
   console.log(value, '66');
-  formData.value.host = value
-  // 代码抽离出去
-  // formData.value.pageNum = 1
+  // formData.value.host = value
+  // console.log(formData.value, ' formData.value.host');
   // initData(formData.value)
-
-  // data.value = data.value.filter(it => {
-  //   return it.host == value
-  // })
-  // totals.value = data.value.length
-
-}
-const handleQuery = async () => {
-  // console.log('1');
-  formData.value.pageNum = 1
-  initData(formData.value)
-}
-const AlldelFn = () => {
-  formData.value.pageNum = 1
-  formData.value.host = undefined
-  initData()
+  // let cloneArr = JSON.parse(JSON.stringify(data.value))
+  await initData()
+  data.value = data.value.filter(it => {
+    return it.host == value
+  })
+  totals.value = data.value.length
 
 }
 //所有主机
@@ -429,13 +349,7 @@ const handleOk = async () => {
   // if (formState.value.aclId == []) {
   // formState.value.aclId = JSON.parse(formState.value.aclId);
   // }
-  // 校验表单
-  try {
-    await formlineRef.value.validate()
-  } catch (error) {
-    // console.log(error);
-    return console.log(error)
-  }
+
   console.log(lineIds.value, 'id');
   console.log(formState.value.formState, '//')
   // 这个在1的时候后端说要加 JSON.stringify 。
@@ -447,7 +361,6 @@ const handleOk = async () => {
   initData()
   visible.value = false
   message.success('添加成功')
-  onCloseaclFn()
 }
 
 const handleChange = (value) => {
@@ -466,7 +379,7 @@ const onCloseaclFn = () => {
   formState.value.lineName = ""
   formState.value.aclId = []
   formState.value.host = null
-  formlineRef.value.resetFields()
+  // formRefinfo.value.resetFields()
 }
 // 删除逻辑功能
 const delFn = async (record) => {
@@ -485,7 +398,7 @@ const delFn = async (record) => {
 
 }
 const confirm = (record) => {
-  // console.log(record, 'record2');
+  console.log(record, 'record2');
   delFn(record.lineId)
   initData()
 };
@@ -496,17 +409,10 @@ const rowSelection = async (selectedRowKeys, selectedRows) => {
   state.selectedRowKeys = selectedRowKeys;
   // 对原数组元素进行运算后再赋值给新的数组
   allclusterId.value = selectedRows.map(item => item.lineId)
-  console.log(allclusterId.value);
+  // console.log(allclusterId.value);
   number.value = allclusterId.value.length
   //这个是勾选的id存放的位置 我点清空我id复空
 }
-// 点击清空
-const fn = () => {
-  allclusterId.value = []
-  number.value = 0
-  state.selectedRowKeys = [];
-}
-
 //分页功能
 const changeFn = (P, Ps) => {
   formData.value.pageNum = P
@@ -650,46 +556,14 @@ const delAll = () => {
 .line {
   padding: 10px;
 
-  .nav {
-    margin-bottom: 6px;
-
-    ::v-deep(.ant-form-item) {
-
-      margin-bottom: 0px !important;
-
-    }
-
-    ::v-deep(.ant-card-body) {
-      // padding: 12px 10px 6px 10px !important;
-      padding: 8px !important;
-    }
-
-    .searchbtn {
-      display: flex;
-      flex-wrap: nowrap;
-    }
-
-    @media screen and (max-width: 800px) {
-      .searchbtn {
-        margin-top: 10px;
-      }
-    }
-
+  ::v-deep(.ant-card-body) {
+    padding: 6px !important;
   }
-
-  .contion {
-    ::v-deep(.ant-card-body) {
-      padding: 6px !important;
-    }
-
-  }
-
-
 
   .btn {
     display: flex;
     justify-content: space-between;
-    height: 36px;
+    height: 40px;
 
     .left {
       .ant-btn {
@@ -703,44 +577,6 @@ const delAll = () => {
     .right {
       display: flex;
       margin-right: 8px;
-
-      .icon {
-        height: 32px;
-        display: flex;
-        align-items: center;
-        margin-top: 4px;
-
-        .icon-sx {
-          width: 22px;
-          height: 16px;
-          display: inline-block;
-
-          img {
-            width: 100%;
-            height: 100%;
-          }
-
-          &:hover {
-            cursor: pointer;
-          }
-        }
-
-        .icon-kz {
-          display: inline-block;
-          width: 16px;
-          height: 16px;
-
-          img {
-            width: 100%;
-            height: 100%;
-          }
-        }
-
-        span:nth-child(1) {
-          padding-right: 7px;
-
-        }
-      }
     }
   }
 

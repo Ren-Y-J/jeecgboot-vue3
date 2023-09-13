@@ -1,33 +1,28 @@
 <template>
 	<div style="padding: 10px">
 		<!-- 头部搜索 -->
-		<div class="page">
-			<a-form autocomplete="off">
-				<a-row :gutter="1">
-					<a-col span="5">
-						<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 20 }">
-							<a-input v-model:value="name" placeholder="请输入名称"></a-input>
-						</a-form-item>
-					</a-col>
-					<a-col span="5">
-						<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 20 }">
-							<a-input v-model:value="note" placeholder="请输入备注"></a-input>
-						</a-form-item>
-					</a-col>
-					<a-col span="5">
-						<div class="searchbtn">
-							<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="seachbtn"> <search-outlined />搜索</a-button>
-							<a-button :style="{ margin: '0px 5px ' }" @click="resetbtn"><reload-outlined />重置</a-button>
-						</div>
-					</a-col>
-				</a-row>
-				<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="addOpen"> <search-outlined />添加转发服务器</a-button>
+		<div class="page" >
+			<a-form>
+				<div style='display: flex;'>
+					<a-form-item label="名称" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
+						<a-input v-model:value="name" placeholder="请输入名称"></a-input>
+					</a-form-item>
+					<a-form-item label="备注" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
+						<a-input v-model:value="note" placeholder="请输入备注"></a-input>
+					</a-form-item>
+					<div class="searchbtn">
+						<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="seachbtn"> <search-outlined />搜索</a-button>
+						<a-button :style="{ margin: '0px 5px ' }" @click="resetbtn"><reload-outlined />重置</a-button>
+					</div>
+				</div>
 			</a-form>
 		</div>
 		<!-- 表格 -->
 		<div class="page" style="margin-top: 10px">
+			<a-button type="primary" @click="addOpen"> <search-outlined />添加转发服务器</a-button>
 			<a-table
 				:rowKey="(record) => record.hostId"
+				style='margin-top:5px'
 				:pagination="false"
 				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
 				:columns="columns"
@@ -45,11 +40,11 @@
 					<template v-if="column.dataIndex === 'operation'">
 						<div style="display: flex; justify-content: center; align-items: center">
 							<div class="pointer" style="margin-right: 5px" @click="editBtn(record)">
-								<form-outlined style="color: #1b9ef3" />
+							<span class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
 							</div>
 							<div class="pointer">
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<delete-outlined style="color: #f15d48" />
+										<span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -118,6 +113,7 @@
 				</a-form-item>
 			</a-form>
 		</a-modal>
+		
 	</div>
 </template>
 
@@ -201,15 +197,14 @@
 	};
 	const formRef = ref(null);
 	const handleOk = async () => {
-		console.log(formState.value, 'formState');
-		try {
-			await formRef.value.validate();
-		} catch (error) {
-			console.log(error);
-			return;
-		}
-
+		console.log(formRef,'formRef')
 		if (modelType.value == 0) {
+			try {
+				await formRef.value.validate();
+			} catch (error) {
+				console.log(error);
+				return;
+			}
 			IPlists.value = IPlists.value.filter((item) => item.ip !== undefined);
 			addlist({
 				ipList: IPlists.value,
@@ -217,10 +212,12 @@
 				note: formState.value.note,
 			}).then((res) => {
 				message.success('添加成功');
+				 formRef.value.resetFields()
 				getData();
 				add_visible.value = false;
 			});
 		}
+		
 		if (modelType.value == 1) {
 			editlist({
 				id: recordID.value,
@@ -262,7 +259,6 @@
 		IPlists.value = foundData.ipList;
 	};
 	const delBtn = (record) => {
-		console.log(record, 'recordrecord');
 		dellist({
 			id: record.id,
 		}).then((res) => {
@@ -273,8 +269,8 @@
 
 	const seachbtn = () => {
 		getlist({
-			name: formState.value.name,
-			note: formState.value.note,
+			name: name.value,
+			note: note.value,
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
 		}).then((res) => {
@@ -303,6 +299,8 @@
 		if (add_visible.value == false) {
 			name.value = '';
 			note.value = '';
+			formState.value.name='';
+				formState.value.note='';
 			IPlists.value = [
 				{
 					ip: '',
