@@ -210,34 +210,47 @@
         </a-form>
       </a-modal>
       <!-- 线路排序 -->
-      <a-modal v-model:visible="sortvisible" :title="sorttopTitle" @ok="sorthandleOk" @cancel="sortCloseaclFn">
-        <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <a-form-item label="所属主机" name="" style='margin-top: 26px'>
-            <a-space>
-              <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
-                @focus="focus" @change="handleChangsort">
-                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                  ">{{ item.ipAddress }} </a-select-option>
-                <!-- <div>
+      <div class="sort">
+        <a-modal v-model:visible="sortvisible" :title="sorttopTitle" @ok="sorthandleOk" @cancel="sortCloseaclFn">
+          <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+            @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+            <a-form-item label="所属主机" name="" style='margin-top: 26px'>
+              <a-space>
+                <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
+                  @focus="focus" @change="handleChangsort">
+                  <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
+                    ">{{ item.ipAddress }} </a-select-option>
+                  <!-- <div>
                   <span>{{ item.hostName }}</span>
                 </div> -->
-              </a-select>
+                </a-select>
 
-            </a-space>
+              </a-space>
 
-          </a-form-item>
-          <a-orm-item>
-            <ul v-for="(item, index) in lineNameList" :key="index">
-              <li>{{ item.lineName }} <a-button type="primary" @click="moveup(index)"
-                  :disabled="index === 0">上移</a-button>
-                <a-button @click="moveDown(index)" :disabled="index === lineNameList.length - 1">下移</a-button>
-              </li>
+            </a-form-item>
+            <!-- <a-form-item> -->
+            <!-- style="padding-left: 60px;" -->
+            <ul v-for="(item, index) in lineNameList" style="padding-left: 56px;">
+              <!-- border:0.5px solid #EBEBEB; -->
+              <span
+                style="border-top:0.5px solid #EBEBEB;border-bottom:0.5px solid #EBEBEB; width: 404px;display: inline-block;padding-top: 6px;padding-bottom: 6px;">
+                <li class="itemlineName" style='display: flex;height: 32px;line-height: 32px;padding-left: 4px;'>
+                  <span class="spnname" style='display: flex;width: 260px;'> {{ item.lineName }} </span>
+                  <span class="spnbtn" style="display: flex;justify-content: start;">
+                    <a-button type="primary" @click="moveup(index)" :disabled="index === 0"
+                      style='margin-right:6px;'>上移</a-button>
+                    <a-button @click="moveDown(index)" :disabled="index === lineNameList.length - 1">下移</a-button>
+                  </span>
+
+                </li>
+              </span>
             </ul>
-          </a-orm-item>
+            <!-- </a-form-item> -->
 
-        </a-form>
-      </a-modal>
+          </a-form>
+        </a-modal>
+      </div>
+
     </div>
   </div>
 </template>
@@ -649,6 +662,7 @@ const delAll = () => {
 <style scoped lang="less">
 .line {
   padding: 10px;
+
 
   .nav {
     margin-bottom: 6px;
