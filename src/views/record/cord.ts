@@ -12,3 +12,5 @@ export const addlist = (params) => defHttp.post({ url: CordApi.addlist, params }
 export const dellist = (params) => defHttp.post({ url: CordApi.dellist, params });
 export const editlist = (params) => defHttp.post({ url: CordApi.editlist, params });
 export const listAll = (params) => defHttp.post({ url: CordApi.listAll, params });
+// 获取
+export const GetLine = (params) => defHttp.get({ url:'/zone/manage/'+ params });
