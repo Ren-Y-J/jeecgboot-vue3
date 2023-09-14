@@ -42,13 +42,13 @@
           <template #bodyCell="{ column, record }">
 
 
-            <template v-if="column.dataIndex === 'aclRelName'">
+            <!-- <template v-if="column.dataIndex === 'aclRelName'">
               <div style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                <!-- a-popover宽度-->
+   
                 <a-popover :overlayStyle="{ width: '30%' }" trigger="hover">
                   <template #content>
                     {{ record.aclRelName }}
-                    <!-- {{ record }} -->
+       
 
                   </template>
 
@@ -57,7 +57,7 @@
                     {{ record.aclRelName }}</p>
                 </a-popover>
               </div>
-            </template>
+            </template> -->
 
             <template v-if="column.dataIndex === 'remark'">
               <!-- 这是备注有内容的时候展示备注里的东西 -->
@@ -201,7 +201,7 @@ const handelClick = async (val) => {
 const columns = [
   {
     title: '名称',
-    dataIndex: 'aclRelName',
+    dataIndex: 'relName',
     width: 220,
     align: 'center'
   },
