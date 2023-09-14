@@ -1,26 +1,58 @@
 <template>
-    <div class="myname">
-        <div class="Record">
-            <!-- placeholder="Basic usage" v-model:value="Cordquery.name" :rules="formList.cordName" style="width: 100%"-->
-            <span>记录名称：</span><a-input placeholder="请输入集群名称" />
+    <div class="allclustersBox">
+      <a-card>
+        <div class="title">
+          <a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
+            <a-row :gutter="1">
+              <a-col :md="6" :sm="24">
+                <a-form-item style="margin-bottom: 0px;" label="记录名称" name="name" :labelCol="{ span: 6 }"
+                  :wrapperCol="{ span: 16 }">
+                  <a-input  placeholder="请输入记录名称" v-model:value="queryParams.name"/>
+                </a-form-item>
+              </a-col>
+              
+              <a-col :md="3" :sm="24" >
+                
+                <a-form-item style="margin-bottom: 0px;" label="类型" name="type" :labelCol="{ span: 7 }" placeholder="请输入" 
+                  :wrapperCol="{ span: 10 }" v-model:value="queryParams.type" >
+                  <a-space>
+                    <a-select ref="select"  style="width: 120px" @focus="focus" 
+                      @change="handleChange"  v-model:value="queryParams.type">
+                      <a-select-option :value="0">A</a-select-option>
+                    <a-select-option :value="1">AAAA</a-select-option>
+                    <a-select-option :value="2">CNAME</a-select-option>
+                    <a-select-option :value="3">NS </a-select-option>
+                    <a-select-option :value="4">MX </a-select-option>
+                    <a-select-option :value="5">CAA </a-select-option>
+                    <a-select-option :value="6">SRV </a-select-option>
+                    <a-select-option :value="7">TXT </a-select-option>
+                    <a-select-option :value="8">PTR </a-select-option>
+                    <a-select-option :value="9">反向域的NS</a-select-option>
+                    <a-select-option :value="10">子网</a-select-option>
+                    <a-select-option :value="11">其他</a-select-option>
+                    
+                    </a-select>
+                    
+                  </a-space>
+                </a-form-item>
+                
+              </a-col>
+              
+              <a-col :md="4" :sm="5">
+                <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
+                  <div class="searchbtn">
+                    <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
+                      <search-outlined />搜索</a-button>
+                    <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
+                  </div>
+
+                </span>
+              </a-col>
+            </a-row>
+          </a-form>
         </div>
-        <div class="type">
-            <span>类型：</span>
-            <a-select v-model:value="value17" style="width: 100%" placeholder="请选择">
-                    <a-select-option value="A">A</a-select-option>
-                    <a-select-option value="AAAA">AAAA</a-select-option>
-                    <a-select-option value="CNAME">CNAME</a-select-option>
-                    <a-select-option value="NS">NS </a-select-option>
-                    <a-select-option value="MX">MX </a-select-option>
-                    <a-select-option value="CAA">CAA </a-select-option>
-                    <a-select-option value="SRV">SRV </a-select-option>
-                    <a-select-option value="TXT">TXT </a-select-option>
-                    <a-select-option value="PTR">PTR </a-select-option>
-                    <a-select-option value="反向域的NS">反向域的NS</a-select-option>
-                    <a-select-option value="子网">子网</a-select-option>
-                    <a-select-option value="其他">其他</a-select-option>
-            </a-select>
-        </div>
+      </a-card>
+        <!-- @change="handleChange" -->
     </div>
     <div class="controls">
         <div class="batch">
@@ -29,7 +61,7 @@
 							ref="select"
 							style="width: 120px; margin-right: 8px"
 							@focus="focus"
-							@change="handleChange"
+							@select="handlChangeFn"
 							v-model="delselect"
 							placeholder="批量操作"
 						>
@@ -45,13 +77,27 @@
             </span>
         </div>
         <div class="select">
-            <a-alert message="未选中任何数据" type="info" show-icon />
+          <a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
+				<template #message>
+					<template v-if="number > 0">
+						<span>已选定 {{ number }} 条记录(可跨页)</span>
+						<a-divider type="vertical" />
+						<a @click="clearbtn">清空</a>
+						<a-divider type="vertical" />
+					</template>
+					<template v-else>
+						<span>未选中任何数据</span>
+					</template>
+				</template>
+			</a-alert>
+            <!-- <a-alert message="未选中任何数据" type="info" show-icon /> -->
         </div>
         <!-- table表格 -->
         <div class="table">
            <span style="margin-left: 8px"></span>
             <a-table :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :pagination="false" bordered
-                :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: rowSelection }"
+                :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+                :rowKey="(record) => record.id"
                 :columns="columns"
                 :data-source="listData" >
                 
@@ -69,13 +115,27 @@
                   </template>
                   <template v-if="column.dataIndex === 'operation'">
                     <div>
-                      <span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
+                      <span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">修改</span>
                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
                         @cancel="cancel">
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
                       </a-popconfirm>
                     </div>
                   </template> 
+                <template v-if="column.dataIndex === 'type'">
+                    <div v-if='record.type == 0'>A</div>
+                    <div v-if='record.type == 1'>AAAA </div>
+                    <div v-if='record.type == 2'>CNAME </div>
+                    <div v-if='record.type == 3'>NS </div>
+                    <div v-if='record.type == 4'>MX </div>
+                    <div v-if='record.type == 5'>CAA </div>
+                    <div v-if='record.type == 6'>SRV </div>
+                    <div v-if='record.type == 7'>TXT </div>
+                    <div v-if='record.type == 8'>PTR </div>
+                    <div v-if='record.type == 9'>反向域的NS</div>
+                    <div v-if='record.type == 10'>子网</div>
+                    <div v-if='record.type == 11'>其他</div>
+              </template>
               </template>
             </a-table>
         </div>
@@ -94,12 +154,12 @@
     </div>
     <!-- 添加记录弹窗 v-model:visible="visible" style='margin-top: 26px'-->
    <div class="addlist">
-  <a-modal  v-model:visible="visible" title="添加记录" width="985px" @ok="btnOK">
-        <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
+  <a-modal  v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
+        <a-form ref='formRef' :model="rowData" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="formRules.DomainName"  name="DomainName" style='margin-top: 26px' >
             <a-space>
-              <a-select placeholder="请选择域名" ref="select" v-model:value="value17" style="width: 245px"
+              <a-select placeholder="请选择域名" ref="select" v-model:value="rowData.DomainName" style="width: 245px"
                 @focus="focus" @change="handleChangsort">
                 <a-select-option value="A">1 </a-select-option>
               </a-select>
@@ -107,10 +167,10 @@
           </a-form-item>
           <div class="line">
               <a-form-item label="记录名称" :rules="formRules.designation" name="designation" style='margin-top: 18px'>
-                <a-input v-model:value="value17" placeholder="请输入记录名称" style='width:50%' />
+                <a-input v-model:value="rowData.designation" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
-              <a-form-item label="类型" :rules="formRules.type" name="type" style='margin-top: 0px'>
-            <a-radio-group v-model:value="radiovalue" name="radioGroup" @change="changeradioFn">
+              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="formRules.type" name="type" style='margin-top: 0px'>
+            <a-radio-group v-model:value="rowData.type" name="radioGroup" @change="changeradioFn">
               <a-radio :value="0">A</a-radio>
               <a-radio :value="1">AAAA</a-radio>
               <a-radio :value="2">CNAME </a-radio>
@@ -122,24 +182,71 @@
             </a-radio-group>
           </a-form-item>
               <a-form-item label="记录值" :rules="formRules.value" name="value" style='margin-top: 18px'>
-                <a-input v-model:value="value17" placeholder="请输入记录值" style='width:50%' />
+                <a-input v-model:value="rowData.value" placeholder="请输入记录值" style='width:50%' />
               </a-form-item>
               <a-form-item label="TTL" :rules="formRules.ttl" name="ttl" style='margin-top: 18px'>
-                <a-input v-model:value="value17" placeholder="请输入TTL" style='width:50%' />
+                <a-input v-model:value="rowData.ttl" placeholder="请输入TTL" style='width:50%' />
               </a-form-item>
               <a-form-item label="线路" :rules="formRules.line" name="line" style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="value17" style="width: 150px"
+              <a-select placeholder="请选择线路" ref="select" v-model:value="rowData.line" style="width: 150px"
                 @focus="focus" @change="handleChangsort">
                 <a-select-option value="A">1 </a-select-option>
               </a-select>
             </a-space>
               </a-form-item>
           </div>
-          <div class="Addrecord line">
-            <span>添加记录</span>
+          <div class="Addrecord line" @click="addline">
+            <span >添加记录</span>
           </div>
           </a-form>
+      </a-modal>
+   </div>
+   <!-- 修改弹框 @ok="btnOK"-->
+   <div class="dellist">
+      <a-modal  v-model:visible="visible_edit" title="记录修改" width="900px"  @ok="editOK">
+        <a-form ref='lineRef' :model="rowData" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
+          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <a-form-item label="域名" :rules="formRules.DomainName"  name="DomainName" style='margin-top: 26px' >
+            <a-space>
+              <a-select placeholder="请选择域名" ref="select" v-model:value="rowData.DomainName" style="width: 245px"
+                @focus="focus" @change="handleChangsort">
+                <a-select-option value="A">1 </a-select-option>
+              </a-select>
+            </a-space>
+          </a-form-item>
+          <div >
+              <a-form-item label="记录名称" :rules="formRules.designation" name="designation" style='margin-top: 18px'>
+                <a-input v-model:value="rowData.designation" placeholder="请输入记录名称" style='width:50%' />
+              </a-form-item>
+              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="formRules.type" name="type" style='margin-top: 0px'>
+            <a-radio-group v-model:value="rowData.type" name="radioGroup" @change="changeradioFn">
+              <a-radio :value="0">A</a-radio>
+              <a-radio :value="1">AAAA</a-radio>
+              <a-radio :value="2">CNAME </a-radio>
+              <a-radio :value="3">NS</a-radio>
+              <a-radio :value="4">MX </a-radio>
+              <a-radio :value="5">CAA </a-radio>
+              <a-radio :value="6">SRV </a-radio>
+              <a-radio :value="7">TXT </a-radio>
+            </a-radio-group>
+          </a-form-item>
+              <a-form-item label="记录值" :rules="formRules.value" name="value" style='margin-top: 18px'>
+                <a-input v-model:value="rowData.value" placeholder="请输入记录值" style='width:50%' />
+              </a-form-item>
+              <a-form-item label="TTL" :rules="formRules.ttl" name="ttl" style='margin-top: 18px'>
+                <a-input v-model:value="rowData.ttl" placeholder="请输入TTL" style='width:50%' />
+              </a-form-item>
+              <a-form-item label="线路" :rules="formRules.line" name="line" style='margin-top: 18px'>
+                <a-space>
+              <a-select placeholder="请选择线路" ref="select" v-model:value="rowData.line" style="width: 150px"
+                @focus="focus" @change="handleChangsort">
+                <a-select-option value="A">1 </a-select-option>
+              </a-select>
+            </a-space>
+              </a-form-item>
+              </div>
+              </a-form>
       </a-modal>
    </div>
 </template>
@@ -147,8 +254,9 @@
 
 <script setup>
 import { message } from 'ant-design-vue';
+import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { computed, defineComponent, reactive, toRefs, ref } from 'vue';
-import { list, addlist} from "./cord"
+import { list, addlist,dellist,editlist,listAll} from "./cord"
 const columns = [{
   title: '记录名称',
   dataIndex: 'name',
@@ -217,6 +325,9 @@ const data = reactive({
   lineId:"",
   pageNum: 1,
 	pageSize: 10,
+  commonEnty:{values:[]},
+  visible_edit: false,
+  number: 0,
 });
 const {
   name,
@@ -232,15 +343,107 @@ const {
   lineId,
   pageNum,
 	pageSize,
+  commonEnty,
+  visible_edit,
+  number
 } = toRefs(data)
 
 const Cordquery = ref({
   pageNum:1,
-  pageSize:10
+  pageSize:10,
+ 
 })
+
+const formRef = ref(null)
+const rowData = ref({
+  zoneName: '',
+  name: '',
+  type:'',
+  content:'',
+  ttl:"",
+  lineId:''
+})
+//新增
+const addFn = async () => {
+  // 校验表单
+  try {
+    await formRef.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return console.log(error)
+  }
+  // 提交表单
+  visible.value = false
+    message.success('添加成功')
+  getcordList()
+  onClose()
+}
+// 关闭弹框
+const onClose = () => {
+  visible.value = false;
+  formRef.value.resetFields()
+  rowData.value.zoneName = ""
+  rowData.value.name = ""
+  rowData.value.name = ""
+  rowData.value.type = ""
+  rowData.value.content = ""
+  rowData.value.ttl = ""
+  rowData.value.lineId = ""
+  rowData.value = {}
+};
+const editId = ref({
+  id:""
+})
+//修改
+const editOK = async()=>{
+  let res = await editlist(editId.value)
+  // console.log(res,'987');
+}
+//域名
+// const listAll = ref({})
+const addlistAll = ()=>{
+  listAll().then(res=>{
+    console.log(res,'222');
+  })
+}
+const queryParams = ref({
+  // 查询参数
+  name: "",
+  pageNum: 1,
+  pageSize: 10,
+  type:""
+});
+//搜索
+const handleQuery =()=>{
+  list({
+    pageNum: pageNum.value,
+		pageSize: pageSize.value,
+    type: queryParams.value.type,
+    name:queryParams.value.name,
+  }).then((res)=>{
+    console.log(res);
+    listData.value = res.records
+    total.value = res.total;
+  //  getcordList()
+  })
+}
+// const changesearch = ref('请选择')
+//重置
+const AlldelFn = () => {
+  // console.log('1');
+  queryParams.value.name = ''
+  // changesearch.value = ''
+  queryParams.value.type = ''
+  queryParams.value.pageNum = 1
+  queryParams.value.pageSize = 10
+  getcordList()
+  // changesearch.value = '请选择'
+}
+
+//列表数据
 const getcordList = ()=>{
   list(Cordquery.value).then(res =>{
-    console.log(res);
+    // console.log(res);
     listData.value = res.records
     total.value = res.total
     // console.log(listData.value,'0000');
@@ -255,14 +458,7 @@ const onShowSizeChange = (current, pageSize) => {
 		Cordquery.value.pageNum = P 
 		getcordList();
 	};
-const options = ([
-      { value: 'jack', label: 'Jack' },
-      { value: 'lucy', label: 'Lucy' },
-      { value: 'tom', label: 'Tom' },
-    ]);
-// const openadd = ()=>{
-//   visible.value = true;
-// }
+
  const showModal = () => {
       visible.value = true;
       zoneName.value = "";
@@ -272,77 +468,55 @@ const options = ([
       ttl.value = ""
       lineId.value = ""
     };
+// 删除
+  const delFn = async (record) =>{
+    // console.log(record,'111');
+    // console.log(record.lineId,'232');
+  commonEnty.value.values.push(record);
+  // console.log(commonEnty.value,'252');
+  await dellist(commonEnty.value)
+  getcordList()
+  message.success('删除成功')
+  }
     const confirm = (record) => {
   // console.log(record, 'record2');
-  delFn(record.lineId)
+  delFn(record.id)
   getcordList()
 };
-    // const btnOK = () => {
-    //   const regs = /^[1-9]\d*$/;//TTL 需要检验为 大于0的整数
-    //   const reg = /[\u4E00-\u9FA5]/g;//记录值需要校验不能输入汉字
-    //   if(zoneName.value == ""){
-    //       message.error('请选择域名')
-    //   } else if (name.value == ""){
-    //       message.error('请填写记录名称')
-    //   } else if (type.value == ""){
-    //     message.error('请选择类型')
-    //   } else if (!reg.test(content.value)){
-    //     message.error('请正确填写记录值')
-    //   } else if (!regs.test(ttl.value)){
-    //     message.error('请正确填写TTL')
-    //   } else if (lineId.value == ""){
-    //     message.error('请选择线路')
-    //   } else {
-    //       addlist({
-    //         name:name.value,
-    //         zoneName:zoneName.value,
-    //         type:type.value,
-    //         content:content.value,
-    //         ttl:ttl.value,
-    //         lineId:lineId.value
-    //       })
-    //   }
-    // };
-// const state = reactive({
-// 		selectedRowKeys: [],
-// 	});
-// 	const allclusterId = ref([]);
-// 	const rowSelection = (selectedRowKeys, selectedRows) => {
-// 		state.selectedRowKeys = selectedRowKeys;
-// 		console.log(selectedRowKeys, 'allclusterId');
-// 		// 对原数组元素进行运算后再赋值给新的数组
+//修改
+const openmodal = (record)=>{
+  visible_edit.value = true;
+}
+//多选
+const state = reactive({
+		selectedRowKeys: [],
+	});
+ const allclusterId = ref([]);
+  const rowSelection = (selectedRowKeys, selectedRows) =>{
+    state.selectedRowKeys = selectedRowKeys;
+		console.log(selectedRowKeys, 'allclusterId');
+    allclusterId.value = selectedRows.map((item) => item.id);
+		number.value = allclusterId.value.length;
+  }
+  const clearbtn = () => {
+		allclusterId.value = [];
+		number.value = 0;
+		state.selectedRowKeys = [];
+	};
 
-// 		allclusterId.value = selectedRows.map((item) => item.zoneId);
+const addline = ()=>{
+  // console.log('111');
 
-// 		number.value = allclusterId.value.length;
-// 	};
-// 	const clearbtn = () => {
-// 		allclusterId.value = [];
-// 		number.value = 0;
-// 		state.selectedRowKeys = [];
-// 	};
+}
 
 </script>
 
 <style scoped lang="less">
-.myname{
-    background: #fff;
-    padding: 12px;
-    margin: 10px;
-    display: flex;
-    // flex-wrap: nowrap;
+.allclustersBox{
+    padding: 10px;
+    padding-bottom: 0px;
 }
-.Record{
-    margin-right: 50px;
-    padding-left: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    span{
-      width: 100px;
-      
-    }
-}
+
 .controls{
     background: #fff;
     margin: 10px;
@@ -369,14 +543,44 @@ const options = ([
     width: 985px!important
   }
 .line{
-    width: 825px;
+    width: 717px;
     margin: 0 auto;
     box-shadow: 1px 1px 8px 5px #F1F1F1;
     border-radius: 10px;
     padding: 8px 0 8px 0;
+   
 }
 .Addrecord{
     margin-top: 15px;
     text-align: center;
 }
+ .title {
+     
+      .searchbtn {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+      @media screen and (max-width: 800px) {
+        .searchbtn {
+          margin-top: 10px;
+        }
+      }
+ }
+ .ant-card-body {
+      padding: 12px 10px 13px 10px !important;
+    }
+
+    .ant-card-body {
+      padding: 12px 10px 13px 10px !important;
+    }
+
+    :deep(.ant-card-body) {
+      padding: 12px 10px 13px 10px !important;
+    }
+
+    ::v-deep(.ant-card-body) {
+      padding: 12px 10px 13px 10px !important;
+    }
+
 </style>
