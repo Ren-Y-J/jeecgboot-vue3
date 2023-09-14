@@ -122,9 +122,9 @@
 
     <div>
       <!-- 新增弹出层 -->
-      <a-modal ref='formlineRef' v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onCloseaclFn">
+      <a-modal v-model:visible="visible" :title="opTitle" @ok="handleOk" @cancel="onCloseaclFn">
         <!-- :model="aclInfoData" -->
-        <a-form :model="formState" ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+        <a-form ref='formlineRef' :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <!--  -->
           <a-form-item label="线路名称" :rules="fromlineRules.lineName" name="lineName" style='margin-top: 26px'>
@@ -142,7 +142,8 @@
             <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
             <div style="margin-left:130px ;">
               <!--  -->
-              <a-form-item :rules="fromlineRules.aclId" label="" name="aclId" style='margin-top: 10px'>
+              <a-form-item :validateTrigger="['change', 'blur']" :rules="fromlineRules.aclId" label="" name="aclId"
+                style='margin-top: 10px'>
                 <a-space>
                   <a-select placeholder="请选择" ref="select" v-model:value="formState.aclId" style="width: 160px"
                     @focus="focus" @change="handleChange" mode="tags" :size="size" :options="allaclId"
@@ -168,10 +169,10 @@
       </a-modal>
       <!-- 编辑 -->
       <a-modal v-model:visible="editvisible" :title="editopTitle" @ok="edithandleOk" @cancel="editonCloseaclFn">
-        <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+        <a-form ref='editlineRef' :model="editformState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
 
-          <a-form-item label="线路名称" name="lineName" style='margin-top: 26px'>
+          <a-form-item label="线路名称" :rules="editlineRules.lineName" name="lineName" style='margin-top: 26px'>
             <a-input v-model:value="editformState.lineName" placeholder="请输入线路名称" />
           </a-form-item>
 
@@ -185,10 +186,11 @@
           <div v-show="editradiovalue == 1">
 
             <div style="margin-left:130px ;">
-              <a-form-item label="" name="" style='margin-top: 10px'>
+              <a-form-item label="" :validateTrigger="['change', 'blur']" :rules="editlineRules.aclId" name="aclId"
+                style='margin-top: 10px'>
                 <a-space>
                   <a-select placeholder="请选择" ref="select" v-model:value="editformState.aclId" style="width: 160px"
-                    @focus="focus" @change="handleChange" mode="tags" :size="size" :options="allaclId"
+                    @focus="focus" @change="handleChanges" mode="tags" :size="size" :options="allaclId"
                     :field-names="{ label: 'aclName', value: 'aclId' }">
 
                   </a-select>
@@ -198,7 +200,7 @@
             </div>
 
           </div>
-          <a-form-item label="所属主机" name="" style='margin-top: 26px'>
+          <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                 @focus="focus" @change="handleChangehost">
@@ -212,9 +214,10 @@
       <!-- 线路排序 -->
       <div class="sort">
         <a-modal v-model:visible="sortvisible" :title="sorttopTitle" @ok="sorthandleOk" @cancel="sortCloseaclFn">
-          <a-form ref='lineRef' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-            @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-            <a-form-item label="所属主机" name="" style='margin-top: 26px'>
+          <a-form ref='sortlineRef' :model="editformState" name="basic" :label-col="{ span: 6 }"
+            :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed"
+            :validateTrigger="['change']">
+            <a-form-item label="所属主机" :rules="sortlineRules.host" name="host" style='margin-top: 26px'>
               <a-space>
                 <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                   @focus="focus" @change="handleChangsort">
@@ -303,12 +306,24 @@ const columns = [{
 },
 
 ];
+// 校验规则
 const formlineRef = ref(null)
+const editlineRef = ref(null)
+const sortlineRef = ref(null)
 const fromlineRules = {
   lineName: [{ required: true, message: "请输入线路名称" }],
   host: [{ required: true, message: "请选择" }],
   aclId: [{ required: true, message: "请选择" }]
 
+}
+const editlineRules = {
+  lineName: [{ required: true, message: "请输入线路名称" }],
+  host: [{ required: true, message: "请选择" }],
+  aclId: [{ required: true, message: "请选择" }]
+
+}
+const sortlineRules = {
+  host: [{ required: true, message: "请选择" }]
 }
 const data = ref([])
 const totals = ref(0)
@@ -426,7 +441,9 @@ const isOpen = async (record) => {
     // 不是，你那个接口0还是1都是json字符串，我0是空数组，你的意思是0 的时候传 1是
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
+      console.log(formState.value.aclId);
       formState.value.aclId = JSON.parse(res.aclId)//这是1是吗
+      console.log(formState.value.aclId);
 
     } else {
       formState.value.aclId = [] //这是0
@@ -555,8 +572,9 @@ const editisOpen = async (record) => {
     // 那个接口0还是1都是json字符串，
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
-      editformState.value.aclId = JSON.parse(res.aclId)//这是1是
-
+      console.log(editformState.value.aclId, '这是编辑配置的aclId');
+      editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
+      console.log(editformState.value.aclId, '这是编辑配置的aclId');
     } else {
       editformState.value.aclId = [] //这是0
     }
@@ -570,21 +588,33 @@ const editonCloseaclFn = async () => {
   editformState.value.lineName = ""
   editformState.value.aclId = []
   editformState.value.host = null
+  editlineRef.value.resetFields()
 }
 // 编辑提交
 const edithandleOk = async () => {
+  // 校验表单
+  try {
+    await editlineRef.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return console.log(error)
+  }
   editformState.value.aclId = JSON.stringify(editformState.value.aclId);
   let res = await editline(editformState.value)
   console.log(res, 'resdata');
   initData()
   editvisible.value = false
   message.success('修改成功')
+  editonCloseaclFn()
 }
 const editchangeradioFn = (value) => {
-  console.log(value, 'value');
-  if (editradiovalue.value == 1 && editformState.value.aclId.length == 0) { //1不能传【】 1要是传【】，那0传啥
+  console.log(value, 'value这是拿acl的id的路线');
+  if (editradiovalue.value == 1 && editformState.value.aclId.length == 0) { //那0传的是数组
     editformState.value.aclId = []
   }
+}
+const handleChanges = (value) => {
+  console.log(value, 'aaa');
 }
 // 这块写的是线路排序
 const sortvisible = ref(false)
@@ -624,6 +654,13 @@ const isOpensort = () => {
 }
 const sorthandleOk = async () => {
   console.log('1');
+  // 校验表单
+  try {
+    await sortlineRef.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return console.log(error)
+  }
   let res = await sortlineName(lineObjects.value)
   console.log(res, 'res531s');
   // initData()
@@ -657,6 +694,7 @@ const delAll = () => {
   editformState.value.host = ""
   lineNameList.value = []
   initData()
+  sortlineRef.value.resetFields()
 }
 </script>
 <style scoped lang="less">
