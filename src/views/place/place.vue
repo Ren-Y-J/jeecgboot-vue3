@@ -84,6 +84,10 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
+		
+		
+		
+		
 			<a-form-item
 				label="域名"
 				:labelCol="{ span: 5 }"
@@ -171,7 +175,7 @@
 		</a-form>
 	</a-modal>
 	<!-- SOA配置 -->
-	<a-modal v-model:visible="visible_SOA" title="SOA配置" @ok="handleOk_">
+	<a-modal v-model:visible="visible_SOA" title="SOA配置" @ok="handleOk_SOA">
 		<a-form
 			style="margin-top: 10px"
 			ref="formRef_SOA"
@@ -182,33 +186,68 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
-		<a-form-item label="主名称服务器" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="主名称服务器" v-model:value="formState_SOA.serverName" />
-		</a-form-item>
-		<a-form-item label="TTL" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="TTL" v-model:value="formState_SOA.ttl" />
-		</a-form-item>
-		<a-form-item label="管理员邮箱" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="管理员邮箱" v-model:value="formState_SOA.mail" />
-		</a-form-item>
-		
-		<a-form-item label="刷新时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="刷新时间(秒)" v-model:value="formState_SOA.refreshTime" />
-		</a-form-item>
-		<a-form-item label="重试时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="重试时间(秒)" v-model:value="formState_SOA.retryTime" />
-		</a-form-item>
-		<a-form-item label="过期时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="过期时间(秒)" v-model:value="formState_SOA.expireTime" />
-		</a-form-item>
-		<a-form-item label="否定缓存时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-			<a-input placeholder="否定缓存时间(秒)" v-model:value="formState_SOA.minimumTime" />
-		</a-form-item>
+			<a-form-item label="主名称服务器" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="主名称服务器" v-model:value="formState_SOA.serverName" />
+			</a-form-item>
+			<a-form-item label="TTL" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }" name="ttl">
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="TTL"
+					v-model:value="formState_SOA.ttl"
+				/>
+			</a-form-item>
+			<a-form-item label="管理员邮箱" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="管理员邮箱" v-model:value="formState_SOA.mail" />
+			</a-form-item>
+
+			<a-form-item label="刷新时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="刷新时间(秒)"
+					v-model:value="formState_SOA.refreshTime"
+				/>
+			</a-form-item>
+			<a-form-item label="重试时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="重试时间(秒)"
+					v-model:value="formState_SOA.retryTime"
+				/>
+			</a-form-item>
+			<a-form-item label="过期时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="过期时间(秒)"
+					v-model:value="formState_SOA.expireTime"
+				/>
+			</a-form-item>
+			<a-form-item label="否定缓存时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="否定缓存时间(秒)"
+					v-model:value="formState_SOA.minimumTime"
+				/>
+			</a-form-item>
 		</a-form>
 	</a-modal>
 </template>
 <script setup>
-	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll,SOAEcho } from './place.ts';
+	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho,EditSOA } from './place.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { message } from 'ant-design-vue';
@@ -259,19 +298,13 @@
 			remark: '',
 		},
 		formState_SOA: {
-			serverName:'',
-			ttl:'',
-			mail:'',
-			refreshTime:'',
-			retryTime:'',
-			expireTime:'',
-			minimumTime:''
-			
-			
-			
-			
-			
-			
+			serverName: '',
+			ttl: '',
+			mail: '',
+			refreshTime: '',
+			retryTime: '',
+			expireTime: '',
+			minimumTime: '',
 		},
 		groupData: [],
 		search: '',
@@ -280,6 +313,7 @@
 		status: 1,
 		HostsData: '',
 		hosts: undefined,
+		zoneId:''
 	});
 	const {
 		formState_SOA,
@@ -301,6 +335,7 @@
 		type_1,
 		HostsData,
 		hosts,
+		zoneId
 	} = toRefs(data);
 	const changetabs = () => {
 		placetype.value = activeKey.value;
@@ -325,29 +360,42 @@
 			});
 		}
 	};
-	const openSOA = (record) =>{
-		visible_SOA.value=true
-		SOAEcho(`${record.zoneId}`).then(res=>{
-			
-			console.log(JSON.parse(res.soaInfo),'SOA')
-			
-			
-			
-			
-			
-			
-			
+	const handleOk_SOA = () => {
+		let arr= []
+		arr.push(formState_SOA.value )
+		let soaInfo  = JSON.stringify(arr)
+		
+		EditSOA({
+			soaInfo:soaInfo,
+			zoneId:zoneId.value
+		}).then(res=>{
+				message.success('操作成功');
+			visible_SOA.value=false
+				getData();
+			clearData()
 		})
 		
+	};
+	// 回显SOA
+	const openSOA = (record) => {
+		visible_SOA.value = true;
 		
-		
-		
-		
-		
-		
-		
-		
-	}
+		zoneId.value =record.zoneId
+		SOAEcho(`${record.zoneId}`).then((res) => {
+			
+			let data = JSON.parse(res.soaInfo);
+			console.log(data,'recordrecordrecordrecord')
+			data.forEach((item) => {
+				formState_SOA.value.expireTime = item.expireTime;
+				formState_SOA.value.mail = item.mail;
+				formState_SOA.value.minimumTime = item.minimumTime;
+				formState_SOA.value.refreshTime = item.refreshTime;
+				formState_SOA.value.retryTime = item.retryTime;
+				formState_SOA.value.serverName = item.serverName;
+				formState_SOA.value.ttl = item.ttl;
+			});
+		});
+	};
 	const getData = () => {
 		GetHostsAll({}).then((res) => {
 			HostsData.value = res;
@@ -480,6 +528,15 @@
 		formState_.value.IP = '';
 		formState_.value.remark = '';
 		formState_.value.childZone = '';
+		
+		formState_SOA.value.serverName=''
+		formState_SOA.value.ttl=''
+		formState_SOA.value.mail=''
+		formState_SOA.value.refreshTime=''
+		formState_SOA.value.retryTime=''
+		formState_SOA.value.expireTime=''
+		formState_SOA.value.minimumTime=''
+		
 	};
 	const delBtn = (record) => {
 		console.log(record, 'record');
