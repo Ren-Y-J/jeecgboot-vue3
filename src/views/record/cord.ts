@@ -6,6 +6,7 @@ enum CordApi {
     dellist = '/record/manage/delete',//删除
     editlist = '/record/manage/update',//修改
     listAll = '/zone/manage/listAll',//域名
+
 }
 export const list = (params) => defHttp.post({ url: CordApi.list, params });
 export const addlist = (params) => defHttp.post({ url: CordApi.addlist, params });
@@ -14,3 +15,5 @@ export const editlist = (params) => defHttp.post({ url: CordApi.editlist, params
 export const listAll = (params) => defHttp.post({ url: CordApi.listAll, params });
 // 获取
 export const GetLine = (params) => defHttp.get({ url:'/zone/manage/'+ params });
+// 回显
+export const BackLine = (params) => defHttp.get({ url:'/record/manage/'+ params });
