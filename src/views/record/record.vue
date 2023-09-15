@@ -65,7 +65,7 @@
 							v-model="delselect"
 							placeholder="批量操作"
 						>
-							<a-select-option value="1">删除</a-select-option>
+							<a-select-option value="0">删除</a-select-option>
 						</a-select>
 					</a-space>
             <!-- <a-select v-model:value="value17" style="width: 20%" placeholder="批量操作" class="Con-Bat">
@@ -77,7 +77,7 @@
             </span>
         </div>
         <div class="select">
-          <a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
+          <a-alert show-icon style="margin-top: 8px" type="info">
 				<template #message>
 					<template v-if="number > 0">
 						<span>已选定 {{ number }} 条记录(可跨页)</span>
@@ -95,7 +95,7 @@
         <!-- table表格 -->
         <div class="table">
            <span style="margin-left: 8px"></span>
-            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :pagination="false" bordered
+            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 510 }" :pagination="false" bordered
                 :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
                 :rowKey="(record) => record.id"
                 :columns="columns"
@@ -136,6 +136,15 @@
                     <div v-if='record.type == 10'>子网</div>
                     <div v-if='record.type == 11'>其他</div>
               </template>
+              <!-- 线路 -->
+					<template v-if="column.dataIndex === 'lineName'">
+						<div style="display: flex; justify-content: center; align-items: center">
+							<div v-for="(item, index) in record.lineName" :key="index" class="iplist_data" style="margin-right: 10px">
+								<span> {{ item }} </span>
+							</div>
+						</div>
+					</template>
+
               </template>
             </a-table>
         </div>
@@ -152,25 +161,24 @@
 				/>
 			</div> 
     </div>
-    <!-- 添加记录弹窗 v-model:visible="visible" style='margin-top: 26px'-->
+    <!-- !!!!!添加记录弹窗 v-model:visible="visible" style='margin-top: 26px'-->
    <div class="addlist">
       <a-modal  v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
-        <a-form ref='formRef' :model="rowData" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
+        <a-form ref='formRef' :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <a-form-item label="域名" :rules="formRules.DomainName"  name="DomainName" style='margin-top: 26px' >
+          <a-form-item label="域名" :rules="[{ required: true, message:'请选择域名' }]"  name="zoneId" style='margin-top: 26px' >
             <a-space>
-              <a-select placeholder="请选择域名" ref="select" v-model:value="rowData.DomainName" style="width: 245px"
+              <a-select placeholder="请选择域名" ref="select" v-model:value="formState.zoneId" style="width: 245px"
                 @focus="focus" @change="changeNames" :options="listAllData" >
-                <!-- <a-select-option value="A">1 </a-select-option> -->
               </a-select>
             </a-space>
           </a-form-item>
           <div class="line">
-              <a-form-item label="记录名称" :rules="formRules.designation" name="designation" style='margin-top: 18px'>
-                <a-input v-model:value="rowData.designation" placeholder="请输入记录名称" style='width:50%' />
+              <a-form-item label="记录名称" :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
+                <a-input v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
-              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="formRules.type" name="type" style='margin-top: 0px'>
-            <a-radio-group v-model:value="rowData.type" name="radioGroup" @change="changeradioFn">
+              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message:'请选择类型' }]" name="type" style='margin-top: 0px'>
+              <a-radio-group v-model:value="formState.type" name="radioGroup" @change="changeradioFn">
               <a-radio :value="0">A</a-radio>
               <a-radio :value="1">AAAA</a-radio>
               <a-radio :value="2">CNAME </a-radio>
@@ -179,39 +187,56 @@
               <a-radio :value="5">CAA </a-radio>
               <a-radio :value="6">SRV </a-radio>
               <a-radio :value="7">TXT </a-radio>
-            </a-radio-group>
-          </a-form-item>
-              <a-form-item label="记录值" :rules="formRules.value" name="value" style='margin-top: 18px'>
-                <a-input v-model:value="rowData.value" placeholder="请输入记录值" style='width:50%' />
+              </a-radio-group>
               </a-form-item>
-              <a-form-item label="TTL" :rules="formRules.ttl" name="ttl" style='margin-top: 18px'>
-                <a-input v-model:value="rowData.ttl" placeholder="请输入TTL" style='width:50%' />
+              <a-form-item label="记录值" :rules="[{ required: true, message:'请输入记录值' }]" name="content" style='margin-top: 18px'>
+                <!-- <a-input v-model:value="formState.content" placeholder="请输入记录值" style='width:50%' /> -->
+                <a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width:50%"
+							placeholder="请输入记录值"
+							v-model:value="formState.content"
+						></a-input-number>
               </a-form-item>
-              <a-form-item label="线路" :rules="formRules.line" name="line" style='margin-top: 18px'>
+              <a-form-item label="TTL" :rules="[{ required: true, message:'请输入大于0的整数,'}]" name="ttl" style='margin-top: 18px'>
+                <!-- <a-input v-model:value="formState.ttl" placeholder="请输入TTL" style='width:50%' /> -->
+                <a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="1"
+							style="width:50%"
+							placeholder="请输入大于0的TTL"
+							v-model:value="formState.ttl"
+						></a-input-number>
+              </a-form-item>
+              <a-form-item label="线路" :rules="[{ required: true, message:'请选择线路' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="rowData.line" style="width: 150px"
-                @focus="focus" @change="handleChangsort" :options="groupData">
-                <!-- <a-select-option value="A">1 </a-select-option> -->
+              <a-select placeholder="请选择线路" ref="select" v-model:value="formState.lineId" style="width: 150px"
+                @focus="focus" @change="handleChangsortadd" :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
-            </a-space>
+              </a-space>
               </a-form-item>
           </div>
           </a-form>
           <div class="Addrecord line" style="margin-bottom: 10px"  @click="addRecordBtn">
-            <span >添加记录</span>
+            <plus-circle-outlined /><span >添加记录</span>
           </div>
-<!-- 第二个表格 -->
-          <a-form v-show="addRecord == true" ref='formRef' :model="formState_1" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
+<!-- 第二个表格 :rules="formRules.designation" :rules="formRules.type"  :rules="formRules.value"  :rules="formRules.ttl" :rules="formRules.line"-->
+          <a-form v-show="addRecord == true" :rules="formAdd" ref='formRef_' :model="formState_1" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           
           <div class="line">
             <div @click="XiconBtn" style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
 				      <close-circle-filled class="Xicon" @click="XiconBtn"/>
 			    </div>
-              <a-form-item label="记录名称" :rules="formRules.designation" name="designation" style='margin-top: 18px'>
+              <a-form-item label="记录名称"  name="name" style='margin-top: 18px'>
                 <a-input v-model:value="formState_1.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
-              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="formRules.type" name="type" style='margin-top: 0px'>
+              <a-form-item label="类型"  :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }"  name="type" style='margin-top: 0px'>
             <a-radio-group v-model:value="formState_1.type" name="radioGroup" @change="changeradioFn">
               <a-radio :value="0">A</a-radio>
               <a-radio :value="1">AAAA</a-radio>
@@ -223,17 +248,34 @@
               <a-radio :value="7">TXT </a-radio>
             </a-radio-group>
           </a-form-item>
-              <a-form-item label="记录值" :rules="formRules.value" name="value" style='margin-top: 18px'>
+              <a-form-item label="记录值"  name="content" style='margin-top: 18px'>
                 <a-input v-model:value="formState_1.content" placeholder="请输入记录值" style='width:50%' />
+                	<!-- <a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width:50%"
+							placeholder="请输入记录值"
+							v-model:value="formState_1.content"
+						></a-input-number> -->
               </a-form-item>
-              <a-form-item label="TTL" :rules="formRules.ttl" name="ttl" style='margin-top: 18px'>
+              <a-form-item label="TTL"  name="ttl" style='margin-top: 18px'>
                 <a-input v-model:value="formState_1.ttl" placeholder="请输入TTL" style='width:50%' />
+                <!-- <a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="1"
+							style="width:50%"
+							placeholder="请输入大于0的TTL"
+							v-model:value="formState_1.ttl"
+						></a-input-number> -->
               </a-form-item>
-              <a-form-item label="线路" :rules="formRules.line" name="line" style='margin-top: 18px'>
+              <a-form-item label="线路"  name="lineId" style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="formState_1.line" style="width: 150px"
-                @focus="focus" @change="handleChangsort" :options="groupData">
-                <!-- <a-select-option value="A">1 </a-select-option> -->
+              <a-select placeholder="请选择线路" ref="select" v-model:value="formState_1.lineId" style="width: 150px"
+                @focus="focus" @change="handleChangsort" :options="groupData"  mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }" >
               </a-select>
             </a-space>
               </a-form-item>
@@ -241,25 +283,25 @@
           </a-form>
       </a-modal>
    </div>
-   <!-- 修改弹框 @ok="btnOK"-->
+   <!-- 修改弹框 -->
    <div class="dellist">
       <a-modal  v-model:visible="visible_edit" title="记录修改" width="900px"  @ok="editOK">
-        <a-form ref='lineRef' :model="rowData" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
+        <a-form ref='formRef' :model="formState_edit" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <a-form-item label="域名" :rules="formRules.DomainName"  name="DomainName" style='margin-top: 26px' >
+          <a-form-item label="域名" :rules="[{ required: true, message:'请选择域名' }]"  name="zoneId" style='margin-top: 26px' >
             <a-space>
-              <a-select placeholder="请选择域名" ref="select" v-model:value="rowData.DomainName" style="width: 245px"
-                @focus="focus"  :options="listAllData">
-                <!-- <a-select-option value="A">1 </a-select-option> -->
+              <a-select placeholder="请选择域名" ref="select" v-model:value="formState_edit.zoneId" style="width: 245px"
+                @focus="focus" @change="changeName_edit" :options="listAllData">
+                
               </a-select>
             </a-space>
           </a-form-item>
           <div >
-              <a-form-item label="记录名称" :rules="formRules.designation" name="designation" style='margin-top: 18px'>
-                <a-input v-model:value="rowData.designation" placeholder="请输入记录名称" style='width:50%' />
+              <a-form-item label="记录名称" :rules="[{ required: true, message: '请输入记录名称!' }]" name="name" style='margin-top: 18px'>
+                <a-input v-model:value="formState_edit.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
-              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="formRules.type" name="type" style='margin-top: 0px'>
-            <a-radio-group v-model:value="rowData.type" name="radioGroup" @change="changeradioFn">
+              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message: '请选择类型!' }]" name="type" style='margin-top: 0px'>
+            <a-radio-group v-model:value="formState_edit.type" name="radioGroup" @change="changeradioFn">
               <a-radio :value="0">A</a-radio>
               <a-radio :value="1">AAAA</a-radio>
               <a-radio :value="2">CNAME </a-radio>
@@ -270,17 +312,16 @@
               <a-radio :value="7">TXT </a-radio>
             </a-radio-group>
           </a-form-item>
-              <a-form-item label="记录值" :rules="formRules.value" name="value" style='margin-top: 18px'>
-                <a-input v-model:value="rowData.value" placeholder="请输入记录值" style='width:50%' />
+              <a-form-item label="记录值" :rules="[{ required: true, message: '请输入记录值!' }]" name="content" style='margin-top: 18px'>
+                <a-input v-model:value="formState_edit.content" placeholder="请输入记录值" style='width:50%' />
               </a-form-item>
-              <a-form-item label="TTL" :rules="formRules.ttl" name="ttl" style='margin-top: 18px'>
-                <a-input v-model:value="rowData.ttl" placeholder="请输入TTL" style='width:50%' />
+              <a-form-item label="TTL" :rules="[{ required: true, message: '请输入TTL!' }]" name="ttl" style='margin-top: 18px'>
+                <a-input v-model:value="formState_edit.ttl" placeholder="请输入TTL" style='width:50%' />
               </a-form-item>
-              <a-form-item label="线路" :rules="formRules.line" name="line" style='margin-top: 18px'>
+              <a-form-item label="线路" :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="rowData.line" style="width: 150px"
-                @focus="focus"  :options="groupData">
-                <!-- <a-select-option value="A">1 </a-select-option> -->
+              <a-select placeholder="请选择线路" ref="select" v-model:value="formState_edit.lineId" style="width: 150px"
+                @focus="focus"  :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
             </a-space>
               </a-form-item>
@@ -294,8 +335,13 @@
 <script setup>
 import { message } from 'ant-design-vue';
 import { SmileOutlined, DownOutlined,CloseCircleFilled } from '@ant-design/icons-vue';
+import { SmileTwoTone, PlusCircleOutlined,HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
 import { computed, defineComponent, reactive, toRefs, ref } from 'vue';
-import { list, addlist,dellist,editlist,listAll,GetLine} from "./cord"
+import { list, addlist,dellist,editlist,listAll,GetLine,BackLine} from "./cord"
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Modal } from 'ant-design-vue';
+import { createVNode } from 'vue';
+
 const columns = [{
   title: '记录名称',
   dataIndex: 'name',
@@ -320,7 +366,7 @@ const columns = [{
 },
 {
   title: '线路',
-  dataIndex: 'lineId',
+  dataIndex: 'lineName',
   width: 220,
   align: 'center'
 
@@ -341,14 +387,14 @@ const columns = [{
 
 ];
 
-const formRules = {
-  DomainName: [{ required: true, message: "请选择域名" }],
-  designation: [{ required: true, message: "请输入记录名称" }],
-  type: [{ required: true, message: "请选择类型" }],
-  value: [{ required: true, message: "请输入记录值,不可以是数字" }],
-  ttl: [{ required: true, message: "请输入TTL,大于0的整数" }],
-  line: [{ required: true, message: "请选择线路" }],
-}
+// const formRules = {
+//   DomainName: [{ required: true, message: "请选择域名" }],
+//   designation: [{ required: true, message: "请输入记录名称" }],
+//   type: [{ required: true, message: "请选择类型" }],
+//   value: [{ required: true, message: "请输入记录值,不可以是数字" }],
+//   ttl: [{ required: true, message: "请输入TTL,大于0的整数" }],
+//   line: [{ required: true, message: "请选择线路" }],
+// }
 
 const data = reactive({
   name:"",
@@ -370,13 +416,15 @@ const data = reactive({
   groupData: [],
   listAllData:[],
   addRecord: false,
+  selects : 0,
   formState: {
 			name: '',
 			type: '',
-			lineId: undefined,
+			lineId: [],
+      // 先放到数组在stry
 			ttl: '',
 			content: '',
-			
+			zoneId:''
 		},
 		formState_1: {
 			name: '',
@@ -385,6 +433,15 @@ const data = reactive({
 			ttl: '',
 			content: '',
 			
+		},
+    formState_edit: {
+			name: '',
+			type: '',
+			lineId: undefined,
+			ttl: '',
+			content: '',
+			zoneId:'',
+      id:''
 		},
 });
 const {
@@ -408,7 +465,9 @@ const {
   listAllData,
   addRecord,
   formState,
-  formState_1
+  formState_1,
+  formState_edit,
+  selects,
 } = toRefs(data)
 
 const Cordquery = ref({
@@ -417,7 +476,8 @@ const Cordquery = ref({
  
 })
 
-const formRef = ref(null)
+const formRef = ref(null);
+const formRef_ = ref(null)
 const rowData = ref({
   zoneName: '',
   name: '',
@@ -427,10 +487,14 @@ const rowData = ref({
   lineId:''
 })
 //新增
+const formAdd = ref([])
+const formAdd_ = ref([])
 const addFn = async () => {
+  
   // 校验表单
   try {
     await formRef.value.validate()
+   await formRef_.value.validate()
   } catch (error) {
     // console.log(error);
     return console.log(error)
@@ -439,15 +503,24 @@ const addFn = async () => {
   let formData = [];
  if (addRecord.value == true) {
 			formData.push(formState.value, formState_1.value);
+      formAdd = formRef.value.validate()
 		}
     if (addRecord.value == false) {
 			formData.push(formState.value);
+
 		}
-    formData.forEach((item) => {
-			item.lineId = JSON.stringify(item.lineId);
-			// 添加 zoneId 字段，值为 id.value
-			// item.zoneId = id.value;
-		});
+    // console.log(formData.value.lineId,'formData.value.lineId');
+    // formData.value.lineId
+      // formData.value.aclId = JSON.stringify(formState.value.aclId);
+    // formData.forEach((item) => {
+		// 	item.lineId = JSON.stringify(item.lineId);
+		// 	// 添加 zoneId 字段，值为 id.value
+		// 	// item.zoneId = id.value;
+		// });
+     formState.value.lineId = JSON.stringify( formState.value.lineId);
+     formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
+    //  console.log( formState.value.lineId);
+    // console.log( formState.value.lineId,'ok');
     addlist(formData).then((res) => {
 			message.success('添加成功');
 			visible.value = false;
@@ -455,34 +528,22 @@ const addFn = async () => {
 			getcordList();
 		});
 
-// addlist({
-//   zoneName:rowData.value.zoneName,
-//   name:rowData.value.name,
-//   type:0,
-//   content:rowData.value.content,
-//   ttl:rowData.value.ttl,
-//   lineId: JSON.stringify(rowData.value.lineId),
-
-// }).then((res)=>{
-//   visible.value = false;
-// 	message.success('添加成功');
-//   getcordList()
-//   onClose()
-// })
- 
 }
+const handleChangsortadd =(value) =>{
+    // console.log(value,'handleChangsortadd');
+    formState.value.lineId=value
+  //   console.log(formState.value.lineId);
+  // console.log( formState.value.lineId ,'handleChangsortadd22');
+
+}
+
+
 // 关闭弹框
 const onClose = () => {
   visible.value = false;
   formRef.value.resetFields()
-  rowData.value.zoneName = ""
-  rowData.value.name = ""
-  rowData.value.name = ""
-  rowData.value.type = ""
-  rowData.value.content = ""
-  rowData.value.ttl = ""
-  rowData.value.lineId = ""
-  rowData.value = {}
+  formState.value = {}
+  formState_1.value = {}
 };
 const addRecordBtn = () => {
 		addRecord.value = true;
@@ -490,20 +551,7 @@ const addRecordBtn = () => {
    const XiconBtn = () => {
 		addRecord.value = false;
 	};
-//修改
-const editOK = ()=>{
-  GetLine(`${id.value}`).then((res) => {
-			console.log(res,'9-9---9-9-')
-			let transformedData = res.map((item) => {
-				return {
-					value: item.lineId,
-					label: item.lineName,
-				};
-			});
-			groupData.value = transformedData;
-		});
-  
-}
+
 
 
 const queryParams = ref({
@@ -527,7 +575,7 @@ const handleQuery =()=>{
   //  getcordList()
   })
 }
-// const changesearch = ref('请选择')
+
 //重置
 const AlldelFn = () => {
   // console.log('1');
@@ -537,12 +585,15 @@ const AlldelFn = () => {
   queryParams.value.pageNum = 1
   queryParams.value.pageSize = 10
   getcordList()
-  // changesearch.value = '请选择'
+ 
 }
 
 //列表数据
 const getcordList = ()=>{
+  
+  console.log(Cordquery.value,'252');
   list(Cordquery.value).then(res =>{
+    
     // console.log(res);
     listData.value = res.records
     total.value = res.total
@@ -565,16 +616,18 @@ const onShowSizeChange = (current, pageSize) => {
 	};
 //添加按钮
  const showModal = () => {
+  
       visible.value = true;
+     
       zoneName.value = "";
       name.value = "";
       type.value = "";
       content.value = ""
       ttl.value = ""
-      lineId.value = ""
+      // lineId.value = ""
       // 获取线路
      listAll().then(res=>{
-    console.log(res);
+    console.log(res,);
     let listData = res.map((item)=>{
       return {
         value: item.zoneId,
@@ -582,25 +635,45 @@ const onShowSizeChange = (current, pageSize) => {
       }
     })
   listAllData.value = listData
+  //  console.log(listAllData.value,'listAllData.value');
   })
 		
 		visible.value = true;
     };
-// 选择域名
-    const changeNames = ()=>{
-      // console.log(rowData.value.DomainName,'125');
-      
-      GetLine(`${rowData.value.DomainName}`).then((res) => {
-			console.log(res,'9-9---9-9-')
-			let transformedData = res.map((item) => {
-				return {
-					value: item.lineId,
-					label: item.lineName,
-				};
-			});
-			groupData.value = transformedData;
+// 添加弹框选择域名
+    const changeNames = (value)=>{
+      // console.log(formState.value.zoneName,'125');
+      console.log(value,'id');
+      formState.value.zoneId =value
+      GetLine(formState.value.zoneId).then((res) => {
+			console.log(res,'9-9---9-8-')
+			// let transformedData = res.map((item) => {
+			// 	return {
+			// 		value: item.lineId,
+			// 		label: item.lineName,
+			// 	};
+			// });
+			groupData.value = res;
 		});
     }
+    // 修改获取线路
+    const changeName_edit = (value)=>{
+      console.log(value,'id');
+      formState_edit.value.zoneId = value
+      // console.log(formState_edit.value.zoneName,'125');
+       GetLine(formState_edit.value.zoneId).then((res) => {
+			console.log(res,'9-9---9-9-')
+			// let transformedData = res.map((item) => {
+			// 	return {
+			// 		value: item.lineId,
+			// 		label: item.lineName,
+			// 	};
+			// });
+			groupData.value = res;
+		});
+   
+    }
+  
 // 删除
   const delFn = async (record) =>{
     // console.log(record,'111');
@@ -616,9 +689,82 @@ const onShowSizeChange = (current, pageSize) => {
   delFn(record.id)
   getcordList()
 };
-//修改
+//批量删除
+const handlChangeFn = (val) =>{
+  console.log(val,'val');
+  selects.value = val
+  if(number.value == 0){
+    message.error('请勾选需要删除的集群')
+  }else{
+    Modal.confirm({
+      title: '删除',
+      icon: createVNode(ExclamationCircleOutlined),
+      content: createVNode('div', {
+        style: 'color:rgba(0, 0, 0, 0.85);font-size: 14px;',
+      }, '是否删除选中数据'),
+      onOk() {
+        console.log('OK');
+        if (selects.value == '0' && !allclusterId.value.length == 0) {
+          dellist({ values: allclusterId.value }).then(res => {
+            // console.log(res);
+            getcordList()
+            message.success('批量删除成功')
+            number.value = 0
+            // changevalue.value = '批量删除'
+          })
+          // console.log(res, 'allclusterId');
+
+
+        }
+
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+      class: 'test',
+    });
+  }
+}
+//修改按钮
 const openmodal = (record)=>{
   visible_edit.value = true;
+  // console.log(record,"123456");
+    // 获取线路
+     listAll().then(res=>{
+    // console.log(res,"2222");
+    let listData = res.map((item)=>{
+      return {
+        value: item.zoneId,
+				label: item.zoneName,
+      }
+    })
+  listAllData.value = listData
+  // console.log(listAllData.value,'listAllData.value');
+  })
+   formState_edit.value.id = record.id;
+  //  console.log(formState_edit.value.id,"1111");
+    	BackLine(`${record.id}`).then((res) => {
+        console.log(res,"2321");
+			formState_edit.value.name = res.name;
+			formState_edit.value.type = res.type;
+			formState_edit.value.ttl = res.ttl;
+			formState_edit.value.content = res.content;
+			formState_edit.value.lineId = JSON.parse(res.lineId);
+			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
+		});
+
+}
+//修改确定按钮
+const editOK = ()=>{
+ 
+  formState_edit.value.lineId = JSON.stringify(formState_edit.value.lineId);
+		editlist(formState_edit.value).then((res) => {
+      console.log(res,formState_edit.value.lineId,'qd');
+			message.success('操作成功');
+			getcordList();
+			visible_edit.value = false;
+		});
+    
 }
 //多选
 const state = reactive({
@@ -720,6 +866,16 @@ const state = reactive({
 		justify-content: flex-end;
 		align-items: flex-start;
 		font-size: 15px;
+	}
+  .iplist_data {
+		cursor: pointer;
+		padding: 3px;
+		border: 1px solid #249ff3;
+		display: flex;
+		float: left;
+		span {
+			color: #249ff3;
+		}
 	}
 
 </style>
