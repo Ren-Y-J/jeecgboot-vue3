@@ -1,7 +1,7 @@
 <template>
   <div class="contaion" style="margin-top:6px">
     <span class="select-option">
-      <a-space>
+      <a-space style="padding-right: 6px;">
         <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
           <!--这是静态写法 <a-select-option value="0"> <rest-outlined />删除</a-select-option> -->
           <!-- <a-select-option value="1">以后要加别的导出</a-select-option> -->
@@ -81,6 +81,7 @@ import { grouplist, libraryAll, addgroup, editgroup, groupInfo, delgroup } from 
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { message } from 'ant-design-vue';
 const columns = [
   {
     title: '域名',
@@ -232,7 +233,7 @@ const handlChangeFn = async (val) => {
             number.value = 0
             changevalue.value = '批量删除'
           })
-          console.log(res, 'allclusterId');
+          // console.log(res, 'allclusterId');
 
         }
 
@@ -245,11 +246,45 @@ const handlChangeFn = async (val) => {
   }
 
 }
+const delFn = async (record) => {
+  // 拿到点击删除的id
+  // console.log(record, 'record1');
+  // 错误的写法lists.value.push(record.clusterId)
+  // 把id放到对象（包）数组
+  commonEnty.value.values.push(record);
+  // console.log(lists.value, 'lists.value');
+  await delgroup(commonEnty.value)
+  // 更新列表
+  getList()
+  message.success('删除成功')
+
+}
+const confirm = (record) => {
+  console.log(record.clusterId, 'record2');
+  delFn(record.id)
+  initData()
+};
 </script>
 <style scoped lang="less">
 .contaion {
-  padding: 8px;
+  padding: 6px;
   background-color: #fff;
+
+  // 标题
+  /deep/.ant-table-thead>tr>th,
+  .ant-table-tbody>tr>td,
+  .ant-table tfoot>tr>th,
+  .ant-table tfoot>tr>td {
+    padding: 7.5px 16px;
+  }
+
+  // /deep/ .ant-card-body {
+  //   padding: 7.5px !important;
+  // }
+
+  /deep/ .ant-table-tbody>tr>td {
+    padding: 6px !important;
+  }
 
   .pagination {
     margin: 10px 0 0 0;

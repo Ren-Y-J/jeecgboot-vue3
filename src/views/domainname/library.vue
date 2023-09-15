@@ -38,8 +38,7 @@
       <a-modal v-model:visible="visible" :title="opTitle" @ok="addoreditFn" @cancel="onClose">
         <a-form :model="rowData" ref='formReflibrary' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <a-form-item :rules="formRules.name" label="ACL名称" name="name" style='margin-top: 26px'>
-
+          <a-form-item :rules="formRules.name" label="分组名称" name="name" style='margin-top: 26px'>
             <a-input v-model:value="rowData.name" placeholder="请输入分组名称" />
           </a-form-item>
         </a-form>

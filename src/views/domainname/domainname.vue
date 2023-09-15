@@ -28,10 +28,10 @@
       </a-form>
     </div>
 
-    <div v-if="falgeGroup">
+    <div v-if="falgeG">
       <Group ref="groupRef"></Group>
     </div>
-    <div v-show="falgeLibrary">
+    <div v-show="falgeL">
       <Library ref="libraryRef"></Library>
     </div>
   </div>
@@ -43,21 +43,21 @@ import Library from "./library.vue"
 
 const data = reactive({
   activeKey: '0',
-  libraryRef: null,
-  groupRef: null,
+  // libraryRef: null,
+  // groupRef: null,
 })
-const { activeKey, libraryRef, groupRef } = toRefs(data)
-const falgeGroup = ref(true)
-const falgeLibrary = ref(false)
+const { activeKey } = toRefs(data)
+const falgeG = ref(true)
+const falgeL = ref(false)
 const changetabsFn = (value) => {
   if (activeKey.value == '0') {
-    falgeGroup.value = true
-    falgeLibrary.value = false
+    falgeG.value = true
+    falgeL.value = false
     // groupRef.value.initData()
     console.log(falgeLibrary.value);
   } else if (activeKey.value == '1') {
-    falgeLibrary.value = true
-    falgeGroup.value = false
+    falgeL.value = true
+    falgeG.value = false
     libraryRef.value.initData()
     console.log(falgeLibrary.value);
   }
