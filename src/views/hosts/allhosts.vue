@@ -464,9 +464,13 @@
 			initdata.value.forEach(function (item, index) {
 				item.psy = result[index].psy;
 				var physMemTotal = item.physMemTotal / 1000000000;
+					physMemTotal=physMemTotal.toFixed(2)
 				var physDiskTotal = item.physDiskTotal / 1000000000;
+				physDiskTotal=physDiskTotal.toFixed(2)
 				var physDiskUsed = item.physDiskUsed / 1000000000;
+				physDiskUsed=physDiskUsed.toFixed(2)
 				var physMemUsed = item.physMemUsed / 1000000000;
+				physMemUsed=physMemUsed.toFixed(2)
 				item.physMemTotal = physMemTotal;
 				item.physDiskTotal = physDiskTotal;
 				item.physDiskUsed = physDiskUsed;
