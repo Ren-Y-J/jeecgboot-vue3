@@ -1,0 +1,557 @@
+<template>
+	<div class="title">
+		<span>主机配置{{ ShowDataAllData.ipAddress }}</span>
+	</div>
+
+	<div class="padding">
+		<!-- 主机信息 -->
+		<div class="header">
+			<span>主机信息</span>
+			<br />
+			<div class="line" />
+
+			<div class="container" >
+				<div>
+					状态:{{ statusName }}
+					<br />
+					集群:{{ ShowDataAllData.clusterName }}
+				</div>
+				<div
+					>名称:{{ ShowDataAllData.hostName }}
+					<br />
+					磁盘总容量:{{ ShowDataAllData.physDiskTotal }}G
+				</div>
+				<div>
+					IP:{{ ShowDataAllData.ipAddress }}
+					<br />
+					物理内存总容量:{{ ShowDataAllData.physMemTotal }}G
+					
+				</div>
+				<div>
+					端口:{{ ShowDataAllData.port }}
+					<br />
+					
+					机架:{{ ShowDataAllData.floor }}
+				</div>
+			</div>
+		</div>
+		<!-- 配置主机 -->
+
+		<div class="body">
+			<span>配置主机</span>
+			<br />
+			<div class="line" />
+			<a-tabs v-model:activeKey="activeKey">
+				<a-tab-pane key="0" tab="基本配置"></a-tab-pane>
+				<a-tab-pane key="1" tab="线路配置">线路配置</a-tab-pane>
+				<a-tab-pane key="2" tab="域配置">域配置</a-tab-pane>
+				<a-tab-pane key="3" tab="记录配置">记录配置</a-tab-pane>
+				<a-tab-pane key="4" tab="策略配置">策略配置</a-tab-pane>
+			</a-tabs>
+			<!-- 基本配置 -->
+			<div v-show="activeKey == 0" style="padding: 10px">
+				<a-form
+					style="margin-top: 10px"
+					ref="formRef_bas"
+					:model="formState_bas"
+					name="basic"
+					:label-col="{ span: 5 }"
+					:wrapper-col="{ span: 20 }"
+					autocomplete="off"
+					validateTrigger="blur"
+				>
+					基本配置
+
+					<a-form-item label="递归查询" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch checked-children="开启" un-checked-children="关闭" v-model:checked="formState_bas.checked" />
+						<a-checkbox
+							v-show="formState_bas.checked == true"
+							class="custom-checkbox"
+							style="margin-left: 30px"
+							v-model:checked="formState_bas.checkedBox"
+							>限制范围</a-checkbox
+						>
+						<a-select
+							v-model:value="formState_bas.allowRecursionNameList"
+							v-show="formState_bas.checkedBox == true"
+							mode="multiple"
+							style="width: 100%; margin-top: 10px"
+							placeholder="请选择"
+							:options="groupData_Acl"
+						></a-select>
+					</a-form-item>
+
+					<a-form-item v-show="formState_bas.checked == true" label="递归解析方式" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-radio-group v-model:value="formState_bas.recursionType">
+							<a-radio value="1">仅递归查询</a-radio>
+							<a-radio value="2">仅转发查询</a-radio>
+							<a-radio value="3">递归失败后转发</a-radio>
+							<a-radio value="4">转发失败后递归</a-radio>
+						</a-radio-group>
+						<a-select
+							v-model:value="formState_bas.forwarderList"
+							v-show="formState_bas.recursionType !== '1'"
+							mode="multiple"
+							style="width: 100%; margin-top: 10px"
+							placeholder="请选择"
+							:options="groupData"
+						></a-select>
+					</a-form-item>
+
+					<a-form-item label="响应速率限制" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.rateLimitOn"
+						/>
+						<a-tooltip placement="topLeft">
+							<template #title>
+								<span style="font-size: 8px">单IP查询速率上限</span>
+							</template>
+							<exclamation-circle-filled />
+						</a-tooltip>
+						<br /><br />
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="请填写对请求响应速率的上限值"
+							v-model:value="formState_bas.responsesPerSecond"
+							v-show="formState_bas.rateLimitOn == true"
+							addon-after="次/秒"
+						></a-input-number>
+					</a-form-item>
+				</a-form>
+
+				<a-form
+					style="margin-top: 10px"
+					ref="formRef_bas"
+					:model="formState_bas"
+					name="basic"
+					:label-col="{ span: 5 }"
+					:wrapper-col="{ span: 20 }"
+					autocomplete="off"
+					validateTrigger="blur"
+				>
+					<div class="line" />
+					优化配置
+					<a-form-item label="DNS日志设置" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-checkbox-group v-model:value="formState_bas.loggingTypeList" style="width: 100%">
+							<a-checkbox value="1">查询日志 </a-checkbox>
+							<a-checkbox value="2">响应日志 </a-checkbox>
+							<a-checkbox value="3">调试日志 </a-checkbox>
+							<a-tooltip overlayStyle="width:1000px">
+								<template #title>
+									<span style="font-size: 8px">查询日志：工作节点每收到一次查询则记录一次查询日志</span>
+									<br />
+									<span style="font-size: 8px">响应日志：工作节点每进行一次响应则记录一次响应日志</span>
+									<br />
+									<span style="font-size: 8px">调试日志：工作节点的调试日志</span>
+								</template>
+								<exclamation-circle-filled />
+							</a-tooltip>
+						</a-checkbox-group>
+					</a-form-item>
+					<a-form-item label="NX重定向" :labelCol="{ span: 8 }" :wrapperCol="{ span: 15 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.nxRedirectOn"
+						/>
+						<a-tooltip>
+							<template #title>
+								<span style="font-size: 8px">1. 开启NX重定向后，当查询结果为NXDOMAIN时，DNS服务器将解析为指定域名或地址。</span>
+								<br />
+								<span style="font-size: 8px">2. 指定后缀后，DNS服务器将对指定后缀的域名进行NX重定向。</span>
+								<br />
+								<span style="font-size: 8px">3. IPv4和IPv6地址不能同时为空。</span>
+							</template>
+							<exclamation-circle-filled />
+						</a-tooltip>
+						<a-radio-group
+							v-show="formState_bas.nxRedirectOn == true"
+							v-model:value="formState_bas.nxDomainType"
+							style="width: 500px; margin-left: 10px"
+						>
+							<a-radio value="0">全部域名 </a-radio>
+							<a-radio value="1">指定后缀 </a-radio>
+						</a-radio-group>
+						<br />
+						<a-input
+							v-show="formState_bas.nxDomainType == 1"
+							placeholder="请填写要启用的NX重定向的域名后缀"
+							style="width: 300px; margin-top: 5px"
+							v-model:value="formState_bas.nxSuffixDomain"
+						/>
+						<div v-show="formState_bas.nxRedirectOn == true">
+							<a-input
+								style="width: 300px; margin-bottom: 5px; margin-top: 5px"
+								placeholder="为空则对IPv4直接返回空解析"
+								v-model:value="formState_bas.nxRedirectIpV4"
+								addon-before="IPv4重定向"
+							/>
+							<br />
+							<a-input
+								style="width: 300px"
+								placeholder="为空则对IPv6直接返回空解析"
+								v-model:value="formState_bas.nxRedirectIpV6"
+								addon-before="IPv6重定向"
+							/>
+						</div>
+					</a-form-item>
+					<a-form-item label="高级优化配置" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-radio-group v-model:value="formState_bas.advancedOption" style="width: 500px; margin-left: 10px">
+							<a-radio value="0">系统默认 </a-radio>
+							<a-radio value="1">自定义 </a-radio>
+						</a-radio-group>
+					</a-form-item>
+
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最大递归深度"
+							v-model:value="formState_bas.maxRecursionDepth"
+							addon-after="层"
+						></a-input-number>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归查询数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最大递归查询数"
+							v-model:value="formState_bas.maxRecursionQueries"
+							addon-after="次"
+						></a-input-number>
+					</a-form-item>
+
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最小缓存TTL"
+							v-model:value="formState_bas.minCacheTtl"
+							addon-after="秒"
+						></a-input-number>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最大缓存TTL"
+							v-model:value="formState_bas.maxCacheTtl"
+							addon-after="秒"
+						></a-input-number>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归超时时间" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="递归超时时间"
+							v-model:value="formState_bas.resolverQueryTimeout"
+							addon-after="秒"
+						></a-input-number>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归最大并发数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="递归最大并发数"
+							v-model:value="formState_bas.resolverQueryTimeout"
+							addon-after="个"
+						></a-input-number>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小否定缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最小否定缓存TTL"
+							v-model:value="formState_bas.minCacheTtl"
+							addon-after="秒"
+						></a-input-number>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="性能优化选项" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-checkbox-group v-model:value="formState_bas.transferFormat" style="width: 100%">
+							<a-checkbox value="many-answers">域记录打包传输 </a-checkbox>
+							<a-tooltip>
+								<template #title>
+									<span style="font-size: 8px">启用域记录打包传输，主从同步时，域记录打包节约时间</span>
+								</template>
+								<exclamation-circle-filled />
+							</a-tooltip>
+						</a-checkbox-group>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="缓存预取" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.prefetch"
+						/>
+						<a-tooltip>
+							<template #title>
+								<span style="font-size: 8px">开启缓存预取后，本系统将对热点域名和重点域名进行缓存预取。</span>
+							</template>
+							<exclamation-circle-filled />
+						</a-tooltip>
+					</a-form-item>
+				</a-form>
+				<a-form
+					style="margin-top: 10px"
+					ref="formRef_bas"
+					:model="formState_bas"
+					name="basic"
+					:label-col="{ span: 5 }"
+					:wrapper-col="{ span: 20 }"
+					autocomplete="off"
+					validateTrigger="blur"
+				>
+					<div class="line" />
+					安全配置
+					<a-form-item label="DNSSEC" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.dnssecValidation"
+						/>
+						<a-tooltip>
+							<template #title>
+								<span style="font-size: 8px">启用DNSSEC可开启系统DNSSEC功能</span>
+							</template>
+							<exclamation-circle-filled />
+						</a-tooltip>
+					</a-form-item>
+					<a-form-item v-show="formState_bas.dnssecValidation == true" label="DNSSEC" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-checkbox-group v-model:value="formState_bas.dnssecEnable" style="width: 100%">
+							<a-checkbox value="many-answers">域记录打包传输 </a-checkbox>
+							<a-tooltip>
+								<template #title>
+									<span style="font-size: 8px"
+										>DNSSEC验证用于对递归查询的DS结果进行验证，由于运营商网络配置不尽规范，一般不建议开启</span
+									>
+								</template>
+								<exclamation-circle-filled />
+							</a-tooltip>
+						</a-checkbox-group>
+					</a-form-item>
+					<a-form-item label="EDNS" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.edns"
+						/>
+						<a-tooltip>
+							<template #title>
+								<span style="font-size: 8px">启用EDNS可提供EDNS支持</span>
+							</template>
+							<exclamation-circle-filled />
+						</a-tooltip>
+					</a-form-item>
+					<a-form-item label="递归攻击防护" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.recursionProtect"
+						/>
+						<a-tooltip>
+							<template #title>
+								<span style="font-size: 8px">启用递归攻击防护，可以有效防护针对递归解析的SERFAIL攻击</span>
+							</template>
+							<exclamation-circle-filled />
+						</a-tooltip>
+							<a-button @click="BtnOk" class='btnok' type="primary">提交</a-button>
+					</a-form-item>
+				
+				</a-form>
+				
+				
+			</div>
+		</div>
+	</div>
+</template>
+
+<script setup>
+	import { UpOutlined, DownOutlined, ExclamationCircleFilled } from '@ant-design/icons-vue'; //icon引入
+	import { ShowData, EditList, ShowDataAll, transList, AclList } from './deploy.ts';
+	import { reactive, ref, toRefs, watchEffect } from 'vue';
+	const data = reactive({
+		initData: '',
+		pageID: '',
+		ShowDataAllData: '',
+		statusName: '',
+		activeKey: '0',
+		formState_bas: {
+			checked: false,
+			checkedBox: false,
+			forwarderList: [],
+			recursionType: '1',
+			advancedOption: false,
+			rateLimitOn: false,
+			responsesPerSecond: '',
+			loggingTypeList: '',
+			nxRedirectOn: false,
+			nxDomainType: '',
+			advancedOption: '0',
+			maxRecursionDepth: '7',
+			maxRecursionQueries: '1000',
+			minCacheTtl: '90',
+			maxCacheTtl: '604800',
+			resolverQueryTimeout: '10',
+			recursiveClients: '10000',
+			minCacheTtl: '90',
+			prefetch: false,
+			transferFormat: 'one-answer',
+			dnssecValidation: false,
+			dnssecEnable: '',
+			edns: '',
+			recursionProtect: '',
+			allowRecursionNameList:[]
+		},
+		groupData: [],
+		style_switch: '',
+		groupData_Acl: [],
+	});
+	const { initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl } = toRefs(data);
+	const GetData = () => {
+		// 转发列表
+		transList().then((res) => {
+			let transformedData = res.map((item) => {
+				return {
+					value: item.id,
+					label: item.name,
+				};
+			});
+			groupData.value = transformedData;
+		});
+		// ACl
+		AclList().then((res) => {
+			console.log(res, 'ACL');
+			let transformedData = res.map((item) => {
+				return {
+					value: item.aclId,
+					label: item.aclName,
+				};
+			});
+			groupData_Acl.value = transformedData;
+		});
+
+		let url = location.search;
+		pageID.value = url.replace('?', '');
+		ShowData(`${pageID.value}`).then((res) => {
+			initData.value = res;
+			console.log(res, 'ShowData');
+		});
+		ShowDataAll(`${pageID.value}`).then((res) => {
+			ShowDataAllData.value = res;
+			if (res.status == 0) {
+				statusName.value = '异常';
+			} else if (res.status == 1) {
+				statusName.value = '正常';
+			} else {
+				statusName.value = '空';
+			}
+			ShowDataAllData.value.physDiskTotal = (res.physDiskTotal / 100000000).toFixed(2);
+			ShowDataAllData.value.physMemTotal = (res.physMemTotal / 100000000).toFixed(2);
+			console.log(ShowDataAllData.value, 'ShowDataAllData.value');
+		});
+	};
+	GetData();
+</script>
+
+<style>
+	body {
+		background-color: #f0f2f5;
+	}
+	p {
+		font-size: 20px;
+		line-height: 30px;
+	}
+	.padding {
+		padding: 10px;
+		
+	}
+
+
+	.pointer {
+		cursor: pointer;
+	}
+	.body {
+		margin-top: 10px;
+		width: 100%;
+		background-color: #fff;
+		padding: 10px;
+	}
+	.title {
+		text-align: center;
+		width: 100%;
+		background-color: #319eff;
+		padding: 10px;
+		span {
+			color: #fff;
+			font-size: 25px;
+		}
+	}
+	.header {
+		background-color: #fff;
+		padding: 10px;
+		span {
+			font-size: 15px;
+		}
+	}
+	.line {
+		width: 100%;
+		background-color: #f0f2f5;
+		height: 1px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.container {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.container-Btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		.text_btn {
+			border: none;
+		}
+		.text_btn:hover {
+			background-color: #fff;
+		}
+	}
+	.btnok{
+		 position: fixed;
+		  right: 80px;
+		  bottom: 80px;
+	}
+</style>

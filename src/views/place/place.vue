@@ -98,10 +98,16 @@
 				<a-input placeholder="不要包含主机名，如www" v-model:value="formState.name" />
 			</a-form-item>
 
-			<a-form-item label="线路选择" :labelCol="{ span: 5 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请选择线路!' }]"
+			 name="lineId"
+			 label="线路选择" :labelCol="{ span: 5 }">
 				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
-			<a-form-item label="主机" :labelCol="{ span: 5 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请选择主机!' }]"
+			 name="lineId"
+			 label="主机" :labelCol="{ span: 5 }">
 				<a-select ref="select" v-model:value="hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
@@ -147,8 +153,11 @@
 					<a-select-option value="4">v6反向解析</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="主机" :labelCol="{ span: 5 }">
-				<a-select ref="select" v-model:value="hosts" style="width: 150px" placeholder="请选择主机">
+			<a-form-item
+			 :rules="[{ required: true, message: '请选择主机!' }]"
+			 name="hosts"
+			 label="主机" :labelCol="{ span: 5 }">
+				<a-select ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
 					}}</a-select-option>
@@ -296,6 +305,7 @@
 			IP: '',
 			childZone: '',
 			remark: '',
+			hosts:undefined,
 		},
 		formState_SOA: {
 			serverName: '',
@@ -505,12 +515,13 @@
 			return;
 		}
 		AddReverseList({
-			hostId: hosts.value,
+			hostId: formState.value.hosts,
 			type: formState.value.type_1,
 			reverseIpAddr: formState_.value.IP,
 			lineId: JSON.stringify(formState_.value.lineId),
 			remark: formState_.value.remark,
 			childZone: formState_.value.childZone,
+			
 		}).then((res) => {
 			visible_1.value = false;
 			message.success('添加成功');

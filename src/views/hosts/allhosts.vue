@@ -164,7 +164,7 @@
 		</div>
 	</div>
 	<!-- 模态框添加主机 -->
-	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK">
+	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK"   >
 		<!-- 添加 -->
 		<div class="addcomputer">
 			<a-form
@@ -680,7 +680,7 @@
 	// 		rulesmessage_rootpwd.value = '';
 	// 	}
 	// });
-
+ 
 	// 多选
 	const state = reactive({
 		selectedRowKeys: [],
@@ -715,7 +715,7 @@
 	};
 	const GoDep = (record) => {
 		let id = record.hostId;
-		router.push(`/hosts/host_deploy?${id}`);
+		window.open('/deploy?' + id);
 	};
 </script>
 

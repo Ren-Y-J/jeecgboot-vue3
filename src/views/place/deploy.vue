@@ -121,6 +121,7 @@
 		<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px">
 			<a-button type="dashed" style="width: 80%" @click="addRecordBtn">增加记录</a-button>
 		</div>
+		<!-- 增加记录 -->
 		<a-form
 			v-show="addRecord == true"
 			style="margin-top: 10px"
@@ -136,11 +137,17 @@
 				<close-circle-filled class="Xicon" />
 			</div>
 
-			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请输入记录名称!' }]"
+			 name="name"
+			 label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="记录名称" v-model:value="formState_1.name" />
 			</a-form-item>
 
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请选择类型!' }]"
+			 name="type"
+			 label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group v-model:value="formState_1.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
 					<a-radio value="1">AAAA </a-radio>
@@ -167,7 +174,7 @@
 	<a-modal v-model:visible="edit_visible" title="编辑" @ok="handleOk_edit">
 		<a-form
 			style="margin-top: 10px"
-			ref="formRef"
+			ref="formRef_edit"
 			:model="formState_edit"
 			name="basic"
 			:label-col="{ span: 3 }"
@@ -175,11 +182,17 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
-			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item 
+			:rules="[{ required: true, message: '请输入记录名称!' }]"
+			name="name"
+			label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="记录名称" v-model:value="formState_edit.name" />
 			</a-form-item>
 
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item 
+			:rules="[{ required: true, message: '请选择类型!' }]"
+			name="type"
+			label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group v-model:value="formState_edit.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
 					<a-radio value="1">AAAA </a-radio>
@@ -328,14 +341,28 @@
 		visible.value = true;
 	};
 	const formRef_ = ref(null);
+	const formRef = ref(null);
 	const handleOk = async () => {
 		// 校验表单
-		try {
-			await formRef_.value.validate();
-		} catch (error) {
-			console.log(error);
-			return;
+		if(addRecord.value == false){
+			try {
+				await formRef_.value.validate();
+			} catch (error) {
+				console.log(error);
+				return;
+			}
 		}
+		if(addRecord.value == true){
+			try {
+				await formRef.value.validate();
+				await formRef_.value.validate();
+			} catch (error) {
+				console.log(error);
+				return;
+			}
+		}
+		
+		
 		let formData = [];
 		if (addRecord.value == true) {
 			formData.push(formState.value, formState_1.value);
@@ -397,7 +424,15 @@
 		formState_1.value.content = '';
 		formState_1.value.zoneId = '';
 	};
-	const handleOk_edit = () => {
+	
+		const formRef_edit = ref(null);
+	const handleOk_edit = async() => {
+		try {
+			await formRef_edit.value.validate();
+		} catch (error) {
+			console.log(error);
+			return;
+		}
 		formState_edit.value.lineId = JSON.stringify(formState_edit.value.lineId);
 		EditList(formState_edit.value).then((res) => {
 			message.success('操作成功');
