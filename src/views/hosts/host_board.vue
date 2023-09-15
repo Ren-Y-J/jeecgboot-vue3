@@ -209,9 +209,9 @@
 		let intervalValue;
 
 		if (window.matchMedia('(max-width: 600px)').matches) {
-			intervalValue = 2;
+		intervalValue =500;
 		} else {
-			intervalValue = 0;
+			intervalValue = 100;
 		}
 		return {
 			
@@ -299,9 +299,9 @@
 
 		if (window.matchMedia('(max-width: 600px)').matches) {
 			// If media query matches
-			intervalValue = 8;
-		} else {
-			intervalValue = 3;
+			intervalValue =500;
+			} else {
+				intervalValue = 200;
 		}
 		return {
 			
@@ -387,10 +387,9 @@
 		let intervalValue;
 
 		if (window.matchMedia('(max-width: 600px)').matches) {
-			// If media query matches
-			intervalValue = 4;
+			intervalValue =500;
 		} else {
-			intervalValue = 1;
+			intervalValue = 200;
 		}
 		return {
 		tooltip: {
@@ -463,7 +462,7 @@
 						},
 					},
 					lineStyle: {
-						color: '#21cbbf', // 设置线条颜色为红色
+						color: '#21cbbf', // 设置线条颜色
 					},
 					symbol: 'none', // 去除锚点
 					data: Ydata.value,

@@ -5,7 +5,8 @@ enum RoleApi {
   add = '/zone/manage/add', //新增
   del = '/zone/manage/delete',//删
   line='/line/manage/all',
-  stop='/zone/manage/switch'//停用
+  stop='/zone/manage/switch',//停用
+  SOA='/zone/manage/update/soa'
 }    
 // 获取所有正向列表
 export const GetList = (params) => defHttp.post({ url: RoleApi.list, params });
@@ -23,3 +24,7 @@ export const AddReverseList = (params) => defHttp.post({ url:'/reverse/zone/add'
 export const stopStatus = (params) => defHttp.post({ url:RoleApi.stop, params });
 // 获取主机下拉
 export const GetHostsAll = (params) => defHttp.post({ url:'/hosts/get/hostsAll', params });
+// SOA回显
+export const SOAEcho = (params) => defHttp.get({ url:'/zone/manage/value/'+ params });
+// 修改SOA
+export const EditSOA = (params) => defHttp.post({ url:RoleApi.SOA, params });
