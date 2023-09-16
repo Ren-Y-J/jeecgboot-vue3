@@ -41,7 +41,7 @@
               <a-col :md="4" :sm="5">
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <div class="searchbtn">
-                    <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
+                    <a-button :style="{ margin: '0px 20px ' }" type="primary" @click="handleQuery">
                       <search-outlined />搜索</a-button>
                     <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
                   </div>
@@ -116,6 +116,7 @@
                   <template v-if="column.dataIndex === 'operation'">
                     <div>
                       <span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">修改</span>
+                      <!-- confirm点击确认的回调 -->
                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
                         @cancel="cancel">
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
@@ -161,9 +162,9 @@
 				/>
 			</div> 
     </div>
-    <!-- !!!!!添加记录弹窗 v-model:visible="visible" style='margin-top: 26px'-->
-   <div class="addlist">
-      <a-modal  v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
+    <!-- !!!!!添加记录弹窗 v-model:visible="visible" style='margin-top: 26px' @cancel="onClose"点击取消的回调-->
+   <div class="addlist" >
+      <a-modal class="mydialog" :scroll="{ x: 'calc(700px + 50%)', y: '510' }"  :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
         <a-form ref='formRef' :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="[{ required: true, message:'请选择域名' }]"  name="zoneId" style='margin-top: 26px' >
@@ -173,7 +174,10 @@
               </a-select>
             </a-space>
           </a-form-item>
-          <div class="line">
+          <div class="line" v-for="item in formDataName" :key="item">
+            <div  style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
+				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
+            </div>
               <a-form-item label="记录名称" :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
                 <a-input v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
@@ -215,6 +219,7 @@
               </a-form-item>
               <a-form-item label="线路" :rules="[{ required: true, message:'请选择线路' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
+                  <!-- mode="tags"设置 Select 的模式为多选或标签   :field-names自定义节点 label、value、options 的字段-->
               <a-select placeholder="请选择线路" ref="select" v-model:value="formState.lineId" style="width: 150px"
                 @focus="focus" @change="handleChangsortadd" :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
@@ -225,67 +230,11 @@
           <div class="Addrecord line" style="margin-bottom: 10px"  @click="addRecordBtn">
             <plus-circle-outlined /><span >添加记录</span>
           </div>
-<!-- 第二个表格 :rules="formRules.designation" :rules="formRules.type"  :rules="formRules.value"  :rules="formRules.ttl" :rules="formRules.line"-->
-          <a-form v-show="addRecord == true" :rules="formAdd" ref='formRef_' :model="formState_1" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
-          @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          
-          <div class="line">
-            <div @click="XiconBtn" style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
-				      <close-circle-filled class="Xicon" @click="XiconBtn"/>
-			    </div>
-              <a-form-item label="记录名称"  name="name" style='margin-top: 18px'>
-                <a-input v-model:value="formState_1.name" placeholder="请输入记录名称" style='width:50%' />
-              </a-form-item>
-              <a-form-item label="类型"  :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }"  name="type" style='margin-top: 0px'>
-            <a-radio-group v-model:value="formState_1.type" name="radioGroup" @change="changeradioFn">
-              <a-radio :value="0">A</a-radio>
-              <a-radio :value="1">AAAA</a-radio>
-              <a-radio :value="2">CNAME </a-radio>
-              <a-radio :value="3">NS</a-radio>
-              <a-radio :value="4">MX </a-radio>
-              <a-radio :value="5">CAA </a-radio>
-              <a-radio :value="6">SRV </a-radio>
-              <a-radio :value="7">TXT </a-radio>
-            </a-radio-group>
-          </a-form-item>
-              <a-form-item label="记录值"  name="content" style='margin-top: 18px'>
-                <a-input v-model:value="formState_1.content" placeholder="请输入记录值" style='width:50%' />
-                	<!-- <a-input-number
-							:formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')"
-							precision="0"
-							min="0"
-							style="width:50%"
-							placeholder="请输入记录值"
-							v-model:value="formState_1.content"
-						></a-input-number> -->
-              </a-form-item>
-              <a-form-item label="TTL"  name="ttl" style='margin-top: 18px'>
-                <a-input v-model:value="formState_1.ttl" placeholder="请输入TTL" style='width:50%' />
-                <!-- <a-input-number
-							:formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')"
-							precision="0"
-							min="1"
-							style="width:50%"
-							placeholder="请输入大于0的TTL"
-							v-model:value="formState_1.ttl"
-						></a-input-number> -->
-              </a-form-item>
-              <a-form-item label="线路"  name="lineId" style='margin-top: 18px'>
-                <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="formState_1.lineId" style="width: 150px"
-                @focus="focus" @change="handleChangsort" :options="groupData"  mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }" >
-              </a-select>
-            </a-space>
-              </a-form-item>
-          </div>
-          </a-form>
       </a-modal>
    </div>
    <!-- 修改弹框 -->
    <div class="dellist">
-      <a-modal  v-model:visible="visible_edit" title="记录修改" width="900px"  @ok="editOK">
+      <a-modal  v-model:visible="visible_edit" title="记录修改" width="900px"  @ok="editOK" >
         <a-form ref='formRef' :model="formState_edit" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="[{ required: true, message:'请选择域名' }]"  name="zoneId" style='margin-top: 26px' >
@@ -321,7 +270,7 @@
               <a-form-item label="线路" :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
               <a-select placeholder="请选择线路" ref="select" v-model:value="formState_edit.lineId" style="width: 150px"
-                @focus="focus"  :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
+                @focus="focus"  :options="groupData_edit" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
             </a-space>
               </a-form-item>
@@ -341,11 +290,12 @@ import { list, addlist,dellist,editlist,listAll,GetLine,BackLine} from "./cord"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
-
+import { forEach } from 'lodash-es';
+// tab表格对应的数据
 const columns = [{
   title: '记录名称',
   dataIndex: 'name',
-  width: 220,
+  width: 200,
   align: 'center'
 }, {
   title: '类型',
@@ -387,14 +337,10 @@ const columns = [{
 
 ];
 
-// const formRules = {
-//   DomainName: [{ required: true, message: "请选择域名" }],
-//   designation: [{ required: true, message: "请输入记录名称" }],
-//   type: [{ required: true, message: "请选择类型" }],
-//   value: [{ required: true, message: "请输入记录值,不可以是数字" }],
-//   ttl: [{ required: true, message: "请输入TTL,大于0的整数" }],
-//   line: [{ required: true, message: "请选择线路" }],
-// }
+const modalStyle= {
+  height:'400px',
+  overflowY: 'auto'
+}
 
 const data = reactive({
   name:"",
@@ -414,14 +360,16 @@ const data = reactive({
   visible_edit: false,
   number: 0,
   groupData: [],
+  groupData_edit:[],
   listAllData:[],
   addRecord: false,
   selects : 0,
+  formDataName:[{id:1}],
+  delicon:true,
   formState: {
 			name: '',
 			type: '',
 			lineId: [],
-      // 先放到数组在stry
 			ttl: '',
 			content: '',
 			zoneId:''
@@ -432,7 +380,6 @@ const data = reactive({
 			lineId: undefined,
 			ttl: '',
 			content: '',
-			
 		},
     formState_edit: {
 			name: '',
@@ -462,68 +409,59 @@ const {
   visible_edit,
   number,
   groupData,
+  groupData_edit,
   listAllData,
   addRecord,
   formState,
   formState_1,
   formState_edit,
   selects,
+  formDataName,
+  delicon
 } = toRefs(data)
 
-const Cordquery = ref({
-  pageNum:1,
-  pageSize:10,
- 
-})
 
-const formRef = ref(null);
-const formRef_ = ref(null)
-const rowData = ref({
-  zoneName: '',
-  name: '',
-  type:'',
-  content:'',
-  ttl:"",
-  lineId:''
-})
-//新增
-const formAdd = ref([])
-const formAdd_ = ref([])
-const addFn = async () => {
-  
+
+const formRef = ref(null);//添加按钮弹框需要的ref
+const formRef_ = ref(null)//添加按钮第二个弹框需要的ref
+// const rowData = ref({
+//   zoneName: '',
+//   name: '',
+//   type:'',
+//   content:'',
+//   ttl:"",
+//   lineId:''
+// })
+
+const formAdd = ref([])//新增校验表单一
+const formAdd_ = ref([])//新增校验表单二
+
+const addFn = async () => {//点击确定按钮
   // 校验表单
   try {
     await formRef.value.validate()
-   await formRef_.value.validate()
+  //  await formRef_.value.validate()
   } catch (error) {
     // console.log(error);
     return console.log(error)
   }
   // 提交表单
-  let formData = [];
- if (addRecord.value == true) {
-			formData.push(formState.value, formState_1.value);
-      formAdd = formRef.value.validate()
+  let formData = [];//存放新增表单
+ if (addRecord.value == true) {//控制第二个表单
+			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
+      formAdd = formRef.value.validate()//校验第一个表单的数据
 		}
     if (addRecord.value == false) {
-			formData.push(formState.value);
+			formData.push(formState.value);//只push第一个表单数据
 
 		}
-    // console.log(formData.value.lineId,'formData.value.lineId');
-    // formData.value.lineId
-      // formData.value.aclId = JSON.stringify(formState.value.aclId);
-    // formData.forEach((item) => {
-		// 	item.lineId = JSON.stringify(item.lineId);
-		// 	// 添加 zoneId 字段，值为 id.value
-		// 	// item.zoneId = id.value;
-		// });
      formState.value.lineId = JSON.stringify( formState.value.lineId);
      formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
     //  console.log( formState.value.lineId);
     // console.log( formState.value.lineId,'ok');
-    addlist(formData).then((res) => {
+    addlist(formData).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
 			message.success('添加成功');
-			visible.value = false;
+			visible.value = false;//关闭弹框
 			onClose();
 			getcordList();
 		});
@@ -539,44 +477,63 @@ const handleChangsortadd =(value) =>{
 
 
 // 关闭弹框
-const onClose = () => {
-  visible.value = false;
-  formRef.value.resetFields()
-  formState.value = {}
-  formState_1.value = {}
+const onClose = () => {//点击取消的回调
+  visible.value = false;//关闭弹框
+  formRef.value.resetFields()//触发表单验证
+  formState.value = {}//第一个表单数据清空
+  formState_1.value = {}//第二个表单数据清空
 };
-const addRecordBtn = () => {
-		addRecord.value = true;
+const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
+		// addRecord.value = true;
+    
+    // formDataName.value = formDataName.value++
+    formDataName.value.push({
+      id:new Date().getTime()
+    })
+    // console.log(formDataName.value);
 	};
-   const XiconBtn = () => {
-		addRecord.value = false;
+   const XiconBtn = (id) => {//点击第二个弹框的取消按钮
+		// addRecord.value = false;
+    console.log(id);
+    // if(id === 1){
+    //   delicon.value = false
+    // }
+    formDataName.value = formDataName.value.filter(item=>{
+      return item.id != id
+    })
+    console.log(formDataName.value );
+
+    // forEach(item=>{
+    //   if(item.id == id){
+    //     formDataName.value.splice
+    //   }
+    // })
 	};
 
 
 
-const queryParams = ref({
-  // 查询参数
+const queryParams = ref({ // 查询参数，响应式
   name: "",
   pageNum: 1,
   pageSize: 10,
   type:""
 });
-//点击搜索
+//点击页面搜索按钮
 const handleQuery =()=>{
   list({
     pageNum: pageNum.value,
 		pageSize: pageSize.value,
-    type: queryParams.value.type,
-    name:queryParams.value.name,
+    type: queryParams.value.type,//获取响应式类型
+    name:queryParams.value.name,//获取响应式记录名称
   }).then((res)=>{
     console.log(res);
-    listData.value = res.records
-    total.value = res.total;
+    listData.value = res.records//把数据给到存放表单的数组中
+    total.value = res.total;//总数
   //  getcordList()
   })
 }
 
-//重置
+//重置按钮，把响应式的queryParams里面的数据初始化
 const AlldelFn = () => {
   // console.log('1');
   queryParams.value.name = ''
@@ -584,68 +541,70 @@ const AlldelFn = () => {
   queryParams.value.type = ''
   queryParams.value.pageNum = 1
   queryParams.value.pageSize = 10
-  getcordList()
+  getcordList()//刷新数据
  
 }
 
-//列表数据
+const Cordquery = ref({//获取列表需要的数据
+  pageNum:1,
+  pageSize:10,
+ 
+})
+//获取列表数据
 const getcordList = ()=>{
   
   console.log(Cordquery.value,'252');
-  list(Cordquery.value).then(res =>{
+  list(Cordquery.value).then(res =>{//调用接口，传入列表需要的数据
     
     // console.log(res);
-    listData.value = res.records
-    total.value = res.total
+    listData.value = res.records//把数据放进存放表单的地方
+    total.value = res.total//总数
     // console.log(listData.value,'0000');
   })
   
 }
-getcordList()
-
-
+getcordList()//调用列表数据
 
 // 分页
-const onShowSizeChange = (current, pageSize) => {
-    Cordquery.value.pageSize = pageSize 
+const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，传入当前页和每页条数
+    Cordquery.value.pageSize = pageSize //把pageSize给到响应式的Cordquery
 		getcordList();
 	};
-	const changeFn = (P, Ps) => {
-		Cordquery.value.pageNum = P 
+	const changeFn = (P, Ps) => {//页码或 pageSize 改变的回调，参数是改变后的页码及每页条数
+		Cordquery.value.pageNum = P //把获取的页码给到响应式的Cordquery
 		getcordList();
 	};
-//添加按钮
+
+//添加按钮，让里面的数据清空
  const showModal = () => {
-  
-      visible.value = true;
-     
+      visible.value = true;//显示弹框
       zoneName.value = "";
       name.value = "";
       type.value = "";
       content.value = ""
       ttl.value = ""
       // lineId.value = ""
-      // 获取线路
-     listAll().then(res=>{
-    console.log(res,);
-    let listData = res.map((item)=>{
+     
+     listAll().then(res=>{ // 调用获取域名接口的数据，显示域名
+    // console.log(res,);
+    let listData = res.map((item)=>{//对域名的数据格式化
       return {
         value: item.zoneId,
 				label: item.zoneName,
       }
     })
-  listAllData.value = listData
+  listAllData.value = listData//获取的数据给到域名的下拉框内
   //  console.log(listAllData.value,'listAllData.value');
   })
 		
-		visible.value = true;
+		// visible.value = true;
     };
-// 添加弹框选择域名
-    const changeNames = (value)=>{
+// 添加弹框选择域名，触发change时间，当input框发生变化就触发
+    const changeNames = (value)=>{//value是id
       // console.log(formState.value.zoneName,'125');
       console.log(value,'id');
-      formState.value.zoneId =value
-      GetLine(formState.value.zoneId).then((res) => {
+      formState.value.zoneId =value//获取的id传给新增表单的数据中
+      GetLine(formState.value.zoneId).then((res) => {//调用获取线路的数据，传入域名的id
 			console.log(res,'9-9---9-8-')
 			// let transformedData = res.map((item) => {
 			// 	return {
@@ -653,15 +612,15 @@ const onShowSizeChange = (current, pageSize) => {
 			// 		label: item.lineName,
 			// 	};
 			// });
-			groupData.value = res;
+			groupData.value = res;//把获取到的数据存放groupData中
 		});
     }
-    // 修改获取线路
+    // 修改弹框里面选择域名的change时间，获取线路
     const changeName_edit = (value)=>{
       console.log(value,'id');
       formState_edit.value.zoneId = value
       // console.log(formState_edit.value.zoneName,'125');
-       GetLine(formState_edit.value.zoneId).then((res) => {
+       GetLine(formState_edit.value.zoneId).then((res) => {//调用获取线路的数据，传入域名的id
 			console.log(res,'9-9---9-9-')
 			// let transformedData = res.map((item) => {
 			// 	return {
@@ -669,7 +628,7 @@ const onShowSizeChange = (current, pageSize) => {
 			// 		label: item.lineName,
 			// 	};
 			// });
-			groupData.value = res;
+			groupData_edit.value = res;
 		});
    
     }
@@ -743,14 +702,14 @@ const openmodal = (record)=>{
   })
    formState_edit.value.id = record.id;
   //  console.log(formState_edit.value.id,"1111");
-    	BackLine(`${record.id}`).then((res) => {
+    	BackLine(formState_edit.value.id).then((res) => {//点击修改回显数据
         console.log(res,"2321");
 			formState_edit.value.name = res.name;
 			formState_edit.value.type = res.type;
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
+			formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
 		});
 
 }
@@ -820,11 +779,11 @@ const state = reactive({
   }
 .line{
     width: 717px;
-    margin: 0 auto;
+    margin: 20px auto;
     box-shadow: 1px 1px 8px 5px #F1F1F1;
     border-radius: 10px;
     padding: 8px 0 8px 0;
-   
+
 }
 .Addrecord{
     margin-top: 15px;
@@ -858,7 +817,21 @@ const state = reactive({
     ::v-deep(.ant-card-body) {
       padding: 12px 10px 13px 10px !important;
     }
-    .Xicon {
+   
+ .table{
+     display: block;
+  }
+//   /deep/ .ant-table-header {
+// 	overflow-y: hidden!important;
+//   }
+
+// .ant-table-body::-webkit-scrollbar-thumb {
+// background: blue;
+// } 
+// .ant-table-body::-webkit-scrollbar {
+//   width: 8px; /*滚动条宽度*/
+// }
+ .Xicon {
 		color: red;
 		cursor: pointer;
 		display: flex;
@@ -877,5 +850,21 @@ const state = reactive({
 			color: #249ff3;
 		}
 	}
+  .addlist{
+    ::v-deep(.ant-modal-body){
+   height: 500px!important;
+  //  overflow-y: auto;
+  }
+  }
+  // /deep/ .ant-modal-content  .ant-modal-body{
+   
+  // }
+  // .ant-modal-body{
+  //   height: 500px!important;
+  // }
+ /deep/ .ant-modal-body{
+    height: 500px!important;
+    
+ }
 
 </style>
