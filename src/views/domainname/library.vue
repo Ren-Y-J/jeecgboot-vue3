@@ -95,13 +95,31 @@ const rowData = ref({
 // ---------------删除定义的字段
 const values = ref([])
 const commonEnty = ref({ values: [] })//// 对象包数组 
+const props = defineProps({
+  libname: {
+    type: String,
+    default: ''
+  }
+})
+console.log(props.libname);
+// props:{
+//   libname:
+// }
 // 表格初始化
 const initData = async () => {
-  let res = await librarylist(formData.value)
+  let res = await librarylist({ ...formData.value, name: props.libname })
   console.log(res);
   datalist.value = res.records
   totals.value = res.total
 }
+// const initData = async (name) => {
+//   console.log(name)
+//   let res = await librarylist({ ...formData.value, name })
+//   console.log(res);
+//   datalist.value = res.records
+//   totals.value = res.total
+// }
+// initData('')
 initData()
 const isOpen = async (record) => {
   console.log(record, 'record.createTime');
@@ -126,11 +144,12 @@ const addoreditFn = async () => {
     await editlibrary(rowData.value)
     visible.value = false
     message.success('修改成功')
+    initData()
   } else {
     await addlibrary(rowData.value)
-      ;
     visible.value = false
     message.success('添加成功')
+    initData()
   }
 
 

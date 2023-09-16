@@ -142,13 +142,13 @@ const options = ref([
   { label: '0', value: '删除' },
 
 ])
-const initData = async () => {
-  let res = await grouplist(formData.value)
+const initData = async (zone) => {
+  let res = await grouplist({ ...formData.value, zone })
   console.log(res.records);
   datalist.value = res.records
   totals.value = res.total
 }
-initData()
+initData('')
 const getlibraryAll = async () => {
   let res = await libraryAll()
   console.log(res);
@@ -186,10 +186,12 @@ const addoreditFn = async () => {
     await editgroup(rowData.value)
     visible.value = false
     message.success('修改成功')
+    initData()
   } else {
     await addgroup(rowData.value)
     visible.value = false
     message.success('添加成功')
+    initData()
   }
 
 }
@@ -264,6 +266,7 @@ const confirm = (record) => {
   delFn(record.id)
   initData()
 };
+defineExpose({ initData })
 </script>
 <style scoped lang="less">
 .contaion {
