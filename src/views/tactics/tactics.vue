@@ -28,10 +28,10 @@
   <div class="controls">
     <div class="iconBtn">
       <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary"
-        @click="handleQuery"><plus-outlined />添加策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="AlldelFn"><edit-outlined />修改策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="handleQuery"><delete-outlined />删除策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="AlldelFn"><reload-outlined />同步策略组</a-button>
+        ><plus-outlined />添加策略组</a-button>
+      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组</a-button>
+      <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="handlChangeFn"><delete-outlined />删除策略组</a-button>
+      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><reload-outlined />同步策略组</a-button>
     </div>
     <div class="select">
       <a-alert show-icon style="margin-top: 8px" type="info">
@@ -49,68 +49,114 @@
       </a-alert>
       <!-- <a-alert message="未选中任何数据" type="info" show-icon /> -->
     </div>
-    <!-- <a-table :columns="columns" :data-source="listData"
-          :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
-          :rowKey="(record) => record.lineId" bordered>
+    <!-- :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :rowKey="(record) => record.lineId"-->
+    <a-table :columns="columns" :data-source="listData"
+           :pagination="false" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: rowSelection }"
+            :rowKey="(record) => record.id"
+           bordered>
+           <template #bodyCell="{ column,record }">
+            <template v-if="column.dataIndex === 'policiesEnable'">
+                    <div v-if='record.policiesEnable == true'
+                      style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
+                      启用
+                    </div>
+                    <div v-if='record.policiesEnable == false'
+                      style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
+                      未启用
+                    </div>
+                  </template>
+        <template v-if="column.dataIndex === 'operation'">
+          <!--   -->
+                    <div>
+                      <span  class="pointer" style="color: #2e7dff; margin-right: 8px">配置策略</span>
+                      <!-- confirm点击确认的回调  @confirm="confirm(record)"-->
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px">停用</span>
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px">修改</span>
+                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
+                        @cancel="cancel">
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
+                      </a-popconfirm>
+                    </div>
+        </template>
+          </template>
 
-        </a-table>  -->
 
+        </a-table> 
+    <!-- 分页 -->
+        <div style="padding: 10px; display: flex; justify-content: flex-end">
+				<a-pagination
+					:show-total="(total) => `共 ${total} 条数据`"
+					v-model:current="pageNum"
+					:total="total"
+					v-model:pageSize="pageSize"
+					show-size-changer
+					@showSizeChange="onShowSizeChange"
+					@change="changeFn"
+				/>
+			</div> 
 
   </div>
 </template>
 
 
 <script setup>
-import { list, listAll } from './tactics'
-import { SmileOutlined, DownOutlined, CloseCircleFilled } from '@ant-design/icons-vue';
-import { SearchOutlined, ReloadOutlined, DeleteOutlined, PlusOutlined, EditOutlined } from '@ant-design/icons-vue'
-import { computed, defineComponent, reactive, toRefs, ref } from 'vue';
+import { message,Modal } from 'ant-design-vue';
+import { list, listAll,dellist } from './tactics'
+import { SmileOutlined, DownOutlined,CloseCircleFilled,ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { SmileTwoTone, PlusCircleOutlined,HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
+import { computed, defineComponent, reactive, toRefs, ref,createVNode } from 'vue';
 
-// const columns = [{
-//   title: '策略组名称',
-//   dataIndex: 'policiesName',
-//   width: 220,
-//   align: 'center'
-// }, {
-//   title: '匹配时段',
-//   dataIndex: 'policiesTimeRange',
-//   width: 220,
-//   align: 'center'
-// }, {
-//   title: '有效策略数',
-//   dataIndex: 'content',
-//   width: 220,
-//   align: 'center'
-// },
-// {
-//   title: '总策略数',
-//   dataIndex: 'zoneName',
-//   width: 220,
-//   align: 'center'
-// },
-// {
-//   title: '状态',
-//   dataIndex: 'policiesEnable',
-//   width: 220,
-//   align: 'center'
+const columns = [{
+  title: '策略组名称',
+  dataIndex: 'policiesName',
+  width: 220,
+  align: 'center'
+}, {
+  title: '匹配时段',
+  dataIndex: 'policiesTimeRange',
+  width: 220,
+  align: 'center'
+}, {
+  title: '有效策略数',
+  dataIndex: 'content',
+  width: 220,
+  align: 'center'
+},
+{
+  title: '总策略数',
+  dataIndex: 'zoneName',
+  width: 220,
+  align: 'center'
+},
+{
+  title: '状态',
+  dataIndex: 'policiesEnable',
+  width: 220,
+  align: 'center'
 
-// },
-// {
-//   title: '操作',
-//   dataIndex: 'operation',
-//   width: 220,
-//   align: 'center'
-// },
-// ];
+},
+{
+  title: '操作',
+  dataIndex: 'operation',
+  width: 250,
+  align: 'center'
+},
+];
 const data = reactive({
   listData: '',
   total: 0,
-  listAllData: []
+  listAllData: [],
+  commonEnty:{},
+  number: 0,
+  policiesId:'',
 });
 const {
   listData,
   total,
-  listAllData
+  listAllData,
+  commonEnty,
+  number,
+  policiesId,
 } = toRefs(data)
 
 const Cordquery = ref({
@@ -122,14 +168,65 @@ const Cordquery = ref({
 const getcordList = () => {
   list(Cordquery.value).then(res => {
 
-    // console.log(res.records);
+    console.log(res.records);
     listData.value = res.records
+  //   let policiesIdName = listData.value.map(item=>{
+  //     return{
+  //       value:'item.policiesId'
+  //     }
+  //   })
+  // policiesId.value = policiesIdName
+  // console.log(policiesId.value,'id');
+   
     total.value = res.total
     console.log(listData.value, '0000');
   })
+  // listAll(policiesId)
 
 }
 getcordList()
+
+// 分页
+const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，传入当前页和每页条数
+    Cordquery.value.pageSize = pageSize //把pageSize给到响应式的Cordquery
+		getcordList();
+	};
+	const changeFn = (P, Ps) => {//页码或 pageSize 改变的回调，参数是改变后的页码及每页条数
+		Cordquery.value.pageNum = P //把获取的页码给到响应式的Cordquery
+		getcordList();
+	};
+// 删除
+//   const delFn = async (record) =>{
+//      console.log(record,'111');
+//     // console.log(record.lineId,'232');
+//   commonEnty.value = record;
+//   console.log(commonEnty.value,'252');
+//   await dellist(commonEnty.value)
+//   getcordList()
+//   message.success('删除成功')
+//   }
+//   const confirm = (record) => {
+//  console.log(record, 'record2');
+//   delFn(record.policiesId)
+//   getcordList()
+// };
+
+// //多选
+// const state = reactive({
+// 		selectedRowKeys: [],
+// 	});
+//  const allclusterId = ref([]);
+//   const rowSelection = (selectedRowKeys, selectedRows) =>{
+//     state.selectedRowKeys = selectedRowKeys;
+// 		console.log(selectedRowKeys, 'allclusterId');
+//     allclusterId.value = selectedRows.map((item) => item.id);
+// 		number.value = allclusterId.value.length;
+//   }
+//   const clearbtn = () => {
+// 		allclusterId.value = [];
+// 		number.value = 0;
+// 		state.selectedRowKeys = [];
+// 	};
 
 
 
@@ -182,4 +279,8 @@ getcordList()
 
 .iconBtn {
   margin-top: -10px;
-}</style>
+}
+.pointer {
+		cursor: pointer;
+	}
+</style>

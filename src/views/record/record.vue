@@ -95,7 +95,7 @@
         <!-- table表格 -->
         <div class="table">
            <span style="margin-left: 8px"></span>
-            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 510 }" :pagination="false" bordered
+            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 310 }" :pagination="false" bordered
                 :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
                 :rowKey="(record) => record.id"
                 :columns="columns"
@@ -174,12 +174,12 @@
               </a-select>
             </a-space>
           </a-form-item>
-          <div class="line" v-for="item in formDataName" :key="item">
+          <div class="line" v-for="item in formDataName" :key="item" >
             <div  style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
 				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
             </div>
-              <a-form-item label="记录名称" :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
-                <a-input v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
+              <a-form-item label="记录名称"  :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
+                <a-input @change="chengeInput" :ref="item.id" v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
               <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message:'请选择类型' }]" name="type" style='margin-top: 0px'>
               <a-radio-group v-model:value="formState.type" >
@@ -225,6 +225,7 @@
               </a-select>
               </a-space>
               </a-form-item>
+              
           </div>
           </a-form>
           <div class="Addrecord line" style="margin-bottom: 10px"  @click="addRecordBtn">
@@ -283,15 +284,13 @@
 
 
 <script setup>
-import { message } from 'ant-design-vue';
+import { message,Modal } from 'ant-design-vue';
 import { SmileOutlined, DownOutlined,CloseCircleFilled } from '@ant-design/icons-vue';
 import { SmileTwoTone, PlusCircleOutlined,HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
-import { computed, defineComponent, reactive, toRefs, ref } from 'vue';
+import { computed, defineComponent, reactive, toRefs, ref,createVNode } from 'vue';
 import { list, addlist,dellist,editlist,listAll,GetLine,BackLine} from "./cord"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { Modal } from 'ant-design-vue';
-import { createVNode } from 'vue';
-import { forEach } from 'lodash-es';
+
 // tab表格对应的数据
 const columns = [{
   title: '记录名称',
@@ -341,7 +340,6 @@ const columns = [{
 const modalStyle = ref({
   height:'450px',
   overflowY: 'auto',
-  // top:'20px'
 })
 
 
@@ -393,7 +391,8 @@ const data = reactive({
 			ttl: '',
 			content: '',
 			zoneId:'',
-      id:''
+      id:'',
+      zoneName:''
 		},
 });
 const {
@@ -452,15 +451,15 @@ const addFn = async () => {//点击确定按钮
     return console.log(error)
   }
   // 提交表单
-  let formData = [];//存放新增表单
- if (addRecord.value == true) {//控制第二个表单
-			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
-      formAdd = formRef.value.validate()//校验第一个表单的数据
-		}
-    if (addRecord.value == false) {
-			formData.push(formState.value);//只push第一个表单数据
+//   let formData = [];//存放新增表单
+//  if (addRecord.value == true) {//控制第二个表单
+// 			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
+//       formAdd = formRef.value.validate()//校验第一个表单的数据
+// 		}
+//     if (addRecord.value == false) {
+// 			formData.push(formState.value);//只push第一个表单数据
 
-		}
+// 		}
      formState.value.lineId = JSON.stringify( formState.value.lineId);
     //  formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
     //  console.log( formState.value.lineId);
@@ -498,6 +497,8 @@ const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
     formDataName.value.push({
       id:new Date().getTime()
     })
+    
+  
 
     // console.log(formDataName.value);
 	};
@@ -626,6 +627,12 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 			groupData.value = res;//把获取到的数据存放groupData中
 		});
     }
+    // const chengeInput = (e)=>{
+    //   console.log(e.target);
+    //  formDataName.value = formDataName.value.filter(item=>{
+    //   return item.id != value
+    // })
+    // }
     // 修改弹框里面选择域名的change时间，获取线路
     const changeName_edit = (value)=>{
       console.log(value,'id');
@@ -646,16 +653,16 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
   
 // 删除
   const delFn = async (record) =>{
-    // console.log(record,'111');
+    console.log(record,'111');
     // console.log(record.lineId,'232');
   commonEnty.value.values.push(record);
-  // console.log(commonEnty.value,'252');
+   console.log(commonEnty.value,'252');
   await dellist(commonEnty.value)
   getcordList()
   message.success('删除成功')
   }
     const confirm = (record) => {
-  // console.log(record, 'record2');
+ console.log(record, 'record2');
   delFn(record.id)
   getcordList()
 };
@@ -717,12 +724,20 @@ const openmodal = (record)=>{
   //  console.log(formState_edit.value.id,"1111");
     	BackLine(formState_edit.value.id).then((res) => {//点击修改回显数据
         console.log(res,"2321");
+        formState_edit.value.zoneId = res.zoneId
+        // let transformedData = res.map((item) => {
+			// 	return {
+			// 		value: item.lineId,
+			// 		label: item.lineName,
+			// 	};
+			// });
 			formState_edit.value.name = res.name;
 			formState_edit.value.type = res.type;
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-			formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
+      console.log(formState_edit.value.lineId,'xianlu ');
+			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
 		});
 
 }
