@@ -107,14 +107,12 @@
                   @cancel="cancel">
                   <a-button type="link">删除</a-button>
                 </a-popconfirm>
+                <a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="SwitchFn(record)">
+                  <a-button v-show="record.status == 0" type="link">启动</a-button>
+                  <a-button v-show="record.status == 1" type="link">禁用</a-button>
 
-                <div class="pointer" style="margin-right: 10px">
-                  <a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="SwitchFn(record)">
-                    <a-button v-show="record.status == 0" type="link">禁用</a-button>
-                    <a-button v-show="record.status == 1" type="link">启动</a-button>
+                </a-popconfirm>
 
-                  </a-popconfirm>
-                </div>
               </div>
 
             </template>
