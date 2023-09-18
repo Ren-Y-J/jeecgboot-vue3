@@ -86,7 +86,7 @@
           <template #bodyCell="{ column, record }">
 
             <template v-if="column.dataIndex === 'ipAddress'">
-              <div @click="GoDep(record)" style="cursor:pointer"> {{ record.ipAddress }}</div>
+              <div @click="GoDep(record)" style="cursor:pointer;"> {{ record.ipAddress }}</div>
 
             </template>
             <template v-if="column.dataIndex === 'status'">
@@ -598,13 +598,28 @@ const editisOpen = async (record) => {
     let res = await lineInfo(`${record.lineId}`)
     console.log(res, '回显999');
     editformState.value = res
+    let originalArray = res.aclId
+    console.log(originalArray);
+    // let convertedArray = originalArray.map(str => str.replace(/[\[\]]/g, ""));
 
+    // console.log(convertedArray);
+    // editformState.value.aclId = JSON.parse(convertedArray)
     // 等于字符串Jparse，转成数组为啥要转呐，而且我一开始在这做的判断0传
     // 那个接口0还是1都是json字符串，
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
       console.log(editformState.value.aclId, '这是编辑配置的aclId');
-      editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
+      // let aclIds = res.aclId.map(String);
+      // console.log(aclIds);
+      // editformState.value.aclId = JSON.parse(aclIds)
+      let originalArray = res.aclId
+      let convertedArray = originalArray.map(str => str.replace(/[\[\]]/g, ""));
+
+      console.log(convertedArray);
+      editformState.value.aclId = JSON.parse(convertedArray)
+
+      console.log(editformState.value.aclId);
+      // editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
       console.log(editformState.value.aclId, '这是编辑配置的aclId');
     } else {
       editformState.value.aclId = [] //这是0
@@ -613,6 +628,7 @@ const editisOpen = async (record) => {
   } else {
     editopTitle.value = "新增线路配置"
   }
+
 }
 const editonCloseaclFn = async () => {
   editvisible.value = false
@@ -649,6 +665,10 @@ const editchangeradioFn = (value) => {
 }
 const handleChanges = (value) => {
   console.log(value, 'aaa');
+  // let originalArray = value
+  // editformState.value.aclId = originalArray.map(String);
+
+  // console.log(editformState.value.aclId);
 }
 // 这块写的是线路排序
 const sortvisible = ref(false)
