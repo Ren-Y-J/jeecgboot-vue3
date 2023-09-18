@@ -13,23 +13,23 @@
               
               <a-col :md="3" :sm="24" >
                 
-                <a-form-item style="margin-bottom: 0px;" label="类型" name="type" :labelCol="{ span: 7 }" placeholder="请输入" 
+                <a-form-item style="margin-bottom: 0px;" label="类型" name="type" :labelCol="{ span: 7 }" 
                   :wrapperCol="{ span: 10 }" v-model:value="queryParams.type" >
                   <a-space>
-                    <a-select ref="select"  style="width: 120px" @focus="focus" 
+                    <a-select ref="select"  style="width: 120px" @focus="focus" placeholder="请输入" 
                       @change="handleChange"  v-model:value="queryParams.type">
-                      <a-select-option :value="0">A</a-select-option>
-                    <a-select-option :value="1">AAAA</a-select-option>
-                    <a-select-option :value="2">CNAME</a-select-option>
-                    <a-select-option :value="3">NS </a-select-option>
-                    <a-select-option :value="4">MX </a-select-option>
-                    <a-select-option :value="5">CAA </a-select-option>
-                    <a-select-option :value="6">SRV </a-select-option>
-                    <a-select-option :value="7">TXT </a-select-option>
-                    <a-select-option :value="8">PTR </a-select-option>
-                    <a-select-option :value="9">反向域的NS</a-select-option>
-                    <a-select-option :value="10">子网</a-select-option>
-                    <a-select-option :value="11">其他</a-select-option>
+                      <a-select-option value="0">A</a-select-option>
+                    <a-select-option value="1">AAAA</a-select-option>
+                    <a-select-option value="2">CNAME</a-select-option>
+                    <a-select-option value="3">NS </a-select-option>
+                    <a-select-option value="4">MX </a-select-option>
+                    <a-select-option value="5">CAA </a-select-option>
+                    <a-select-option value="6">SRV </a-select-option>
+                    <a-select-option value="7">TXT </a-select-option>
+                    <a-select-option value="8">PTR </a-select-option>
+                    <a-select-option value="9">反向域的NS</a-select-option>
+                    <a-select-option value="10">子网</a-select-option>
+                    <a-select-option value="11">其他</a-select-option>
                     
                     </a-select>
                     
@@ -95,7 +95,7 @@
         <!-- table表格 -->
         <div class="table">
            <span style="margin-left: 8px"></span>
-            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 510 }" :pagination="false" bordered
+            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 310 }" :pagination="false" bordered
                 :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
                 :rowKey="(record) => record.id"
                 :columns="columns"
@@ -124,18 +124,18 @@
                     </div>
                   </template> 
                 <template v-if="column.dataIndex === 'type'">
-                    <div v-if='record.type == 0'>A</div>
-                    <div v-if='record.type == 1'>AAAA </div>
-                    <div v-if='record.type == 2'>CNAME </div>
-                    <div v-if='record.type == 3'>NS </div>
-                    <div v-if='record.type == 4'>MX </div>
-                    <div v-if='record.type == 5'>CAA </div>
-                    <div v-if='record.type == 6'>SRV </div>
-                    <div v-if='record.type == 7'>TXT </div>
-                    <div v-if='record.type == 8'>PTR </div>
-                    <div v-if='record.type == 9'>反向域的NS</div>
-                    <div v-if='record.type == 10'>子网</div>
-                    <div v-if='record.type == 11'>其他</div>
+                    <span v-show='record.type === 0'>A</span>
+                    <span v-show='record.type == 1'>AAAA </span>
+                    <span v-show='record.type == 2'>CNAME </span>
+                    <span v-show='record.type == 3'>NS </span>
+                    <span v-show='record.type == 4'>MX </span>
+                    <span v-show='record.type == 5'>CAA </span>
+                    <span v-show='record.type == 6'>SRV </span>
+                    <span v-show='record.type == 7'>TXT </span>
+                    <span v-show='record.type == 8'>PTR </span>
+                    <span v-show='record.type == 9'>反向域的NS</span>
+                    <span v-show='record.type == 10'>子网</span>
+                    <span v-show='record.type == 11'>其他</span>
               </template>
               <!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
@@ -164,7 +164,7 @@
     </div>
     <!-- !!!!!添加记录弹窗 v-model:visible="visible" style='margin-top: 26px' @cancel="onClose"点击取消的回调-->
    <div class="addlist" >
-      <a-modal class="mydialog" :scroll="{ x: 'calc(700px + 50%)', y: '510' }"  :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
+      <a-modal class="mydialog" :scroll="{ x: 'calc(700px + 50%)', y: '510' }" style="top: 20px" :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
         <a-form ref='formRef' :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="[{ required: true, message:'请选择域名' }]"  name="zoneId" style='margin-top: 26px' >
@@ -174,23 +174,23 @@
               </a-select>
             </a-space>
           </a-form-item>
-          <div class="line" v-for="item in formDataName" :key="item">
+          <div class="line" v-for="item in formDataName" :key="item" >
             <div  style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
 				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
             </div>
-              <a-form-item label="记录名称" :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
-                <a-input v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
+              <a-form-item label="记录名称"  :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
+                <a-input @change="chengeInput" :ref="item.id" v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
               <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message:'请选择类型' }]" name="type" style='margin-top: 0px'>
-              <a-radio-group v-model:value="formState.type" name="radioGroup" @change="changeradioFn">
-              <a-radio :value="0">A</a-radio>
-              <a-radio :value="1">AAAA</a-radio>
-              <a-radio :value="2">CNAME </a-radio>
-              <a-radio :value="3">NS</a-radio>
-              <a-radio :value="4">MX </a-radio>
-              <a-radio :value="5">CAA </a-radio>
-              <a-radio :value="6">SRV </a-radio>
-              <a-radio :value="7">TXT </a-radio>
+              <a-radio-group v-model:value="formState.type" >
+              <a-radio value="0">A</a-radio>
+              <a-radio value="1">AAAA</a-radio>
+              <a-radio value="2">CNAME </a-radio>
+              <a-radio value="3">NS</a-radio>
+              <a-radio value="4">MX </a-radio>
+              <a-radio value="5">CAA </a-radio>
+              <a-radio value="6">SRV </a-radio>
+              <a-radio value="7">TXT </a-radio>
               </a-radio-group>
               </a-form-item>
               <a-form-item label="记录值" :rules="[{ required: true, message:'请输入记录值' }]" name="content" style='margin-top: 18px'>
@@ -225,6 +225,7 @@
               </a-select>
               </a-space>
               </a-form-item>
+              
           </div>
           </a-form>
           <div class="Addrecord line" style="margin-bottom: 10px"  @click="addRecordBtn">
@@ -249,16 +250,17 @@
               <a-form-item label="记录名称" :rules="[{ required: true, message: '请输入记录名称!' }]" name="name" style='margin-top: 18px'>
                 <a-input v-model:value="formState_edit.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
-              <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message: '请选择类型!' }]" name="type" style='margin-top: 0px'>
-            <a-radio-group v-model:value="formState_edit.type" name="radioGroup" @change="changeradioFn">
-              <a-radio :value="0">A</a-radio>
-              <a-radio :value="1">AAAA</a-radio>
-              <a-radio :value="2">CNAME </a-radio>
-              <a-radio :value="3">NS</a-radio>
-              <a-radio :value="4">MX </a-radio>
-              <a-radio :value="5">CAA </a-radio>
-              <a-radio :value="6">SRV </a-radio>
-              <a-radio :value="7">TXT </a-radio>
+              <a-form-item label="类型" :labelCol="{ span: 4 }"  :wrapperCol="{ span: 18 }" 
+              :rules="[{ required: true, message: '请选择类型!' }]" name="type" style='margin-top: 0px'>
+            <a-radio-group v-model:value="formState_edit.type"  >
+              <a-radio value="0">A</a-radio>
+              <a-radio value="1">AAAA</a-radio>
+              <a-radio value="2">CNAME </a-radio>
+              <a-radio value="3">NS</a-radio>
+              <a-radio value="4">MX </a-radio>
+              <a-radio value="5">CAA </a-radio>
+              <a-radio value="6">SRV </a-radio>
+              <a-radio value="7">TXT </a-radio>
             </a-radio-group>
           </a-form-item>
               <a-form-item label="记录值" :rules="[{ required: true, message: '请输入记录值!' }]" name="content" style='margin-top: 18px'>
@@ -282,15 +284,13 @@
 
 
 <script setup>
-import { message } from 'ant-design-vue';
+import { message,Modal } from 'ant-design-vue';
 import { SmileOutlined, DownOutlined,CloseCircleFilled } from '@ant-design/icons-vue';
 import { SmileTwoTone, PlusCircleOutlined,HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
-import { computed, defineComponent, reactive, toRefs, ref } from 'vue';
+import { computed, defineComponent, reactive, toRefs, ref,createVNode } from 'vue';
 import { list, addlist,dellist,editlist,listAll,GetLine,BackLine} from "./cord"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { Modal } from 'ant-design-vue';
-import { createVNode } from 'vue';
-import { forEach } from 'lodash-es';
+
 // tab表格对应的数据
 const columns = [{
   title: '记录名称',
@@ -337,10 +337,11 @@ const columns = [{
 
 ];
 
-const modalStyle= {
-  height:'400px',
-  overflowY: 'auto'
-}
+const modalStyle = ref({
+  height:'450px',
+  overflowY: 'auto',
+})
+
 
 const data = reactive({
   name:"",
@@ -367,6 +368,7 @@ const data = reactive({
   formDataName:[{id:1}],
   delicon:true,
   formState: {
+      id:new Date().getDate(),
 			name: '',
 			type: '',
 			lineId: [],
@@ -374,6 +376,7 @@ const data = reactive({
 			content: '',
 			zoneId:''
 		},
+    formStateData:[],
 		formState_1: {
 			name: '',
 			type: '',
@@ -388,7 +391,8 @@ const data = reactive({
 			ttl: '',
 			content: '',
 			zoneId:'',
-      id:''
+      id:'',
+      zoneName:''
 		},
 });
 const {
@@ -417,7 +421,8 @@ const {
   formState_edit,
   selects,
   formDataName,
-  delicon
+  delicon,
+  formStateData
 } = toRefs(data)
 
 
@@ -446,17 +451,17 @@ const addFn = async () => {//点击确定按钮
     return console.log(error)
   }
   // 提交表单
-  let formData = [];//存放新增表单
- if (addRecord.value == true) {//控制第二个表单
-			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
-      formAdd = formRef.value.validate()//校验第一个表单的数据
-		}
-    if (addRecord.value == false) {
-			formData.push(formState.value);//只push第一个表单数据
+//   let formData = [];//存放新增表单
+//  if (addRecord.value == true) {//控制第二个表单
+// 			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
+//       formAdd = formRef.value.validate()//校验第一个表单的数据
+// 		}
+//     if (addRecord.value == false) {
+// 			formData.push(formState.value);//只push第一个表单数据
 
-		}
+// 		}
      formState.value.lineId = JSON.stringify( formState.value.lineId);
-     formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
+    //  formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
     //  console.log( formState.value.lineId);
     // console.log( formState.value.lineId,'ok');
     addlist(formData).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
@@ -483,13 +488,18 @@ const onClose = () => {//点击取消的回调
   formState.value = {}//第一个表单数据清空
   formState_1.value = {}//第二个表单数据清空
 };
+
 const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
 		// addRecord.value = true;
-    
+  modalStyle.value.height = '600px'
+  formStateData.value.push(formState.value)
     // formDataName.value = formDataName.value++
     formDataName.value.push({
       id:new Date().getTime()
     })
+    
+  
+
     // console.log(formDataName.value);
 	};
    const XiconBtn = (id) => {//点击第二个弹框的取消按钮
@@ -516,7 +526,7 @@ const queryParams = ref({ // 查询参数，响应式
   name: "",
   pageNum: 1,
   pageSize: 10,
-  type:""
+  type:undefined
 });
 //点击页面搜索按钮
 const handleQuery =()=>{
@@ -526,8 +536,9 @@ const handleQuery =()=>{
     type: queryParams.value.type,//获取响应式类型
     name:queryParams.value.name,//获取响应式记录名称
   }).then((res)=>{
-    console.log(res);
+    console.log(res.records,'sousuo ');
     listData.value = res.records//把数据给到存放表单的数组中
+    pageNum.value = 1;
     total.value = res.total;//总数
   //  getcordList()
   })
@@ -556,8 +567,9 @@ const getcordList = ()=>{
   console.log(Cordquery.value,'252');
   list(Cordquery.value).then(res =>{//调用接口，传入列表需要的数据
     
-    // console.log(res);
+    console.log(res,'shuju ');
     listData.value = res.records//把数据放进存放表单的地方
+    console.log(listData,'liebiao');
     total.value = res.total//总数
     // console.log(listData.value,'0000');
   })
@@ -615,6 +627,12 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 			groupData.value = res;//把获取到的数据存放groupData中
 		});
     }
+    // const chengeInput = (e)=>{
+    //   console.log(e.target);
+    //  formDataName.value = formDataName.value.filter(item=>{
+    //   return item.id != value
+    // })
+    // }
     // 修改弹框里面选择域名的change时间，获取线路
     const changeName_edit = (value)=>{
       console.log(value,'id');
@@ -635,16 +653,16 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
   
 // 删除
   const delFn = async (record) =>{
-    // console.log(record,'111');
+    console.log(record,'111');
     // console.log(record.lineId,'232');
   commonEnty.value.values.push(record);
-  // console.log(commonEnty.value,'252');
+   console.log(commonEnty.value,'252');
   await dellist(commonEnty.value)
   getcordList()
   message.success('删除成功')
   }
     const confirm = (record) => {
-  // console.log(record, 'record2');
+ console.log(record, 'record2');
   delFn(record.id)
   getcordList()
 };
@@ -690,7 +708,9 @@ const openmodal = (record)=>{
   // console.log(record,"123456");
     // 获取线路
      listAll().then(res=>{
-    // console.log(res,"2222");
+      // let data = JSON.parse(res.lineId);
+      // console.log(data, 'res999');
+    console.log(res,"2222");
     let listData = res.map((item)=>{
       return {
         value: item.zoneId,
@@ -704,12 +724,20 @@ const openmodal = (record)=>{
   //  console.log(formState_edit.value.id,"1111");
     	BackLine(formState_edit.value.id).then((res) => {//点击修改回显数据
         console.log(res,"2321");
+        formState_edit.value.zoneId = res.zoneId
+        // let transformedData = res.map((item) => {
+			// 	return {
+			// 		value: item.lineId,
+			// 		label: item.lineName,
+			// 	};
+			// });
 			formState_edit.value.name = res.name;
 			formState_edit.value.type = res.type;
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-			formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
+      console.log(formState_edit.value.lineId,'xianlu ');
+			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
 		});
 
 }
