@@ -9,6 +9,7 @@ enum RoleApi {
   hostsAll = '/hosts/get/hostsAll',
   infolineName = '/line/manage/getLineByHostId',
   sortlineName = '/line/manage/sort',
+  switch = '/line/manage/switch',
 }
 export const list = (params) => defHttp.post({ url: RoleApi.list, params });
 export const gethostsAll = (params) => defHttp.post({ url: RoleApi.hostsAll, params });
@@ -25,3 +26,4 @@ export const lineInfo = (params) => defHttp.get({ url: '/line/manage/' + params 
 export const delline = (params) => defHttp.post({ url: RoleApi.del, params });
 export const getinfolineName = (params) => defHttp.post({ url: RoleApi.infolineName, params });
 export const sortlineName = (params) => defHttp.post({ url: RoleApi.sortlineName, params });
+export const upswitch = (params) => defHttp.post({ url: RoleApi.switch, params });

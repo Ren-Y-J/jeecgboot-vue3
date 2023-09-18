@@ -96,7 +96,7 @@
               </div>
               <div v-if='record.status == 0'
                 style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                <a-tag color="green">禁用</a-tag>
+                <a-tag color="green">警用</a-tag>
               </div>
             </template>
             <template v-if="column.dataIndex === 'operation'">
@@ -107,14 +107,7 @@
                   @cancel="cancel">
                   <a-button type="link">删除</a-button>
                 </a-popconfirm>
-                <a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="SwitchFn(record)">
-                  <a-button v-show="record.status == 0" type="link">启动</a-button>
-                  <a-button v-show="record.status == 1" type="link">禁用</a-button>
-
-                </a-popconfirm>
-
               </div>
-
             </template>
 
           </template>
@@ -149,8 +142,8 @@
             <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
             <div style="margin-left:130px ;">
               <!--  -->
-              <a-form-item :validateTrigger="['change', 'blur']"
-                :rules="[{ required: (radiovalue == 1), message: '请选择' }]" label="" name="aclId" style='margin-top: 10px'>
+              <a-form-item :validateTrigger="['change', 'blur']" :rules="fromlineRules.aclId" label="" name="aclId"
+                style='margin-top: 10px'>
                 <a-space>
                   <a-select placeholder="请选择" ref="select" v-model:value="formState.aclId" style="width: 160px"
                     @focus="focus" @change="handleChange" mode="tags" :size="size" :options="allaclId"
@@ -167,7 +160,7 @@
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
                 @change="handleChange">
-                <a-select-option :value="item.hostId" v-for=" item  in  allhostId " :key="item.hostId
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
@@ -191,6 +184,7 @@
             </a-radio-group>
           </a-form-item>
           <div v-show="editradiovalue == 1">
+
             <div style="margin-left:130px ;">
               <a-form-item label="" :validateTrigger="['change', 'blur']" :rules="editlineRules.aclId" name="aclId"
                 style='margin-top: 10px'>
@@ -202,13 +196,15 @@
                   </a-select>
                 </a-space>
               </a-form-item>
+
             </div>
+
           </div>
           <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                 @focus="focus" @change="handleChangehost">
-                <a-select-option :value="item.hostId" v-for=" item  in  allhostId " :key="item.hostId
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
@@ -225,7 +221,7 @@
               <a-space>
                 <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                   @focus="focus" @change="handleChangsort">
-                  <a-select-option :value="item.hostId" v-for=" item  in  allhostId " :key="item.hostId
+                  <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                     ">{{ item.ipAddress }} </a-select-option>
                   <!-- <div>
                   <span>{{ item.hostName }}</span>
@@ -237,7 +233,7 @@
             </a-form-item>
             <!-- <a-form-item> -->
             <!-- style="padding-left: 60px;" -->
-            <ul v-for="( item, index ) in  lineNameList " style="padding-left: 56px;">
+            <ul v-for="(item, index) in lineNameList" style="padding-left: 56px;">
               <!-- border:0.5px solid #EBEBEB; -->
               <span
                 style="border-top:0.5px solid #EBEBEB;border-bottom:0.5px solid #EBEBEB; width: 404px;display: inline-block;padding-top: 6px;padding-bottom: 6px;">
@@ -262,8 +258,8 @@
   </div>
 </template>
 <script name='line' setup>
-import { ref, defineComponent, reactive, watch } from 'vue'
-import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName, upswitch } from './line'
+import { ref, defineComponent, reactive } from 'vue'
+import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName } from './line'
 import { message } from 'ant-design-vue';
 
 // 我没引入
@@ -314,9 +310,11 @@ const columns = [{
 const formlineRef = ref(null)
 const editlineRef = ref(null)
 const sortlineRef = ref(null)
-const fromlineRules = {//是这个嘛是新增的ruls校验验证      我看看
+const fromlineRules = {
   lineName: [{ required: true, message: "请输入线路名称" }],
   host: [{ required: true, message: "请选择" }],
+  aclId: [{ required: true, message: "请选择" }]
+
 }
 const editlineRules = {
   lineName: [{ required: true, message: "请输入线路名称" }],
@@ -339,17 +337,7 @@ const lineIds = ref('')
 
 // -------------------
 const radiovalue = ref(0);
-// watch([radiovalue.value, editradiovalue.value], (res, RES1) => {
-//   // formlineRef.value.validateFields(['aclId']);
-//   console.log('cp________________________');
-//   formState.value.aclId = []
-//   if (RES1 == 0) {
-//     editformState.value.aclId = []
-//   }
 
-
-// }, { flush: 'post' })
-//---------------
 const formState = ref({
   aclId: [],
   host: null,//主机
@@ -357,7 +345,6 @@ const formState = ref({
 })
 const changeradioFn = (value) => {
 
-  // 就是选acl的时候，对应的内容清空
   if (radiovalue.value == 1 && formState.value.aclId.length == 0) { //1不能传【】 1要是传【】，那0传啥
     formState.value.aclId = []
   }
@@ -383,33 +370,6 @@ const initData = async () => {
   totals.value = total
 }
 initData()
-
-const SwitchFn = async (record) => {
-  console.log(record);
-  if (record.status == 1) {
-    // let res = await upswitch({
-    //   status: 0,
-    //   lineId: record.lineId
-    // })
-    // console.log(res);
-    upswitch({
-      status: 0,
-      lineId: record.lineId
-    }).then(res => {
-      message.success('操作成功')
-      initData()
-    })
-  }
-  if (record.status == 0) {
-    upswitch({
-      status: 1,
-      lineId: record.lineId
-    }).then(res => {
-      message.success('操作成功')
-      initData()
-    })
-  }
-}
 const handleChangeFn = async (value) => {
   console.log(value, '66');
   formData.value.host = value
@@ -468,7 +428,7 @@ const isOpen = async (record) => {
     console.log(res, '回显999');
     formState.value = res
 
-    // 等于字符串你Jparse干嘛，转成数组为啥要转呐，而且我一开始在这做的判断0传
+    // 等于字符串你Jparse，转成数组为啥要转呐，而且我一开始在这做的判断0传
     // 不是，你那个接口0还是1都是json字符串，我0是空数组，你的意思是0 的时候传 1是
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
@@ -486,7 +446,7 @@ const isOpen = async (record) => {
 
 }
 const handleOk = async () => {
-  // 这写新增路线
+  // 这写新增
   // 校验表单
   try {
     await formlineRef.value.validate()
@@ -496,8 +456,8 @@ const handleOk = async () => {
   }
   console.log(lineIds.value, 'id');
   console.log(formState.value.formState, '//')
-  // 这个在1的时候后端说类型要加 JSON.stringify 。
   formState.value.aclId = JSON.stringify(formState.value.aclId);
+  // 那个我这块要是判断是配置还是新增，你看这样有问题嘛formState.value.aclId == [] 走新增或者走配置编辑我注释掉了，因为当时老报数据重复
   let res = await addaclIdAll(formState.value)
   console.log(res, 'resdata');
   initData()
@@ -594,7 +554,7 @@ const editisOpen = async (record) => {
     console.log(res, '回显999');
     editformState.value = res
 
-    // 等于字符串Jparse，转成数组为啥要转呐，而且我一开始在这做的判断0传
+    // 等于字符串你Jparse干嘛，转成数组为啥要转呐，而且我一开始在这做的判断0传
     // 那个接口0还是1都是json字符串，
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
@@ -625,9 +585,6 @@ const edithandleOk = async () => {
     // console.log(error);
     return console.log(error)
   }
-  if (editradiovalue.value == 0) {
-    editformState.value.aclId = []
-  }
   editformState.value.aclId = JSON.stringify(editformState.value.aclId);
   let res = await editline(editformState.value)
   console.log(res, 'resdata');
@@ -637,7 +594,7 @@ const edithandleOk = async () => {
   editonCloseaclFn()
 }
 const editchangeradioFn = (value) => {
-  // console.log(value, 'value这是拿acl的id的路线');
+  console.log(value, 'value这是拿acl的id的路线');
   if (editradiovalue.value == 1 && editformState.value.aclId.length == 0) { //那0传的是数组
     editformState.value.aclId = []
   }
@@ -682,6 +639,7 @@ const isOpensort = () => {
   sortvisible.value = true
 }
 const sorthandleOk = async () => {
+  console.log('1');
   // 校验表单
   try {
     await sortlineRef.value.validate()

@@ -95,7 +95,7 @@
         <!-- table表格 -->
         <div class="table">
            <span style="margin-left: 8px"></span>
-            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 310 }" :pagination="false" bordered
+            <a-table :scroll="{ x: 'calc(700px + 50%)', y: 510 }" :pagination="false" bordered
                 :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
                 :rowKey="(record) => record.id"
                 :columns="columns"
@@ -124,7 +124,7 @@
                     </div>
                   </template> 
                 <template v-if="column.dataIndex === 'type'">
-                    <span v-show='record.type === 0'>A</span>
+                    <span v-show='record.type == 0'>A</span>
                     <span v-show='record.type == 1'>AAAA </span>
                     <span v-show='record.type == 2'>CNAME </span>
                     <span v-show='record.type == 3'>NS </span>
@@ -164,7 +164,7 @@
     </div>
     <!-- !!!!!添加记录弹窗 v-model:visible="visible" style='margin-top: 26px' @cancel="onClose"点击取消的回调-->
    <div class="addlist" >
-      <a-modal class="mydialog" :scroll="{ x: 'calc(700px + 50%)', y: '510' }" style="top: 20px" :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
+      <a-modal class="mydialog"  :scroll="{ x: 'calc(700px + 50%)', y: '510' }" style="top: 20px" :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
         <a-form ref='formRef' :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="[{ required: true, message:'请选择域名' }]"  name="zoneId" style='margin-top: 26px' >
@@ -179,10 +179,10 @@
 				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
             </div>
               <a-form-item label="记录名称"  :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
-                <a-input @change="chengeInput" :ref="item.id" v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
+                <a-input @change="chengeInput" :ref="item.id" v-model:value="item.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
               <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message:'请选择类型' }]" name="type" style='margin-top: 0px'>
-              <a-radio-group v-model:value="formState.type" >
+              <a-radio-group v-model:value="item.type" >
               <a-radio value="0">A</a-radio>
               <a-radio value="1">AAAA</a-radio>
               <a-radio value="2">CNAME </a-radio>
@@ -194,16 +194,7 @@
               </a-radio-group>
               </a-form-item>
               <a-form-item label="记录值" :rules="[{ required: true, message:'请输入记录值' }]" name="content" style='margin-top: 18px'>
-                <!-- <a-input v-model:value="formState.content" placeholder="请输入记录值" style='width:50%' /> -->
-                <a-input-number
-							:formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')"
-							precision="0"
-							min="0"
-							style="width:50%"
-							placeholder="请输入记录值"
-							v-model:value="formState.content"
-						></a-input-number>
+                <a-input v-model:value="item.content" placeholder="请输入记录值" style='width:50%' />
               </a-form-item>
               <a-form-item label="TTL" :rules="[{ required: true, message:'请输入大于0的整数,'}]" name="ttl" style='margin-top: 18px'>
                 <!-- <a-input v-model:value="formState.ttl" placeholder="请输入TTL" style='width:50%' /> -->
@@ -214,13 +205,13 @@
 							min="1"
 							style="width:50%"
 							placeholder="请输入大于0的TTL"
-							v-model:value="formState.ttl"
+							v-model:value="item.ttl"
 						></a-input-number>
               </a-form-item>
               <a-form-item label="线路" :rules="[{ required: true, message:'请选择线路' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
                   <!-- mode="tags"设置 Select 的模式为多选或标签   :field-names自定义节点 label、value、options 的字段-->
-              <a-select placeholder="请选择线路" ref="select" v-model:value="formState.lineId" style="width: 150px"
+              <a-select placeholder="请选择线路" ref="select" v-model:value="item.lineId" style="width: 150px"
                 @focus="focus" @change="handleChangsortadd" :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
               </a-space>
@@ -271,7 +262,7 @@
               </a-form-item>
               <a-form-item label="线路" :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="formState_edit.lineId" style="width: 150px"
+              <a-select placeholder="请选择线路" ref="select" v-model:value="formState_edit.lineId" style="width: 225px"
                 @focus="focus"  :options="groupData_edit" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
             </a-space>
@@ -442,7 +433,6 @@ const formAdd = ref([])//新增校验表单一
 const formAdd_ = ref([])//新增校验表单二
 
 const addFn = async () => {//点击确定按钮
-
   // 校验表单
   try {
     await formRef.value.validate()
@@ -452,7 +442,14 @@ const addFn = async () => {//点击确定按钮
     return console.log(error)
   }
   // 提交表单
-//   let formData = [];//存放新增表单
+  let formData = ref({
+      name: formState.name,
+			type: formState.type,
+			lineId: formState.lineId,
+			ttl: formState.ttl,
+			content: formState.content,
+			zoneId:formState.zoneId
+  });//存放新增表单
 //  if (addRecord.value == true) {//控制第二个表单
 // 			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
 //       formAdd = formRef.value.validate()//校验第一个表单的数据
@@ -465,7 +462,7 @@ const addFn = async () => {//点击确定按钮
     //  formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
     //  console.log( formState.value.lineId);
     // console.log( formState.value.lineId,'ok');
-    addlist(formData).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
+    addlist(formState).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
 			message.success('添加成功');
 			visible.value = false;//关闭弹框
 			onClose();
@@ -489,11 +486,11 @@ const onClose = () => {//点击取消的回调
   formState.value = {}//第一个表单数据清空
   formState_1.value = {}//第二个表单数据清空
 };
-
+// let count =0
 const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
-		// addRecord.value = true;
-  modalStyle.value.height = '600px'
+  modalStyle.value.height = '800px'
   formStateData.value.push(formState.value)
+
     // formDataName.value = formDataName.value++
     formDataName.value.push({
       id:new Date().getTime()
@@ -501,8 +498,9 @@ const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
     
   
 
-    console.log(formDataName.value);
+    // console.log(formDataName.value);
 	};
+
    const XiconBtn = (id) => {//点击第二个弹框的取消按钮
 		// addRecord.value = false;
     console.log(id);
@@ -512,6 +510,10 @@ const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
     formDataName.value = formDataName.value.filter(item=>{
       return item.id != id
     })
+    // if(formDataName.value.length == 1){
+    //   modalStyle.value.height = '450px'
+    // }
+    
     console.log(formDataName.value );
 
     // forEach(item=>{
@@ -615,8 +617,9 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 // 添加弹框选择域名，触发change时间，当input框发生变化就触发
     const changeNames = (value)=>{//value是id
       // console.log(formState.value.zoneName,'125');
-      console.log(value,'id');
+    
       formState.value.zoneId =value//获取的id传给新增表单的数据中
+        console.log(formState.value.zoneId,'id');
       GetLine(formState.value.zoneId).then((res) => {//调用获取线路的数据，传入域名的id
 			console.log(res,'9-9---9-8-')
 			// let transformedData = res.map((item) => {
