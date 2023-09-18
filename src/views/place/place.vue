@@ -84,10 +84,6 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
-		
-		
-		
-		
 			<a-form-item
 				label="域名"
 				:labelCol="{ span: 5 }"
@@ -97,22 +93,17 @@
 			>
 				<a-input placeholder="不要包含主机名，如www" v-model:value="formState.name" />
 			</a-form-item>
-
-			<a-form-item
-			 :rules="[{ required: true, message: '请选择线路!' }]"
-			 name="lineId"
-			 label="线路选择" :labelCol="{ span: 5 }">
-				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
-			</a-form-item>
-			<a-form-item
-			 :rules="[{ required: true, message: '请选择主机!' }]"
-			 name="lineId"
-			 label="主机" :labelCol="{ span: 5 }">
-				<a-select ref="select" v-model:value="hosts" style="width: 150px" placeholder="请选择主机">
+			<!-- 主机 -->
+			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
+				<a-select @change='changehosts' ref="select" v-model:value="formState.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
 					}}</a-select-option>
 				</a-select>
+			</a-form-item>
+			<!-- 线路 -->
+			<a-form-item :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" label="线路选择" :labelCol="{ span: 5 }">
+				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
 			<a-form-item label="子域名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="请输入子域名" v-model:value="formState.childZone" />
@@ -153,10 +144,7 @@
 					<a-select-option value="4">v6反向解析</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item
-			 :rules="[{ required: true, message: '请选择主机!' }]"
-			 name="hosts"
-			 label="主机" :labelCol="{ span: 5 }">
+			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
 				<a-select ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
@@ -256,7 +244,7 @@
 	</a-modal>
 </template>
 <script setup>
-	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho,EditSOA } from './place.ts';
+	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho, EditSOA } from './place.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { message } from 'ant-design-vue';
@@ -298,6 +286,7 @@
 			childZone: '',
 			remark: '',
 			IP: '',
+			hosts: undefined,
 		},
 		formState_: {
 			lineId: [],
@@ -305,7 +294,7 @@
 			IP: '',
 			childZone: '',
 			remark: '',
-			hosts:undefined,
+			hosts: undefined,
 		},
 		formState_SOA: {
 			serverName: '',
@@ -323,7 +312,7 @@
 		status: 1,
 		HostsData: '',
 		hosts: undefined,
-		zoneId:''
+		zoneId: '',
 	});
 	const {
 		formState_SOA,
@@ -345,7 +334,7 @@
 		type_1,
 		HostsData,
 		hosts,
-		zoneId
+		zoneId,
 	} = toRefs(data);
 	const changetabs = () => {
 		placetype.value = activeKey.value;
@@ -371,30 +360,28 @@
 		}
 	};
 	const handleOk_SOA = () => {
-		let arr= []
-		arr.push(formState_SOA.value )
-		let soaInfo  = JSON.stringify(arr)
-		
+		let arr = [];
+		arr.push(formState_SOA.value);
+		let soaInfo = JSON.stringify(arr);
+
 		EditSOA({
-			soaInfo:soaInfo,
-			zoneId:zoneId.value
-		}).then(res=>{
-				message.success('操作成功');
-			visible_SOA.value=false
-				getData();
-			clearData()
-		})
-		
+			soaInfo: soaInfo,
+			zoneId: zoneId.value,
+		}).then((res) => {
+			message.success('操作成功');
+			visible_SOA.value = false;
+			getData();
+			clearData();
+		});
 	};
 	// 回显SOA
 	const openSOA = (record) => {
 		visible_SOA.value = true;
-		
-		zoneId.value =record.zoneId
+
+		zoneId.value = record.zoneId;
 		SOAEcho(`${record.zoneId}`).then((res) => {
-			
 			let data = JSON.parse(res.soaInfo);
-			console.log(data,'recordrecordrecordrecord')
+			console.log(data, 'recordrecordrecordrecord');
 			data.forEach((item) => {
 				formState_SOA.value.expireTime = item.expireTime;
 				formState_SOA.value.mail = item.mail;
@@ -447,12 +434,18 @@
 		pageSize.value = pageSize;
 		getData();
 	};
-	const addBtn = () => {
+	const changehosts = () =>{
+		console.log(formState.value.hosts,'hosts66+')
 		// 获取线路
-		GetLine({}).then((res) => {
+		GetLine({
+			value:formState.value.hosts,
+		}).then((res) => {
 			const transformedData = res.map(({ lineId: value, lineName: label }) => ({ value, label }));
 			groupData.value = transformedData;
 		});
+	}
+	const addBtn = () => {
+		
 
 		if (placetype.value == '0') {
 			visible.value = true;
@@ -491,7 +484,7 @@
 			return;
 		}
 		AddLine({
-			hostId: hosts.value,
+			hostId: formState.value.hosts,
 			type: 0,
 			zoneName: formState.value.name,
 			lineId: JSON.stringify(formState.value.lineId),
@@ -521,7 +514,6 @@
 			lineId: JSON.stringify(formState_.value.lineId),
 			remark: formState_.value.remark,
 			childZone: formState_.value.childZone,
-			
 		}).then((res) => {
 			visible_1.value = false;
 			message.success('添加成功');
@@ -539,15 +531,14 @@
 		formState_.value.IP = '';
 		formState_.value.remark = '';
 		formState_.value.childZone = '';
-		
-		formState_SOA.value.serverName=''
-		formState_SOA.value.ttl=''
-		formState_SOA.value.mail=''
-		formState_SOA.value.refreshTime=''
-		formState_SOA.value.retryTime=''
-		formState_SOA.value.expireTime=''
-		formState_SOA.value.minimumTime=''
-		
+
+		formState_SOA.value.serverName = '';
+		formState_SOA.value.ttl = '';
+		formState_SOA.value.mail = '';
+		formState_SOA.value.refreshTime = '';
+		formState_SOA.value.retryTime = '';
+		formState_SOA.value.expireTime = '';
+		formState_SOA.value.minimumTime = '';
 	};
 	const delBtn = (record) => {
 		console.log(record, 'record');
@@ -595,6 +586,7 @@
 			});
 		}
 	};
+	
 </script>
 
 <style>

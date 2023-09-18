@@ -76,13 +76,12 @@ const formRules = {
 const data = reactive({
   visible: false,
   datalist: "",
-  pageNum: 1,
-  pageSize: 10,
-  totals: 0,
+
+  totals: '',
   opTitle: "分组添加",
   formReflibrary: null
 })
-const { opTitle, pageNum, pageSize, datalist, totals, visible, formReflibrary } = toRefs(data);
+const { opTitle, datalist, totals, visible, formReflibrary } = toRefs(data);
 const formData = ref({
   name: "",
   pageNum: 1,
@@ -95,22 +94,29 @@ const rowData = ref({
 // ---------------删除定义的字段
 const values = ref([])
 const commonEnty = ref({ values: [] })//// 对象包数组 
-const props = defineProps({
-  libname: {
-    type: String,
-    default: ''
-  }
-})
-console.log(props.libname);
+// const props = defineProps({
+//   libname: {
+//     type: String,
+//     default: ''
+//   }
+// })
+// console.log(props.libname);
 // props:{
 //   libname:
 // }
 // 表格初始化
-const initData = async () => {
-  let res = await librarylist({ ...formData.value, name: props.libname })
+const initData = async (name) => {
+  // let res = await librarylist({ ...formData.value, name: props.libname })
+  let res = await librarylist({ ...formData.value, name })
   console.log(res);
   datalist.value = res.records
   totals.value = res.total
+}
+initData('')
+// 問題 搜索的时候没有重新给参数赋值导致的
+// 解決方案 在子页面写一个方法，把pageNum赋值1，然后在父组件搜索的时候调用那个方法
+const pageNum = () => {
+  formData.value.pageNum = '1'
 }
 // const initData = async (name) => {
 //   console.log(name)
@@ -120,7 +126,7 @@ const initData = async () => {
 //   totals.value = res.total
 // }
 // initData('')
-initData()
+
 const isOpen = async (record) => {
   console.log(record, 'record.createTime');
   visible.value = true
@@ -144,12 +150,12 @@ const addoreditFn = async () => {
     await editlibrary(rowData.value)
     visible.value = false
     message.success('修改成功')
-    initData()
+    initData('')
   } else {
     await addlibrary(rowData.value)
     visible.value = false
     message.success('添加成功')
-    initData()
+    initData('')
   }
 
 
@@ -160,7 +166,7 @@ const delFn = async (record) => {
   console.log(commonEnty.value, '  commonEnty.value.');
   await dellibrary(commonEnty.value)
   // 更新列表
-  initData()
+  initData('')
   message.success('删除成功')
 }
 // 关闭弹框
@@ -174,7 +180,7 @@ const onClose = () => {
 const confirm = (recoed) => {
   console.log(recoed.dnId);
   delFn(recoed.dnId)
-  initData()
+  initData('')
 };
 const cancel = e => {
   console.log(e);
@@ -183,15 +189,15 @@ const cancel = e => {
 
 const changeFn = (P, Ps) => {
   formData.value.pageNum = P
-  initData()
+  initData('')
 }
 const onShowSizeChange = (current, pageSize) => {
   formData.value.pageSize = pageSize
-  initData()
+  initData('')
 
 }
 // 将变量暴露出去 ， 父组件才能传值进来 ， 并且defineExpose也可以暴露方法供父组件调用(子组件方法暴露出去的名字一样也没有事)
-defineExpose({ initData })
+defineExpose({ initData, pageNum })
 </script>
 <style scoped lang="less">
 .domainname {

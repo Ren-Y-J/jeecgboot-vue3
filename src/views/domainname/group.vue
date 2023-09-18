@@ -112,8 +112,7 @@ const formRules = {
 const data = reactive({
 
   datalist: "",
-  pageNum: 1,
-  pageSize: 10,
+
   totals: '',
   number: 0,
   allclusterId: [],
@@ -126,7 +125,7 @@ const data = reactive({
   selects: 0
 
 })
-const { number, pageNum, pageSize, datalist, totals, allclusterId, libraryallList, visible, opTitle, fromRefgroup, changevalue, selects } = toRefs(data);
+const { number, datalist, totals, allclusterId, libraryallList, visible, opTitle, fromRefgroup, changevalue, selects } = toRefs(data);
 const formData = ref({
   libName: "",
   pageNum: 1,
@@ -149,6 +148,10 @@ const initData = async (zone) => {
   totals.value = res.total
 }
 initData('')
+// 搜索的时候没有重新给参数赋值导致的
+const pageNum = () => {
+  formData.value.pageNum = '1'
+}
 const getlibraryAll = async () => {
   let res = await libraryAll()
   console.log(res);
@@ -182,6 +185,12 @@ const isOpen = async (record) => {
   }
 }
 const addoreditFn = async () => {
+  try {
+    await fromRefgroup.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return console.log(error)
+  }
   if (rowData.value.id) {
     await editgroup(rowData.value)
     visible.value = false
@@ -240,8 +249,13 @@ const handlChangeFn = async (val) => {
         }
 
       },
-      onCancel() {
-        console.log('Cancel');
+      onClose() {
+        // console.log('Cancel');
+        visible.value = false;
+        fromRefgroup.value.resetFields()
+        opTitle.value = ""
+        rowData.value.zone = ""
+        rowData.value.dnId = ""
       },
       class: 'test',
     });
@@ -257,7 +271,7 @@ const delFn = async (record) => {
   // console.log(lists.value, 'lists.value');
   await delgroup(commonEnty.value)
   // 更新列表
-  getList()
+  initData()
   message.success('删除成功')
 
 }
@@ -266,7 +280,7 @@ const confirm = (record) => {
   delFn(record.id)
   initData()
 };
-defineExpose({ initData })
+defineExpose({ initData, pageNum })
 </script>
 <style scoped lang="less">
 .contaion {

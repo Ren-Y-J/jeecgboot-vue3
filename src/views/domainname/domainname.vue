@@ -56,7 +56,8 @@
       <Group ref="groupRef"></Group>
     </div>
     <div v-show="falgeL">
-      <Library ref="libraryRef" :libname="formGData.name"></Library>
+      <!-- :libname="formGData.name" -->
+      <Library ref="libraryRef"></Library>
     </div>
   </div>
 </template>
@@ -84,9 +85,13 @@ const searchFn = () => {
   console.log(libraryRef.value);
   console.log(libraryRef.value.initData)
   if (activeKey.value == '0') {
+    groupRef.value.pageNum()
     groupRef.value.initData(formGData.zone)
   } else if (activeKey.value == '1') {
-    libraryRef.value.initData()
+    // libraryRef.value.initData()
+    libraryRef.value.pageNum()
+    libraryRef.value.initData(formGData.name)
+
   }
 }
 const AlldelFn = () => {
@@ -95,8 +100,10 @@ const AlldelFn = () => {
     groupRef.value.initData('')
   } else if (activeKey.value == '1') {
     formGData.name = ''
-    console.log(formGData.name);
-    libraryRef.value.initData()
+    // console.log(formGData.name);
+    // libraryRef.value.initData()
+    libraryRef.value.initData('')
+
   }
 }
 const changetabsFn = (value) => {

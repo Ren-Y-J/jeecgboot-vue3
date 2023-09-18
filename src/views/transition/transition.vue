@@ -197,7 +197,6 @@
 	};
 	const formRef = ref(null);
 	const handleOk = async () => {
-		console.log(formRef,'formRef')
 		if (modelType.value == 0) {
 			try {
 				await formRef.value.validate();
