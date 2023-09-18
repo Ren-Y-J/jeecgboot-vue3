@@ -27,7 +27,7 @@
   </div>
   <div class="controls">
     <div class="iconBtn">
-      <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary"
+      <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"
         ><plus-outlined />添加策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="handlChangeFn"><delete-outlined />删除策略组</a-button>
@@ -96,14 +96,66 @@
 			</div> 
 
   </div>
+  <!-- 添加策略组弹框 -->
+  <div>
+    <a-modal  v-model:visible="visible_add" title="添加策略组" width="600px"  @ok="handleOk" @cancel="onCloseaclFn" >
+        <a-form   name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <!--  -->
+          <a-form-item label="策略组名称"  style='margin-top: 26px'>
+            <a-input  placeholder="请输入策略组名称" />
+          </a-form-item>
+          <a-form-item label="策略组名称"  style='margin-top: 26px'>
+            <a-button type="primary">配置启用时段</a-button>
+            <a-alert message="配置启用时段" type="info" show-icon class="icon"/>
+          </a-form-item>
+          <!-- :rules="fromaclinfoRules.aclType" -->
+          <a-form-item label="启用时段" name="aclType" style='margin-top: 26px'>
+            <a-radio-group  @change="changeradioFn">
+              <a-radio :value="0">启用</a-radio>
+              <a-radio :value="1">停用</a-radio>
+            </a-radio-group>
+          </a-form-item>
+        </a-form>
+    </a-modal>
+  </div>
+  <!-- 配置启用时段弹框 -->
+  <div>
+    <a-modal :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" v-model:visible="visible_Time" title="配置启用时段" width="600px"  @ok="handleOk" @cancel="onCloseaclFn" >
+       <a-form   name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+        <a-form-item label="启用周期" name="aclType" style='margin-top: 26px' class="lable_form">
+            <a-radio-group  @change="changeradioFn" class="radio_right">
+              <a-radio :value="0">周一</a-radio>
+              <a-radio :value="1">周二</a-radio>
+              <a-radio :value="0">周三</a-radio>
+              <a-radio :value="1">周四</a-radio>
+              <a-radio :value="0">周五</a-radio>
+              <a-radio :value="1">周六</a-radio>
+              <a-radio :value="0">周日</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
+          <div class="label_text">时段：</div>
+          <a-form-item class="form_time" v-for="item in formDataName" :key="item">
+              <span >开始时间</span>
+              <a-time-picker v-model:value="value" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px"/>
+              <span>结束时间</span>
+              <a-time-picker v-model:value="value" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px"/>
+              <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1"/>
+               <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
+          </a-form-item>
+      </a-form>
+    </a-modal>
+  </div>
+  
 </template>
 
 
 <script setup>
 import { message,Modal } from 'ant-design-vue';
 import { list, listAll,dellist } from './tactics'
-import { SmileOutlined, DownOutlined,CloseCircleFilled,ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { SmileTwoTone, PlusCircleOutlined,HeartTwoTone, CheckCircleTwoTone, LeftOutlined, SearchOutlined, ReloadOutlined, PlusOutlined, RestOutlined } from '@ant-design/icons-vue'
+import {  SearchOutlined, ReloadOutlined,PlusCircleFilled,CloseCircleFilled  } from '@ant-design/icons-vue'
 import { computed, defineComponent, reactive, toRefs, ref,createVNode } from 'vue';
 
 const columns = [{
@@ -143,20 +195,24 @@ const columns = [{
 },
 ];
 const data = reactive({
-  listData: '',
+  listData: [],
   total: 0,
   listAllData: [],
-  commonEnty:{},
+  policiesId:{},
   number: 0,
-  policiesId:'',
+  visible_add:false,
+  visible_Time:true,
+  formDataName:[{id:1}],
 });
 const {
   listData,
   total,
   listAllData,
-  commonEnty,
   number,
   policiesId,
+  visible_add,
+  visible_Time,
+  formDataName
 } = toRefs(data)
 
 const Cordquery = ref({
@@ -167,25 +223,29 @@ const Cordquery = ref({
 //列表数据
 const getcordList = () => {
   list(Cordquery.value).then(res => {
-
-    console.log(res.records);
+    console.log(res.records,'shuju ');
     listData.value = res.records
-  //   let policiesIdName = listData.value.map(item=>{
-  //     return{
-  //       value:'item.policiesId'
-  //     }
-  //   })
-  // policiesId.value = policiesIdName
-  // console.log(policiesId.value,'id');
-   
     total.value = res.total
     console.log(listData.value, '0000');
   })
-  // listAll(policiesId)
-
+  
+// const PolicyGroupId = listData.value.map(item=>item.policiesId)
+// console.log(PolicyGroupId,'123');
 }
 getcordList()
 
+
+// const geilistAll = () =>{
+//   listAll(PolicyGroupId.value).then(res=>{
+//     console.log(res,'geilistAll');
+//   })
+// }
+// geilistAll()
+
+// 添加策略组按钮
+const addTactics =()=>{
+  visible_add.value = true
+}
 // 分页
 const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，传入当前页和每页条数
     Cordquery.value.pageSize = pageSize //把pageSize给到响应式的Cordquery
@@ -195,21 +255,62 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 		Cordquery.value.pageNum = P //把获取的页码给到响应式的Cordquery
 		getcordList();
 	};
+
+//点击配置启用时段的添加时间图标
+  const addIconTime = ()=>{
+      formDataName.value.push({
+      id:new Date().getTime()
+    })
+  }
+  
+  //点击第二个弹框的取消按钮
+  const modalStyle = ref({
+  height:'450px',
+  overflowY: 'auto',
+})
+   const XiconBtn = (id) => {
+		// addRecord.value = false;
+    console.log(id);
+    // if(id === 1){
+    //   delicon.value = false
+    // }
+    formDataName.value = formDataName.value.filter(item=>{
+      return item.id != id
+    })
+    // if(formDataName.value.length == 1){
+    //   modalStyle.value.height = '450px'
+    // }
+    
+    // console.log(formDataName.value );
+
+    // forEach(item=>{
+    //   if(item.id == id){
+    //     formDataName.value.splice
+    //   }
+    // })
+	};
+
 // 删除
-//   const delFn = async (record) =>{
-//      console.log(record,'111');
-//     // console.log(record.lineId,'232');
-//   commonEnty.value = record;
-//   console.log(commonEnty.value,'252');
-//   await dellist(commonEnty.value)
+
+// const delFn = async (record) =>{
+//   console.log(record,"shuju ");
+// id已经获取到，没有传进去
+//   policiesId.value = record
+//   // console.log(policiesId,'idn');
+//   await dellist()
 //   getcordList()
 //   message.success('删除成功')
-//   }
-//   const confirm = (record) => {
-//  console.log(record, 'record2');
-//   delFn(record.policiesId)
+ 
+// }
+//  const confirm = (record) => {
+// //  console.log(record, 'record2');
+//  let dataId = record.policiesId
+// //  console.log(dataId,'id');
+//   delFn(dataId)
 //   getcordList()
 // };
+
+
 
 // //多选
 // const state = reactive({
@@ -283,4 +384,38 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 .pointer {
 		cursor: pointer;
 	}
+  .icon{
+    background-color: #fff;
+    border: #fff;
+   display: inline-flex;
+  ::v-deep(.ant-alert-icon){
+    color: #E7785F!important;
+    margin-left: 30px!important;
+  }
+  /deep/ .ant-alert-message{
+    color: #E7785F;
+  }
+  }
+.lable_form{
+  /deep/ .ant-form-item-label > label {
+    align-items: start;
+  }
+}
+.radio_right{
+  .ant-radio-wrapper{
+    margin-right: 18px;
+  }
+}
+.label_text{
+  margin-left: 90px;
+}
+.form_time{
+  width: 600px;
+  margin-left: 100px;
+   /deep/ .ant-form-item-control-input{
+  width: 600px;
+}
+}
+
+
 </style>
