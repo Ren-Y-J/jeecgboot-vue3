@@ -96,7 +96,7 @@
               </div>
               <div v-if='record.status == 0'
                 style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                <a-tag color="green">警用</a-tag>
+                <a-tag color="green">禁用</a-tag>
               </div>
             </template>
             <template v-if="column.dataIndex === 'operation'">
@@ -104,10 +104,19 @@
                 <a-button type="link" @click="editisOpen(record)">配置</a-button>
                 <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="isOpen(record)">编辑</a-button> -->
                 <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
-                  @cancel="cancel">2
+                  @cancel="cancel">
                   <a-button type="link">删除</a-button>
                 </a-popconfirm>
+
+                <div class="pointer" style="margin-right: 10px">
+                  <a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="SwitchFn(record)">
+                    <a-button v-show="record.status == 0" type="link">禁用</a-button>
+                    <a-button v-show="record.status == 1" type="link">启动</a-button>
+
+                  </a-popconfirm>
+                </div>
               </div>
+
             </template>
 
           </template>
@@ -256,7 +265,7 @@
 </template>
 <script name='line' setup>
 import { ref, defineComponent, reactive, watch } from 'vue'
-import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName } from './line'
+import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName, upswitch } from './line'
 import { message } from 'ant-design-vue';
 
 // 我没引入
@@ -376,6 +385,33 @@ const initData = async () => {
   totals.value = total
 }
 initData()
+
+const SwitchFn = async (record) => {
+  console.log(record);
+  if (record.status == 1) {
+    // let res = await upswitch({
+    //   status: 0,
+    //   lineId: record.lineId
+    // })
+    // console.log(res);
+    upswitch({
+      status: 0,
+      lineId: record.lineId
+    }).then(res => {
+      message.success('操作成功')
+      initData()
+    })
+  }
+  if (record.status == 0) {
+    upswitch({
+      status: 1,
+      lineId: record.lineId
+    }).then(res => {
+      message.success('操作成功')
+      initData()
+    })
+  }
+}
 const handleChangeFn = async (value) => {
   console.log(value, '66');
   formData.value.host = value
