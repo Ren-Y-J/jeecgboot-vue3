@@ -406,7 +406,9 @@
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-			formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
+				console.log(formState_edit.value.lineId,'formState_edit.value.lineId')
+			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
+		
 		});
 		edit_visible.value = true;
 	};

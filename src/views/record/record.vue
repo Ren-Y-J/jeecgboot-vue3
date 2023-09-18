@@ -442,6 +442,7 @@ const formAdd = ref([])//新增校验表单一
 const formAdd_ = ref([])//新增校验表单二
 
 const addFn = async () => {//点击确定按钮
+
   // 校验表单
   try {
     await formRef.value.validate()
@@ -500,7 +501,7 @@ const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
     
   
 
-    // console.log(formDataName.value);
+    console.log(formDataName.value);
 	};
    const XiconBtn = (id) => {//点击第二个弹框的取消按钮
 		// addRecord.value = false;
