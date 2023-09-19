@@ -92,11 +92,16 @@
                 不限地址段 }}</a-button> -->
             </template>
             <template v-if="column.dataIndex === 'ipAddress'">
-              <!-- border-bottom: 1px solid #109eff; -->
-              <a-button class='examPaper_header' type="link" target="_blank" @click="GoDep(record)"
-                style="cursor:pointer; ">{{
-                  record.ipAddress }}</a-button>
+              <a-button type="primary" ghost @click="GoDep(record)"
+                style="cursor:pointer;border: none;border-bottom: 1px solid; ">
+                {{ record.ipAddress }}
+              </a-button>
             </template>
+            <!-- <template v-if="column.dataIndex === 'ipAddress'"> -->
+            <!-- <a-button class='examPaper_header' type="link" target="_blank" @click="GoDep(record)"
+                style="cursor:pointer; ">{{
+                  record.ipAddress }}</a-button> -->
+            <!-- </template> -->
             <template v-if="column.dataIndex === 'status'">
 
               <div v-if='record.status == 1'
