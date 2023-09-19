@@ -138,14 +138,15 @@
           </a-form-item>
           <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
           <div class="label_text">时段：</div>
-          <a-form-item class="form_time" name="policiesTimeRange" v-model:value="formState.policiesTimeRange"  v-for="item in formDataName" :key="item">
-              <span >开始时间</span>
+          <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName" :key="item">
+             <a-time-range-picker v-model:value="item.state_value"/>
+              <!-- <span >开始时间</span> -->
               <!-- <a-form-item-rest> -->
-              <a-time-picker  v-model:value="formState.policiesTimeRange.state_value" value-format="HH:mm:ss" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px" @change="getstart"/>
+              <!-- <a-time-picker  v-model:value="item.state_value" value-format="HH:mm:ss" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px" @change="getstart"/> -->
               <!-- </a-form-item-rest> -->
-              <span>结束时间</span>
+              <!-- <span>结束时间</span> -->
               <!-- <a-form-item-rest> -->
-              <a-time-picker v-model:value="formState.policiesTimeRange.end_value" value-format="HH:mm:ss" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px" @change="getstart"/>
+              <!-- <a-time-picker v-model:value="item.end_value" value-format="HH:mm:ss" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px" @change="getstart"/> -->
               <!-- </a-form-item-rest> -->
               <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1"/>
                <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
@@ -222,12 +223,12 @@ const data = reactive({
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
-    policiesTimeRange:[{
-      state_value:'',
-      end_value:''
-    }]
+    policiesTimeRange:[]
   },
-  
+  policestimestr:{
+      state_value:'',
+    }
+
 });
 const {
   listData,
@@ -240,7 +241,7 @@ const {
   visible_syn,
   formDataName,
   formState,
- 
+ policiesTimeRange
 } = toRefs(data)
 
 const Cordquery = ref({
@@ -275,9 +276,14 @@ const addTime = ()=>{
   visible_Time.value = true
 }
 const getstart = ()=>{//通过change事件获取到的时间
-  // console.log(formState.value.policiesTimeRange.state_value,'sj');
-  let startTime = formState.value.policiesTimeRange
-  console.log(startTime,'111');
+let policiesTime = []
+let strName = ""
+  // console.log(formState.value.policiesTimeRange.state_value,formState.value.policiesTimeRange.end_value,'sj');
+  // strName = `${formDataName.value.state_value} - ${formDataName.value.end_value}`
+  // console.log(strName,'字符串');
+  // policiesTime.push(strName)
+  // console.log(policiesTime,'shuju');
+  
 }
 // 添加策略组确定按钮
 const Policyadd = ()=>{
@@ -293,7 +299,8 @@ const Policyadd = ()=>{
 // 启用时段确定按钮
 const handleadd = ()=>{
    visible_Time.value = false
-   formData.push(startTime)
+  //  formData.push(startTime)
+   console.log(policestimestr.value,'字符串');
 }
 
 // 同步策略组按钮
