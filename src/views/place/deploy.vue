@@ -389,12 +389,10 @@
 		console.log(record, 'record');
 		// 获取线路
 		GetLine(`${id.value}`).then((res) => {
-			let data = JSON.parse(res.lineId);
-			console.log(data, 'res999');
-			let transformedData = data.map((item) => {
+			let transformedData = res.map((item) => {
 				return {
-					value: item,
-					label: item,
+					value: item.lineId,
+					label: item.lineName,
 				};
 			});
 			groupData.value = transformedData;
