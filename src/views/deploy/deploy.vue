@@ -456,7 +456,7 @@
 			recursionType: '1',
 			rateLimitOn: '0',
 			responsesPerSecond: '',
-			loggingTypeList: '',
+			loggingTypeList: [],
 			nxRedirectOn: false,
 			nxDomainType: '',
 			advancedOption: '0',
@@ -532,7 +532,7 @@
 			formState_bas.value.recursionType = res.confContent.recursionType;
 			formState_bas.value.rateLimitOn = res.confContent.rateLimitOn;
 			formState_bas.value.responsesPerSecond = res.confContent.responsesPerSecond;
-			// formState_bas.value.loggingTypeList = res.confContent.loggingTypeList.toString();
+			formState_bas.value.loggingTypeList =res.confContent.loggingTypeList.map(String);
 			formState_bas.value.nxRedirectOn = res.confContent.nxRedirectOn;
 			formState_bas.value.nxDomainType = res.confContent.nxDomainType;
 			formState_bas.value.advancedOption = res.confContent.advancedOption;
@@ -553,7 +553,6 @@
 			formState_bas.value.limitRecursionRange = res.confContent.limitRecursionRange;
 			formState_bas.value.recursionOn = res.confContent.recursionOn;
 			formState_bas.value.minRes = res.confContent.minRes;
-			console.log(res, 'ShowData');
 		});
 		ShowDataAll(`${pageID.value}`).then((res) => {
 			ShowDataAllData.value = res;
@@ -573,16 +572,14 @@
 		localStorage.setItem('pageID', pageID.value);
 	};
 	const BtnOk = async () => {
+		console.log(formState_bas.value.loggingTypeList, 'formState_bas.value.6666666666');
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {
 			formState_bas.value.transferFormat = formState_bas.value.transferFormat.toString();
 			formState_bas.value.dnssecEnable = formState_bas.value.dnssecEnable.toString();
-			formState_bas.value.limitRecursionRange = formState_bas.value.limitRecursionRange ? 1 : 0;
-			formState_bas.value.nxRedirectOn = formState_bas.value.nxRedirectOn ? 1 : 0;
 			EditList(formState_bas.value)
 				.then((res) => {
-					console.log(res, 'res9-9-9-9-');
 					message.success('配置成功！');
 					GetData();
 				})
