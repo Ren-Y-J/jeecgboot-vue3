@@ -261,6 +261,11 @@
 			align: 'center',
 		},
 		{
+			title: '主机',
+			dataIndex: 'ipAddress',
+			align: 'center',
+		},
+		{
 			title: '备注',
 			dataIndex: 'remark',
 			align: 'center',
