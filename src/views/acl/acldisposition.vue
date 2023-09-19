@@ -97,7 +97,7 @@
             <a-radio-group v-model:value="radiovalue" name="radioGroup" @change="changeradioFn(value)">
               <!-- 这是strig 这是数字类型 -->
               <a-radio :value="0">网络地址</a-radio>
-              <a-radio :value="1">地理位置</a-radio>
+              <!-- <a-radio :value="1">地理位置</a-radio> -->
               <a-radio :value="2">运营商</a-radio>
             </a-radio-group>
 
@@ -119,9 +119,9 @@
               <a-input v-model:value="aclInfoData.remark" placeholder="备注" />
             </a-form-item>
           </div>
-          <div v-show="radiovalue === 1">
+          <!-- 这是地理位置逻辑代码暂时隐藏 -->
+          <!-- <div v-show="radiovalue === 1">
             <a-form-item label="策略" name="status" style='margin-top: 26px'>
-              <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
               <a-radio-group v-model:value="value" name="radioGroup" @change="changstatusFn(value)">
                 <a-radio value="1">启用</a-radio>
                 <a-radio value="0">禁用</a-radio>
@@ -129,10 +129,10 @@
               </a-radio-group>
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.Geography" label="地理位置" name="aclRelName" style='margin-top: 26px'>
-              <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
-              <!-- <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入地理位置" /> 
-             在之内别动嗯嗯这个我没定义刚刚那个是selsed的value 现在没问题了有我这v-model要绑定的是最后一个字段name: "石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端 -->
-              <!-- 这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端 -->
+
+              <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入地理位置" /> 
+             在之内别动嗯嗯这个我没定义刚刚那个是selsed的value 现在没问题了有我这v-model要绑定的是最后一个字段name: "石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端
+              这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端
               <a-cascader v-model:value="activeAere" :options="getdistrictList"
                 :fieldNames="{ label: 'name', value: 'code', children: 'child' }" placeholder="请选择"
                 @change="changecodeFn" />
@@ -140,7 +140,7 @@
             <a-form-item :rules="fromaclinfoRules.remark" label="备注" name="remark" style='margin-top: 26px'>
               <a-input v-model:value="aclInfoData.remark" placeholder="备注" />
             </a-form-item>
-          </div>
+          </div> -->
           <div v-show="radiovalue === 2">
             <a-form-item label="策略" name="status" style='margin-top: 26px'>
               <a-radio-group v-model:value="value" name="radioGroup" @change="changstatusFn(value)">
