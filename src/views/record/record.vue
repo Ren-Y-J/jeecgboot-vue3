@@ -368,13 +368,6 @@ const data = reactive({
 			zoneId:''
 		},
     formStateData:[],
-		formState_1: {
-			name: '',
-			type: '',
-			lineId: undefined,
-			ttl: '',
-			content: '',
-		},
     formState_edit: {
 			name: '',
 			type: '',
@@ -408,7 +401,6 @@ const {
   listAllData,
   addRecord,
   formState,
-  formState_1,
   formState_edit,
   selects,
   formDataName,
@@ -449,17 +441,8 @@ const addFn = async () => {//点击确定按钮
 			ttl: formState.ttl,
 			content: formState.content,
 			zoneId:formState.zoneId
-  });//存放新增表单
-//  if (addRecord.value == true) {//控制第二个表单
-// 			formData.push(formState.value, formState_1.value);//把上方存放两个表单的数据push进去
-//       formAdd = formRef.value.validate()//校验第一个表单的数据
-// 		}
-//     if (addRecord.value == false) {
-// 			formData.push(formState.value);//只push第一个表单数据
-
-// 		}
-     formState.value.lineId = JSON.stringify( formState.value.lineId);
-    //  formState_1.value.lineId = JSON.stringify( formState_1.value.lineId);
+  });
+    formState.value.lineId = JSON.stringify( formState.value.lineId);
     //  console.log( formState.value.lineId);
     // console.log( formState.value.lineId,'ok');
     addlist(formState).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
@@ -470,12 +453,12 @@ const addFn = async () => {//点击确定按钮
 		});
 
 }
+// 添加弹框内的change事件
 const handleChangsortadd =(value) =>{
     // console.log(value,'handleChangsortadd');
     formState.value.lineId=value
   //   console.log(formState.value.lineId);
   // console.log( formState.value.lineId ,'handleChangsortadd22');
-
 }
 
 
@@ -484,42 +467,22 @@ const onClose = () => {//点击取消的回调
   visible.value = false;//关闭弹框
   formRef.value.resetFields()//触发表单验证
   formState.value = {}//第一个表单数据清空
-  formState_1.value = {}//第二个表单数据清空
 };
-// let count =0
+
 const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
   formStateData.value.push(formState.value)
-
-    // formDataName.value = formDataName.value++
     formDataName.value.push({
       id:new Date().getTime()
     })
-    
-  
-
     // console.log(formDataName.value);
 	};
 
    const XiconBtn = (id) => {//点击第二个弹框的取消按钮
-		// addRecord.value = false;
-    console.log(id);
-    // if(id === 1){
-    //   delicon.value = false
-    // }
+    // console.log(id);
     formDataName.value = formDataName.value.filter(item=>{
       return item.id != id
-    })
-    // if(formDataName.value.length == 1){
-    //   modalStyle.value.height = '450px'
-    // }
-    
+    })   
     console.log(formDataName.value );
-
-    // forEach(item=>{
-    //   if(item.id == id){
-    //     formDataName.value.splice
-    //   }
-    // })
 	};
 
 
@@ -696,11 +659,21 @@ const handlChangeFn = (val) =>{
 //修改按钮
 const openmodal = (record)=>{
   visible_edit.value = true;
-  console.log(record.zoneId,"123456");
+  // console.log(record.zoneId,"123456");
   GetLine(record.zoneId).then((res=>{
     console.log(res,'1232');
+    // let transformedData = res.map((item) => {
+		// 		return {
+		// 			value: item.lineId,
+		// 			label: item.lineName,
+		// 		};
+		// 	});
+    groupData_edit.value = res;
+    console.log(groupData_edit.value.lineId,'res');
+    // console.log(groupData_edit.lineId,'res');
     // let transformedData = res.map(item=>item.lineId);
     // console.log(transformedData);
+      // formState.value.lineId = JSON.stringify( formState.value.lineId);
     // formState_edit.value.lineId = JSON.parse(transformedData.lineId);
 
   }))

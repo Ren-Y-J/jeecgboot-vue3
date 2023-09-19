@@ -477,7 +477,7 @@
 			edns: '0',
 			recursionProtect: '0',
 			allowRecursionList: [],
-			limitRecursionRange: '',
+			limitRecursionRange: false,
 			recursionOn: '0',
 			minRes: '0',
 		},
@@ -535,6 +535,7 @@
 			} else {
 				statusName.value = '空';
 			}
+			console.log(res,'quanbu')
 			ShowDataAllData.value.physDiskTotal = (res.physDiskTotal / 100000000).toFixed(2);
 			ShowDataAllData.value.physMemTotal = (res.physMemTotal / 100000000).toFixed(2);
 		});
