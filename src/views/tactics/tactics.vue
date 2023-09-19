@@ -121,7 +121,7 @@
   </div>
   <!-- 配置启用时段弹框 -->
   <div>
-    <a-modal cancelText="重置"  :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" style="top:200px"
+    <a-modal   :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" style="top:200px"
     v-model:visible="visible_Time" title="配置启用时段" width="600px" @ok="handleadd" @cancel="reset">
        <a-form  :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
@@ -170,6 +170,28 @@
         <a-form  name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
         <div class="synOK">确定同步策略组？</div>
+        </a-form>
+    </a-modal>
+  </div>
+
+   <!-- 修改策略组弹框 -->
+  <div>
+    <a-modal  v-model:visible="visible_editsyn" title="修改策略组" width="600px" style="top:200px" >
+        <a-form  :model="formState_edit"  name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+          <a-form-item label="策略组名称"  style='margin-top: 26px' name="policiesName">
+            <a-input v-model:value="formState_edit.policiesName" placeholder="请输入策略组名称" />
+          </a-form-item>
+          <a-form-item label="启用时段"  style='margin-top: 26px'>
+            <a-button type="primary" @click="addTime">配置启用时段</a-button>
+            <a-alert message="配置启用时段" type="info" show-icon class="icon"/>
+          </a-form-item>
+          <a-form-item label="启用状态" name="aclType" style='margin-top: 26px'>
+            <a-radio-group v-model:value="formState_edit.policiesEnable" name="policiesEnable" @change="changeradioFn">
+              <a-radio :value="true">启用</a-radio>
+              <a-radio :value="false">停用</a-radio>
+            </a-radio-group>
+          </a-form-item>
         </a-form>
     </a-modal>
   </div>
@@ -229,11 +251,18 @@ const data = reactive({
   visible_add:false,
   visible_Time:false,
   visible_syn:false,
+  visible_editsyn:true,
   formDataName:[{id:1,state_value:''}],
   formName:{
      policiesName:'',
   },
   formState:{
+    policiesName:'',
+    policiesEnable:'',
+    policiesTimeType:[],
+    policiesTimeRange:[]
+  },
+   formState_edit:{
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
@@ -259,6 +288,7 @@ const {
   visible_add,
   visible_Time,
   visible_syn,
+  visible_editsyn,
   formDataName,
   formState,
   policiesTimeRange,
@@ -377,7 +407,6 @@ const handleadd = ()=>{
 
 // 启用时段重置按钮
 const reset = ()=>{
-  visible_Time.value = true
    formState.value.policiesTimeType = []
   formState.value.policiesTimeRange = []
   timecycle.value = []

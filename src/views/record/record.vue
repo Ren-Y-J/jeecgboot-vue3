@@ -104,13 +104,13 @@
                <!-- 操作 @click="Delbtn(record)" @click="GoDep(record)"-->
                <template #bodyCell="{ column,record }">
                   <template v-if="column.dataIndex === 'status'">
-                    <div v-if='record.status == 1'
+                    <div v-if="record.status == 1 || record.status == null"
                       style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
                       <a-tag color="green">已启用</a-tag>
                     </div>
                     <div v-if='record.status == 0'
                       style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                      <a-tag color="green">警用</a-tag>
+                      <a-tag color="green">禁用</a-tag>
                     </div>
                   </template>
                   <template v-if="column.dataIndex === 'operation'">
