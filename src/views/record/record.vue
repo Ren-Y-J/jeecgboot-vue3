@@ -408,22 +408,8 @@ const {
   formStateData
 } = toRefs(data)
 
-
-
 const formRef = ref(null);//添加按钮弹框需要的ref
-const formRef_ = ref(null)//添加按钮第二个弹框需要的ref
-// const rowData = ref({
-//   zoneName: '',
-//   name: '',
-//   type:'',
-//   content:'',
-//   ttl:"",
-//   lineId:''
-// })
-
 const formAdd = ref([])//新增校验表单一
-const formAdd_ = ref([])//新增校验表单二
-
 const addFn = async () => {//点击确定按钮
   // 校验表单
   try {
@@ -443,8 +429,6 @@ const addFn = async () => {//点击确定按钮
 			zoneId:formState.zoneId
   });
     formState.value.lineId = JSON.stringify( formState.value.lineId);
-    //  console.log( formState.value.lineId);
-    // console.log( formState.value.lineId,'ok');
     addlist(formState).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
 			message.success('添加成功');
 			visible.value = false;//关闭弹框
@@ -455,10 +439,7 @@ const addFn = async () => {//点击确定按钮
 }
 // 添加弹框内的change事件
 const handleChangsortadd =(value) =>{
-    // console.log(value,'handleChangsortadd');
     formState.value.lineId=value
-  //   console.log(formState.value.lineId);
-  // console.log( formState.value.lineId ,'handleChangsortadd22');
 }
 
 
@@ -478,14 +459,11 @@ const addRecordBtn = () => {//点击添加记录按钮，出现第二个弹框
 	};
 
    const XiconBtn = (id) => {//点击第二个弹框的取消按钮
-    // console.log(id);
     formDataName.value = formDataName.value.filter(item=>{
       return item.id != id
     })   
     console.log(formDataName.value );
 	};
-
-
 
 const queryParams = ref({ // 查询参数，响应式
   name: "",
@@ -571,39 +549,22 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
       }
     })
   listAllData.value = listData//获取的数据给到域名的下拉框内
-  //  console.log(listAllData.value,'listAllData.value');
   })
-		
-		// visible.value = true;
     };
+
 // 添加弹框选择域名，触发change时间，当input框发生变化就触发
-    const changeNames = (value)=>{//value是id
-      // console.log(formState.value.zoneName,'125');
-    
+    const changeNames = (value)=>{//value是id 
       formState.value.zoneId =value//获取的id传给新增表单的数据中
       GetLine(formState.value.zoneId).then((res) => {//调用获取线路的数据，传入域名的id
-			console.log(res,'9-9---9-8-')
-			// let transformedData = res.map((item) => {
-			// 	return {
-			// 		value: item.lineId,
-			// 		label: item.lineName,
-			// 	};
-			// });
 			groupData.value = res;//把获取到的数据存放groupData中
 		});
     }
     // 修改弹框里面选择域名的change时间，获取线路
     const changeName_edit = (value)=>{
-      console.log(value,'id');
+      // console.log(value,'id');
       formState_edit.value.zoneId = value
        GetLine(formState_edit.value.zoneId).then((res) => {//调用获取线路的数据，传入域名的id
 			console.log(res,'9-9---9-9-')
-			// let transformedData = res.map((item) => {
-			// 	return {
-			// 		value: item.lineId,
-			// 		label: item.lineName,
-			// 	};
-			// });
 			groupData_edit.value = res;
 		});
    
@@ -611,7 +572,7 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
   
 // 删除
   const delFn = async (record) =>{
-    console.log(record,'111');
+    // console.log(record,'111');
     // console.log(record.lineId,'232');
   commonEnty.value.values.push(record);
    console.log(commonEnty.value,'252');
@@ -641,13 +602,11 @@ const handlChangeFn = (val) =>{
         console.log('OK');
         if (selects.value == '0' && !allclusterId.value.length == 0) {
           dellist({ values: allclusterId.value }).then(res => {
-            // console.log(res);
             getcordList()
             message.success('批量删除成功')
             number.value = 0
           })
         }
-
       },
       onCancel() {
         console.log('Cancel');
@@ -659,23 +618,10 @@ const handlChangeFn = (val) =>{
 //修改按钮
 const openmodal = (record)=>{
   visible_edit.value = true;
-  // console.log(record.zoneId,"123456");
   GetLine(record.zoneId).then((res=>{
     console.log(res,'1232');
-    // let transformedData = res.map((item) => {
-		// 		return {
-		// 			value: item.lineId,
-		// 			label: item.lineName,
-		// 		};
-		// 	});
     groupData_edit.value = res;
     console.log(groupData_edit.value.lineId,'res');
-    // console.log(groupData_edit.lineId,'res');
-    // let transformedData = res.map(item=>item.lineId);
-    // console.log(transformedData);
-      // formState.value.lineId = JSON.stringify( formState.value.lineId);
-    // formState_edit.value.lineId = JSON.parse(transformedData.lineId);
-
   }))
     // 获取线路
      listAll().then(res=>{
@@ -687,26 +633,16 @@ const openmodal = (record)=>{
       }
     })
   listAllData.value = listData
-  // console.log(listAllData.value,'listAllData.value');
   })
    formState_edit.value.id = record.id;
-  //  console.log(formState_edit.value.id,"1111");
     	BackLine(formState_edit.value.id).then((res) => {//点击修改回显数据
-        console.log(res,"2321");
         formState_edit.value.zoneId = res.zoneId
-        // let transformedData = res.map((item) => {
-			// 	return {
-			// 		value: item.lineId,
-			// 		label: item.lineName,
-			// 	};
-			// });
 			formState_edit.value.name = res.name;
 			formState_edit.value.type = res.type;
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
       console.log(formState_edit.value.lineId,'xianlu ');
-			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
 		});
 
 }
@@ -818,16 +754,6 @@ const state = reactive({
  .table{
      display: block;
   }
-//   /deep/ .ant-table-header {
-// 	overflow-y: hidden!important;
-//   }
-
-// .ant-table-body::-webkit-scrollbar-thumb {
-// background: blue;
-// } 
-// .ant-table-body::-webkit-scrollbar {
-//   width: 8px; /*滚动条宽度*/
-// }
  .Xicon {
 		color: red;
 		cursor: pointer;
@@ -850,18 +776,14 @@ const state = reactive({
   .addlist{
     ::v-deep(.ant-modal-body){
    height: 500px!important;
-  //  overflow-y: auto;
   }
   }
-  // /deep/ .ant-modal-content  .ant-modal-body{
-   
-  // }
-  // .ant-modal-body{
-  //   height: 500px!important;
-  // }
  /deep/ .ant-modal-body{
     height: 500px!important;
     
+ }
+  /deep/ .anticon svg{
+      margin-right: 10px;
  }
 
 </style>
