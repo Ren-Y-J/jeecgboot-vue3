@@ -54,8 +54,8 @@
            :pagination="false" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: rowSelection }"
             :rowKey="(record) => record.id"
            bordered>
-           <template #bodyCell="{ column,record }">
-            <template v-if="column.dataIndex === 'policiesEnable'">
+            <template #bodyCell="{ column,record }">
+                <template v-if="column.dataIndex === 'policiesEnable'">
                     <div v-if='record.policiesEnable == true'
                       style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
                       启用
@@ -64,9 +64,9 @@
                       style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
                       未启用
                     </div>
-                  </template>
-        <template v-if="column.dataIndex === 'operation'">
-          <!--   -->
+                </template>
+                    <!--  操作 -->
+                <template v-if="column.dataIndex === 'operation'">
                     <div>
                       <span  class="pointer" style="color: #2e7dff; margin-right: 8px">配置策略</span>
                       <!-- confirm点击确认的回调  @confirm="confirm(record)"-->
@@ -77,10 +77,8 @@
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
                       </a-popconfirm>
                     </div>
-        </template>
-          </template>
-
-
+                </template>
+            </template>
         </a-table> 
     <!-- 分页 -->
         <div style="padding: 10px; display: flex; justify-content: flex-end">
@@ -112,8 +110,8 @@
           <!-- :rules="fromaclinfoRules.aclType" -->
           <a-form-item label="启用状态" name="aclType" style='margin-top: 26px'>
             <a-radio-group v-model:value="formState.policiesEnable" name="policiesEnable" @change="changeradioFn">
-              <a-radio value="0">启用</a-radio>
-              <a-radio value="1">停用</a-radio>
+              <a-radio :value="true">启用</a-radio>
+              <a-radio :value="false">停用</a-radio>
             </a-radio-group>
           </a-form-item>
         </a-form>
@@ -126,29 +124,37 @@
        <a-form  :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
         <a-form-item label="启用周期" name="aclType" style='margin-top: 26px' class="lable_form">
-            <a-radio-group v-model:value="formState.policiesTimeType	" name="policiesTimeType	" @change="changeradioFn" class="radio_right">
-              <a-radio value="0">周一</a-radio>
-              <a-radio value="1">周二</a-radio>
-              <a-radio value="2">周三</a-radio>
-              <a-radio value="3">周四</a-radio>
-              <a-radio value="4">周五</a-radio>
-              <a-radio value="5">周六</a-radio>
-              <a-radio value="6">周日</a-radio>
-            </a-radio-group>
+          <a-checkbox-group v-model:value="formState.policiesTimeType" name="policiesTimeType" style="width: 100%" @change="checkboxTime" class="radio_right">
+            <a-row>
+              <a-col :span="5">
+                <a-checkbox value="1">周一</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="2">周二</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="3">周三</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="4">周四</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="5">周五</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="6">周六</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="7">周日</a-checkbox>
+              </a-col>
+            </a-row>
+          </a-checkbox-group>
           </a-form-item>
           <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
           <div class="label_text">时段：</div>
           <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName" :key="item">
-             <a-time-range-picker v-model:value="item.state_value"/>
-              <!-- <span >开始时间</span> -->
-              <!-- <a-form-item-rest> -->
-              <!-- <a-time-picker  v-model:value="item.state_value" value-format="HH:mm:ss" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px" @change="getstart"/> -->
-              <!-- </a-form-item-rest> -->
-              <!-- <span>结束时间</span> -->
-              <!-- <a-form-item-rest> -->
-              <!-- <a-time-picker v-model:value="item.end_value" value-format="HH:mm:ss" :minute-step="15" :second-step="10" style="margin: 0 10px 0 10px" @change="getstart"/> -->
-              <!-- </a-form-item-rest> -->
-              <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1"/>
+             <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss"/>
+              <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1" class="addtimeform"/>
                <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
           </a-form-item>
       </a-form>
@@ -213,22 +219,25 @@ const data = reactive({
   listData: [],
   total: 0,
   listAllData: [],
-  policiesId:{},
+  policiesId:'',
   number: 0,
   visible_add:false,
   visible_Time:false,
   visible_syn:false,
-  formDataName:[{id:1}],
+  formDataName:[{id:1,state_value:''}],
   formState:{
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
     policiesTimeRange:[]
   },
-  policestimestr:{
-      state_value:'',
-    }
-
+  formData:{
+     policiesName:'',
+    policiesEnable:'',
+    policiesTimeType:[],
+    policiesTimeRange:[]
+  },
+  timecycle:[]
 });
 const {
   listData,
@@ -241,7 +250,9 @@ const {
   visible_syn,
   formDataName,
   formState,
- policiesTimeRange
+  policiesTimeRange,
+  formData,
+  timecycle
 } = toRefs(data)
 
 const Cordquery = ref({
@@ -259,54 +270,73 @@ const getcordList = () => {
     // console.log(status_able,'1254');
     // console.log(listData.value, '0000');
   })
-  
-
 }
 getcordList()
 
-let formData = []
-// 添加策略组按钮
+// 添加策略组按钮v
 const addTactics =()=>{
   visible_add.value = true
-
 }
 
-// 配置启用时段按钮
+// 配置启用时段按钮v
 const addTime = ()=>{
   visible_Time.value = true
 }
-const getstart = ()=>{//通过change事件获取到的时间
-let policiesTime = []
-let strName = ""
-  // console.log(formState.value.policiesTimeRange.state_value,formState.value.policiesTimeRange.end_value,'sj');
-  // strName = `${formDataName.value.state_value} - ${formDataName.value.end_value}`
-  // console.log(strName,'字符串');
-  // policiesTime.push(strName)
-  // console.log(policiesTime,'shuju');
-  
-}
-// 添加策略组确定按钮
+
+// 添加策略组确定按钮v
 const Policyadd = ()=>{
   visible_add.value = false
-  // console.log(formState.value.policiesTimeRange,'时间');
-  formData.push(formState.value.policiesName,formState.value.policiesEnable)
-  // console.log(formData,'数据');
-  addlist(formData).then((res=>{
-    console.log(res,'ann ');
+  //给需要传的数据赋值
+  formState.value.policiesTimeType = timecycle.value
+  formData.value.policiesName = formState.value.policiesName
+  formData.value.policiesEnable = formState.value.policiesEnable
+  formData.value.policiesTimeType = formState.value.policiesTimeType
+  formData.value.policiesTimeRange = formState.value.policiesTimeRange
+  // 调用添加策略组接口
+  addlist(formData.value).then((res=>{
+    // console.log(res,'ann ');
+    message.success("添加成功")
+    getcordList()
   }))
-
+ clearData()//清空表单数据
 }
-// 启用时段确定按钮
+
+// 所有数据清空v
+const clearData = () => {
+	formData.value.policiesName = ''
+  formData.value.policiesEnable = ''
+  formData.value.policiesTimeType = []
+  formData.value.policiesTimeRange = []
+  formState.value.policiesName = ''
+  formState.value.policiesEnable = ''
+  formState.value.policiesTimeType = []
+  formState.value.policiesTimeRange = []
+	};
+
+//多选框内的选择的值，change事件v
+const checkboxTime = (value)=>{
+    timecycle.value = value
+}
+
+// 启用时段确定按钮v
 const handleadd = ()=>{
-   visible_Time.value = false
-  //  formData.push(startTime)
-   console.log(policestimestr.value,'字符串');
+  visible_Time.value = false
+  let arrTime =''
+  let policiesTime = []//获取的时间段的数组
+  let strCancel = formDataName.value.forEach(item=>{//数据是对象包数组的形式，遍历里面的每一项
+  arrTime =item.state_value.toString()//用toString()转成字符串形式
+  let arrToStr = arrTime.split(',')//逗号分隔
+  let convertedTimeString  = arrToStr.join('-')//按照指定分隔符分割
+  policiesTime.push(convertedTimeString) //push没有返回值，let变量需要在遍历之前；
+  formState.value.policiesTimeRange = policiesTime
+  })
 }
 
-// 同步策略组按钮
+// 同步策略组按钮v
 const synOK = ()=>{
   visible_syn.value = true
 }
+
 // 同步策略组确定按钮v
 const syncGroup =()=>{
   synclist().then(res=>{
@@ -314,6 +344,7 @@ const syncGroup =()=>{
   })
    visible_syn.value = false
 }
+
 // 分页v
 const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，传入当前页和每页条数
     Cordquery.value.pageSize = pageSize //把pageSize给到响应式的Cordquery
@@ -350,10 +381,10 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 
 // const delFn = async (record) =>{
 //   console.log(record,"shuju ");
-// id已经获取到，没有传进去
+// // id已经获取到，没有传进去
 //   policiesId.value = record
 //   // console.log(policiesId,'idn');
-//   await dellist()
+//   await dellist(policiesId.value)
 //   getcordList()
 //   message.success('删除成功')
  
@@ -365,8 +396,13 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 //   delFn(dataId)
 //   getcordList()
 // };
-
-
+const confirm = (record)=>{
+  policiesId.value = record.policiesId
+  console.log(policiesId.value,'id');
+  dellist(policiesId.value).then((res)=>{
+    console.log(res,"删除");
+  })
+}
 
 // //多选
 // const state = reactive({
@@ -457,11 +493,10 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
     align-items: start;
   }
 }
-.radio_right{
-  .ant-radio-wrapper{
-    margin-right: 18px;
+
+ /deep/ .anticon svg{
+        margin-left: 20px;
   }
-}
 .label_text{
   margin-left: 90px;
 }
@@ -469,7 +504,8 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
   width: 400px;
   margin-left: 100px;
    /deep/ .ant-form-item-control-input{
-  width: 600px;
+  width: 450px;
+  margin-left: 30px;
 }
 }
 .synOK{
