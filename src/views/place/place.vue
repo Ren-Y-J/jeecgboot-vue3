@@ -35,6 +35,13 @@
 							</div>
 						</div>
 					</template>
+					<!-- 线路 -->
+					<template v-if="column.dataIndex === 'ipAddress'" >
+						<div style="display: flex; justify-content: center; align-items: center" class='pointer' @click='GoDep(record)'>
+							<span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }} </span>
+						</div>
+						
+					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div style="display: flex; justify-content: center; align-items: center">
@@ -48,8 +55,8 @@
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 							<div class="pointer" style="margin-right: 10px" @click="openSOA(record)">
@@ -95,7 +102,7 @@
 			</a-form-item>
 			<!-- 主机 -->
 			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
-				<a-select @change='changehosts' ref="select" v-model:value="formState.hosts" style="width: 150px" placeholder="请选择主机">
+				<a-select @change="changehosts" ref="select" v-model:value="formState.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
 					}}</a-select-option>
@@ -258,6 +265,11 @@
 		{
 			title: '线路',
 			dataIndex: 'lineName',
+			align: 'center',
+		},
+		{
+			title: '主机',
+			dataIndex: 'ipAddress',
 			align: 'center',
 		},
 		{
@@ -434,19 +446,17 @@
 		pageSize.value = pageSize;
 		getData();
 	};
-	const changehosts = () =>{
-		console.log(formState.value.hosts,'hosts66+')
+	const changehosts = () => {
+		console.log(formState.value.hosts, 'hosts66+');
 		// 获取线路
 		GetLine({
-			value:formState.value.hosts,
+			value: formState.value.hosts,
 		}).then((res) => {
 			const transformedData = res.map(({ lineId: value, lineName: label }) => ({ value, label }));
 			groupData.value = transformedData;
 		});
-	}
+	};
 	const addBtn = () => {
-		
-
 		if (placetype.value == '0') {
 			visible.value = true;
 		}
@@ -586,7 +596,11 @@
 			});
 		}
 	};
-	
+	// 跳转
+	const GoDep = (record) =>{
+		let id = record.hostId;
+		window.open('/deploy?' + id);
+	}
 </script>
 
 <style>
