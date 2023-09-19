@@ -254,7 +254,7 @@
 			ttl: '',
 			content: '',
 			zoneId: '',
-			stauts: '1',
+			status: '1',
 		},
 		formState_1: {
 			name: '',
@@ -272,7 +272,7 @@
 			content: '',
 			id: '',
 			zoneId: '',
-			stauts: '1',
+			status: '1',
 		},
 		search: '',
 		groupData: [],
