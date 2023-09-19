@@ -11,24 +11,24 @@
 			<div class="line" />
 			<div class="container">
 				<div>
-					状态:{{ statusName }}
+					状态：{{ statusName }}
 					<br />
-					集群:{{ ShowDataAllData.clusterName }}
+					集群：{{ ShowDataAllData.clusterName }}
 				</div>
 				<div
-					>名称:{{ ShowDataAllData.hostName }}
+					>名称：{{ ShowDataAllData.hostName }}
 					<br />
-					磁盘总容量:{{ ShowDataAllData.physDiskTotal }}G
+					磁盘总容量：{{ ShowDataAllData.physDiskTotal }}G
 				</div>
 				<div>
-					IP:{{ ShowDataAllData.ipAddress }}
+					IP：{{ ShowDataAllData.ipAddress }}
 					<br />
-					物理内存总容量:{{ ShowDataAllData.physMemTotal }}G
+					物理内存总容量：{{ ShowDataAllData.physMemTotal }}G
 				</div>
 				<div>
-					端口:{{ ShowDataAllData.port }}
+					端口：{{ ShowDataAllData.port }}
 					<br />
-					机架:{{ ShowDataAllData.floor }}
+					机架：{{ ShowDataAllData.floor }}
 				</div>
 			</div>
 		</div>
@@ -45,7 +45,8 @@
 					<Area @toggleComponent="toggleComponent" />
 				</a-tab-pane>
 				<a-tab-pane key="3" tab="记录配置">
-					<Deploy />
+					<Deploy v-if="deptype == '0'" />
+					<DeployReverse v-if="deptype == '1'" />
 				</a-tab-pane>
 				<a-tab-pane key="4" tab="策略配置">策略配置</a-tab-pane>
 			</a-tabs>
@@ -62,7 +63,6 @@
 					validateTrigger="blur"
 				>
 					基本配置
-
 					<a-form-item label="递归查询" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-switch
 							checkedValue="1"
@@ -147,11 +147,7 @@
 				>
 					<div class="line" />
 					优化配置
-					<a-form-item
-						label="DNS日志设置"
-						:labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }"
-					>
+					<a-form-item label="DNS日志设置" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-checkbox-group v-model:value="formState_bas.loggingTypeList" style="width: 100%">
 							<a-checkbox value="1">查询日志 </a-checkbox>
 							<a-checkbox value="2">响应日志 </a-checkbox>
@@ -442,8 +438,11 @@
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import Area from './component/deploy_area.vue';
 	import Deploy from './component/deploy_record.vue';
+
+	import DeployReverse from './component/reverse_deploy.vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
+		deptype: '0',
 		initData: '',
 		pageID: '',
 		ShowDataAllData: '',
@@ -484,7 +483,7 @@
 		groupData_Acl: [],
 	});
 
-	const { initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl } = toRefs(data);
+	const { deptype, initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl } = toRefs(data);
 	const handleClose = () => {
 		activeKey.value = 3;
 	};
@@ -492,8 +491,14 @@
 	const toggleComponent = (componentName) => {
 		activeKey.value = '3';
 		console.log(componentName, 'componentName');
-	};
 
+		localStorage.setItem('Dep_type', componentName);
+		if (componentName == '0') {
+			deptype.value = '0';
+		} else if (componentName == '1') {
+			deptype.value = '1';
+		}
+	};
 	const GetData = () => {
 		// 转发列表
 		transList().then((res) => {
@@ -522,55 +527,32 @@
 		formState_bas.value.hostId = pageID.value;
 		ShowData(`${pageID.value}`).then((res) => {
 			initData.value = res;
-			
 			formState_bas.value.checked = res.confContent.checked;
 			formState_bas.value.forwarderList = res.confContent.forwarderList;
-			
 			formState_bas.value.recursionType = res.confContent.recursionType;
-			
 			formState_bas.value.rateLimitOn = res.confContent.rateLimitOn;
 			formState_bas.value.responsesPerSecond = res.confContent.responsesPerSecond;
-			
 			formState_bas.value.loggingTypeList = res.confContent.loggingTypeList.toString();
-			// if (res.confContent.nxRedirectOn == '0') {
-			// 	formState_bas.value.nxRedirectOn = false;
-			// }
-			// if (res.confContent.nxRedirectOn =='1') {
-			// 	formState_bas.value.nxRedirectOn = true;
-			// }
-				formState_bas.value.nxRedirectOn = res.confContent.nxRedirectOn;
+			formState_bas.value.nxRedirectOn = res.confContent.nxRedirectOn;
 			formState_bas.value.nxDomainType = res.confContent.nxDomainType;
 			formState_bas.value.advancedOption = res.confContent.advancedOption;
 			formState_bas.value.maxRecursionDepth = res.confContent.maxRecursionDepth;
-			
 			formState_bas.value.maxRecursionQueries = res.confContent.maxRecursionQueries;
 			formState_bas.value.minCacheTtl = res.confContent.minCacheTtl;
-			
 			formState_bas.value.maxCacheTtl = res.confContent.maxCacheTtl;
 			formState_bas.value.minNcacheTtl = res.confContent.minNcacheTtl;
 			formState_bas.value.resolverQueryTimeout = res.confContent.resolverQueryTimeout;
-			
 			formState_bas.value.recursiveClients = res.confContent.recursiveClients;
 			formState_bas.value.prefetch = res.confContent.prefetch;
 			formState_bas.value.transferFormat = res.confContent.transferFormat;
-			
-			
 			formState_bas.value.dnssecValidation = res.confContent.dnssecValidation;
 			formState_bas.value.dnssecEnable = res.confContent.dnssecEnable;
 			formState_bas.value.edns = res.confContent.edns;
 			formState_bas.value.recursionProtect = res.confContent.recursionProtect;
 			formState_bas.value.allowRecursionList = res.confContent.allowRecursionList;
 			formState_bas.value.limitRecursionRange = res.confContent.limitRecursionRange;
-			
 			formState_bas.value.recursionOn = res.confContent.recursionOn;
-				formState_bas.value.minRes = res.confContent.minRes;
-			
-			
-			
-			
-			
-			
-			
+			formState_bas.value.minRes = res.confContent.minRes;
 			console.log(res, 'ShowData');
 		});
 		ShowDataAll(`${pageID.value}`).then((res) => {
@@ -582,10 +564,6 @@
 			} else {
 				statusName.value = '空';
 			}
-
-			console.log(res, 'quanbu');
-			
-
 			ShowDataAllData.value.physDiskTotal = (res.physDiskTotal / 100000000).toFixed(2);
 			ShowDataAllData.value.physMemTotal = (res.physMemTotal / 100000000).toFixed(2);
 		});
@@ -597,12 +575,8 @@
 	const BtnOk = async () => {
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
-		}
-		
-		else {
-			
+		} else {
 			formState_bas.value.transferFormat = formState_bas.value.transferFormat.toString();
-			
 			formState_bas.value.dnssecEnable = formState_bas.value.dnssecEnable.toString();
 			formState_bas.value.limitRecursionRange = formState_bas.value.limitRecursionRange ? 1 : 0;
 			formState_bas.value.nxRedirectOn = formState_bas.value.nxRedirectOn ? 1 : 0;
@@ -610,7 +584,7 @@
 				.then((res) => {
 					console.log(res, 'res9-9-9-9-');
 					message.success('配置成功！');
-					GetData()
+					GetData();
 				})
 				.catch((error) => {
 					console.log(error, 'error');
