@@ -92,16 +92,17 @@
                 不限地址段 }}</a-button> -->
             </template>
             <template v-if="column.dataIndex === 'ipAddress'">
-              <a-button type="primary" ghost @click="GoDep(record)"
+              <!-- <a-button type="primary" ghost @click="GoDep(record)"
                 style="cursor:pointer;border: none;border-bottom: 1px solid; ">
                 {{ record.ipAddress }}
-              </a-button>
+              </a-button> -->
+              <div style="display: flex; justify-content: center; align-items: center" class='cursor:pointer'
+                @click='GoDep(record)'>
+                <span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }}
+                </span>
+              </div>
             </template>
-            <!-- <template v-if="column.dataIndex === 'ipAddress'"> -->
-            <!-- <a-button class='examPaper_header' type="link" target="_blank" @click="GoDep(record)"
-                style="cursor:pointer; ">{{
-                  record.ipAddress }}</a-button> -->
-            <!-- </template> -->
+
             <template v-if="column.dataIndex === 'status'">
 
               <div v-if='record.status == 1'
@@ -159,7 +160,7 @@
               <a-radio :value="1">ACL选择</a-radio>
             </a-radio-group>
           </a-form-item>
-          <div v-show="radiovalue == 1">
+          <div v-if="radiovalue == 1">
             <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
             <div style="margin-left:130px ;">
               <!--  -->
@@ -181,7 +182,7 @@
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
                 @change="handleChange">
-                <a-select-option :value="item.hostId" v-for="     item      in      allhostId     " :key="item.hostId
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
@@ -205,7 +206,7 @@
             </a-radio-group>
           </a-form-item>
 
-          <div v-show="editradiovalue == 1">
+          <div v-if="editradiovalue == 1">
             <div style="margin-left:130px ;">
               <a-form-item label="" :validateTrigger="['change', 'blur']" :rules="editlineRules.aclId" name="aclId"
                 style='margin-top: 10px'>
