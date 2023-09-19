@@ -93,14 +93,6 @@
 			>
 				<a-input placeholder="不要包含主机名，如www" v-model:value="formState.name" />
 			</a-form-item>
-			<!-- 主机 -->
-			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
-				<a-select @change='changehosts' ref="select" v-model:value="formState.hosts" style="width: 150px" placeholder="请选择主机">
-					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
-						item.hostName
-					}}</a-select-option>
-				</a-select>
-			</a-form-item>
 			<!-- 线路 -->
 			<a-form-item :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" label="线路选择" :labelCol="{ span: 5 }">
 				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
@@ -142,13 +134,6 @@
 				>
 					<a-select-option value="3">v4反向解析</a-select-option>
 					<a-select-option value="4">v6反向解析</a-select-option>
-				</a-select>
-			</a-form-item>
-			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
-				<a-select ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
-					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
-						item.hostName
-					}}</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item
@@ -246,7 +231,7 @@
 <script setup>
 	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho, EditSOA } from './place.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
-	import { reactive, ref, toRefs, watchEffect } from 'vue';
+	import { reactive, ref, toRefs, watchEffect, defineProps, defineEmits } from 'vue';
 	import { message } from 'ant-design-vue';
 	import { router } from '/@/router';
 	const columns = [
@@ -258,11 +243,6 @@
 		{
 			title: '线路',
 			dataIndex: 'lineName',
-			align: 'center',
-		},
-		{
-			title: '主机',
-			dataIndex: 'ipAddress',
 			align: 'center',
 		},
 		{
@@ -318,6 +298,7 @@
 		HostsData: '',
 		hosts: undefined,
 		zoneId: '',
+		pageID: '',
 	});
 	const {
 		formState_SOA,
@@ -340,6 +321,7 @@
 		HostsData,
 		hosts,
 		zoneId,
+		pageID,
 	} = toRefs(data);
 	const changetabs = () => {
 		placetype.value = activeKey.value;
@@ -398,7 +380,10 @@
 			});
 		});
 	};
+
 	const getData = () => {
+		pageID.value = localStorage.getItem('pageID');
+
 		GetHostsAll({}).then((res) => {
 			HostsData.value = res;
 		});
@@ -439,18 +424,13 @@
 		pageSize.value = pageSize;
 		getData();
 	};
-	const changehosts = () =>{
-		console.log(formState.value.hosts,'hosts66+')
-		// 获取线路
+	const addBtn = () => {
 		GetLine({
-			value:formState.value.hosts,
+			value: pageID.value,
 		}).then((res) => {
 			const transformedData = res.map(({ lineId: value, lineName: label }) => ({ value, label }));
 			groupData.value = transformedData;
 		});
-	}
-	const addBtn = () => {
-		
 
 		if (placetype.value == '0') {
 			visible.value = true;
@@ -459,6 +439,7 @@
 			visible_1.value = true;
 		}
 	};
+
 	const searchBtn = () => {
 		if (placetype.value == '0') {
 			GetList({
@@ -489,7 +470,7 @@
 			return;
 		}
 		AddLine({
-			hostId: formState.value.hosts,
+			hostId: pageID.value,
 			type: 0,
 			zoneName: formState.value.name,
 			lineId: JSON.stringify(formState.value.lineId),
@@ -560,15 +541,16 @@
 			clearData();
 		}
 	});
+	const emit = defineEmits(['toggleComponent']);
 	const Godeploy = (record) => {
-		let id = record.zoneId;
-
+		localStorage.setItem('zoneId', record.zoneId);
 		if (placetype.value == '0') {
-			router.push(`/place/deploy?${id}`);
+			emit('toggleComponent', '0');
+			// router.push(`/place/deploy?${id}`);
 		}
-
 		if (placetype.value == '1') {
-			router.push(`/place/reverse_deploy?${id}`);
+			emit('toggleComponent', '1');
+			// router.push(`/place/reverse_deploy?${id}`);
 		}
 	};
 	const stopBtn = (record) => {
@@ -591,7 +573,6 @@
 			});
 		}
 	};
-	
 </script>
 
 <style>
