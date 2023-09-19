@@ -2,12 +2,12 @@
   <div class="allclustersBox">
     <a-card>
       <div class="title">
-        <a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
+        <a-form :model="formData" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
           <a-row :gutter="1">
             <a-col :md="6" :sm="24">
               <a-form-item style="margin-bottom: 0px" label="策略组名称" name="name" :labelCol="{ span: 6 }"
                 :wrapperCol="{ span: 16 }">
-                <a-input placeholder="请输入策略组名称" />
+                <a-input placeholder="请输入策略组名称" v-model:value="formData.policiesName"/>
               </a-form-item>
             </a-col>
             <a-col :md="4" :sm="5">
@@ -30,7 +30,7 @@
       <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"
         ><plus-outlined />添加策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="handlChangeFn"><delete-outlined />删除策略组</a-button>
+      <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="deleteGroup"><delete-outlined />删除策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="synOK"><reload-outlined />同步策略组</a-button>
     </div>
     <div class="select">
@@ -50,9 +50,10 @@
       <!-- <a-alert message="未选中任何数据" type="info" show-icon /> -->
     </div>
     <!-- :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :rowKey="(record) => record.lineId"-->
-    <a-table :columns="columns" :data-source="listData"
-           :pagination="false" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: rowSelection }"
-            :rowKey="(record) => record.id"
+    <div>
+      <a-table :columns="columns" :data-source="listData"
+           :pagination="false" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+            :rowKey="(record) => record.policiesId"
            bordered>
             <template #bodyCell="{ column,record }">
                 <template v-if="column.dataIndex === 'policiesEnable'">
@@ -80,6 +81,7 @@
                 </template>
             </template>
         </a-table> 
+    </div>
     <!-- 分页 -->
         <div style="padding: 10px; display: flex; justify-content: flex-end">
 				<a-pagination
@@ -119,8 +121,8 @@
   </div>
   <!-- 配置启用时段弹框 -->
   <div>
-    <a-modal cancelText="重置" :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" style="top:200px"
-    v-model:visible="visible_Time" title="配置启用时段" width="600px" @ok="handleadd">
+    <a-modal cancelText="重置"  :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" style="top:200px"
+    v-model:visible="visible_Time" title="配置启用时段" width="600px" @ok="handleadd" @cancel="reset">
        <a-form  :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
         <a-form-item label="启用周期" name="aclType" style='margin-top: 26px' class="lable_form">
@@ -152,10 +154,12 @@
           </a-form-item>
           <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
           <div class="label_text">时段：</div>
-          <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName" :key="item">
-             <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss"/>
-              <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1" class="addtimeform"/>
-               <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
+          <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName" :key="item" >
+             <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss" :placeholder='placeholder' />
+              <div class="addtimeform">
+                <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1" />
+                <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
+              </div>
           </a-form-item>
       </a-form>
     </a-modal>
@@ -175,7 +179,7 @@
 
 <script setup>
 import { message,Modal } from 'ant-design-vue';
-import { list,dellist,synclist,addlist } from './tactics'
+import { list,dellist,synclist,addlist,dellistAll } from './tactics'
 import {  SearchOutlined, ReloadOutlined,PlusCircleFilled,CloseCircleFilled  } from '@ant-design/icons-vue'
 import { computed, defineComponent, reactive, toRefs, ref,createVNode,watch  } from 'vue';
 
@@ -191,13 +195,13 @@ const columns = [{
   align: 'center'
 }, {
   title: '有效策略数',
-  dataIndex: 'content',
+  dataIndex: 'validPolicyNum',
   width: 220,
   align: 'center'
 },
 {
   title: '总策略数',
-  dataIndex: 'num_sta',
+  dataIndex: 'totalPolicyNum',
   width: 220,
   align: 'center'
 },
@@ -220,11 +224,15 @@ const data = reactive({
   total: 0,
   listAllData: [],
   policiesId:'',
+  ids:[],
   number: 0,
   visible_add:false,
   visible_Time:false,
   visible_syn:false,
   formDataName:[{id:1,state_value:''}],
+  formName:{
+     policiesName:'',
+  },
   formState:{
     policiesName:'',
     policiesEnable:'',
@@ -232,12 +240,14 @@ const data = reactive({
     policiesTimeRange:[]
   },
   formData:{
-     policiesName:'',
+    policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
     policiesTimeRange:[]
   },
-  timecycle:[]
+  timecycle:[],
+  pageNum: 1,
+	pageSize: 10,
 });
 const {
   listData,
@@ -245,6 +255,7 @@ const {
   listAllData,
   number,
   policiesId,
+  ids,
   visible_add,
   visible_Time,
   visible_syn,
@@ -252,14 +263,17 @@ const {
   formState,
   policiesTimeRange,
   formData,
-  timecycle
+  timecycle,
+  pageNum,
+	pageSize,
 } = toRefs(data)
 
 const Cordquery = ref({
   pageNum: 1,
   pageSize: 10,
-
 })
+const placeholder = ref(['开始时间', '结束时间'])
+const timePicker = ref(null)
 //列表数据
 const getcordList = () => {
   list(Cordquery.value).then(res => {
@@ -273,6 +287,28 @@ const getcordList = () => {
 }
 getcordList()
 
+//点击页面搜索按钮v
+const handleQuery =()=>{
+  list({
+    pageNum: pageNum.value,
+		pageSize: pageSize.value,
+    policiesName:formState.value.policiesName,//获取响应式记录名称
+  }).then((res)=>{
+    listData.value = res.records//把数据给到存放表单的数组中
+    pageNum.value = 1;
+    total.value = res.total;//总数
+  })
+}
+
+//重置按钮，把数据初始化v
+const AlldelFn = () => {
+  // console.log('1');
+  formState.value.policiesName = ''
+  Cordquery.value.pageNum = 1
+  Cordquery.value.pageSize = 10
+  getcordList()//刷新数据
+}
+
 // 添加策略组按钮v
 const addTactics =()=>{
   visible_add.value = true
@@ -281,6 +317,8 @@ const addTactics =()=>{
 // 配置启用时段按钮v
 const addTime = ()=>{
   visible_Time.value = true
+  console.log(timecycle.value,'value');
+
 }
 
 // 添加策略组确定按钮v
@@ -294,9 +332,12 @@ const Policyadd = ()=>{
   formData.value.policiesTimeRange = formState.value.policiesTimeRange
   // 调用添加策略组接口
   addlist(formData.value).then((res=>{
-    // console.log(res,'ann ');
+    console.log(res,'ann ');
+   
     message.success("添加成功")
     getcordList()
+    
+    
   }))
  clearData()//清空表单数据
 }
@@ -311,6 +352,8 @@ const clearData = () => {
   formState.value.policiesEnable = ''
   formState.value.policiesTimeType = []
   formState.value.policiesTimeRange = []
+  timecycle.value = []
+  placeholder.value = ['开始时间', '结束时间']
 	};
 
 //多选框内的选择的值，change事件v
@@ -330,6 +373,17 @@ const handleadd = ()=>{
   policiesTime.push(convertedTimeString) //push没有返回值，let变量需要在遍历之前；
   formState.value.policiesTimeRange = policiesTime
   })
+}
+
+// 启用时段重置按钮
+const reset = ()=>{
+  visible_Time.value = true
+   formState.value.policiesTimeType = []
+  formState.value.policiesTimeRange = []
+  timecycle.value = []
+  placeholder.value = ['开始时间', '结束时间']
+  timePicker.value.clear()
+  console.log(timecycle.value,'141111');
 }
 
 // 同步策略组按钮v
@@ -377,50 +431,45 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
     })
 	};
 
-// 删除
-
-// const delFn = async (record) =>{
-//   console.log(record,"shuju ");
-// // id已经获取到，没有传进去
-//   policiesId.value = record
-//   // console.log(policiesId,'idn');
-//   await dellist(policiesId.value)
-//   getcordList()
-//   message.success('删除成功')
- 
-// }
-//  const confirm = (record) => {
-// //  console.log(record, 'record2');
-//  let dataId = record.policiesId
-// //  console.log(dataId,'id');
-//   delFn(dataId)
-//   getcordList()
-// };
+// 删除按钮v
 const confirm = (record)=>{
   policiesId.value = record.policiesId
   console.log(policiesId.value,'id');
-  dellist(policiesId.value).then((res)=>{
-    console.log(res,"删除");
+  dellist({
+     policiesId:policiesId.value
+   }).then((res)=>{
+    message.success('删除成功')
+    getcordList()
   })
 }
 
-// //多选
-// const state = reactive({
-// 		selectedRowKeys: [],
-// 	});
-//  const allclusterId = ref([]);
-//   const rowSelection = (selectedRowKeys, selectedRows) =>{
-//     state.selectedRowKeys = selectedRowKeys;
-// 		console.log(selectedRowKeys, 'allclusterId');
-//     allclusterId.value = selectedRows.map((item) => item.id);
-// 		number.value = allclusterId.value.length;
-//   }
-//   const clearbtn = () => {
-// 		allclusterId.value = [];
-// 		number.value = 0;
-// 		state.selectedRowKeys = [];
-// 	};
-
+//多选v
+const state = reactive({
+		selectedRowKeys: [],
+	});
+  const rowSelection = (selectedRowKeys, selectedRows) =>{
+    state.selectedRowKeys = selectedRowKeys;
+    ids.value = selectedRows.map((item) => item.policiesId);
+		number.value = ids.value.length;
+  }
+  const clearbtn = () => {
+		ids.value = [];
+		number.value = 0;
+		state.selectedRowKeys = [];
+	};
+// 批量删除策略组v
+const deleteGroup = ()=>{
+  // console.log(ids.value,'111');
+  if(ids.value.length == 0){
+    message.error('请勾选需要删除的策略组')
+  }
+  dellistAll(ids.value).then((res)=>{
+    // console.log(res,'shanchu');
+     number.value = 0
+    message.success('删除成功')
+    getcordList()
+  })
+}
 
 
 </script>
@@ -467,7 +516,7 @@ const confirm = (record)=>{
 }
 
 .select {
-  margin: 8px 0px 0px 0px;
+  margin: 8px 0px 10px 0px;
 }
 
 .iconBtn {
@@ -494,9 +543,11 @@ const confirm = (record)=>{
   }
 }
 
- /deep/ .anticon svg{
-        margin-left: 20px;
-  }
+.addtimeform{
+  display: inline;
+  margin-left: 30px;
+}
+
 .label_text{
   margin-left: 90px;
 }
@@ -513,5 +564,6 @@ const confirm = (record)=>{
   text-align: center;
   margin: 30px;
 }
+
 
 </style>
