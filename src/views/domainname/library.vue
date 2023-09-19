@@ -10,12 +10,12 @@
           <template v-if="column.dataIndex === 'operation'">
             <div style="display: flex; justify-content: center; align-items: center">
               <div class="pointer" style="margin-right: 10px">
+                <a-button type="link" @click="isOpen(record)">编辑</a-button>
+              </div>
+              <div class="pointer" style="margin-right: 10px">
                 <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)">
                   <a-button type="link">删除</a-button>
                 </a-popconfirm>
-              </div>
-              <div class="pointer" style="margin-right: 10px">
-                <a-button type="link" @click="isOpen(record)">编辑</a-button>
               </div>
               <div class="pointer" style="margin-right: 10px">
                 <a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
@@ -118,22 +118,17 @@ initData('')
 const pageNum = () => {
   formData.value.pageNum = '1'
 }
-// const initData = async (name) => {
-//   console.log(name)
-//   let res = await librarylist({ ...formData.value, name })
-//   console.log(res);
-//   datalist.value = res.records
-//   totals.value = res.total
-// }
-// initData('')
 
 const isOpen = async (record) => {
-  console.log(record, 'record.createTime');
+  // console.log(record, 'record.createTime');
   visible.value = true
   // clusterId标题用rowdata里的id是否存在进行判断,页面关闭的时候也清空一下
   if (record.dnId) {
     let res = await libraryInfo(`${record.dnId}`)
     rowData.value = res
+    // console.log(rowData.value, 'rowData.value');
+    // console.log(rowData.value.dnId, 'rowData.value')
+    // console.log(typeof rowData.value.dnId, 'rowData.value')
     opTitle.value = "分组修改"
   } else {
     opTitle.value = "分组添加"
@@ -146,28 +141,33 @@ const addoreditFn = async () => {
     // console.log(error);
     return console.log(error)
   }
+  // console.log(rowData);
   if (rowData.value.dnId) {
     await editlibrary(rowData.value)
     visible.value = false
     message.success('修改成功')
     initData('')
+    onClose()
   } else {
     await addlibrary(rowData.value)
     visible.value = false
     message.success('添加成功')
     initData('')
+    onClose()
   }
 
 
 }
 const delFn = async (record) => {
-  console.log(record, '删除');
+  // console.log(record, '删除');
   commonEnty.value.values.push(record)
-  console.log(commonEnty.value, '  commonEnty.value.');
+  // console.log(commonEnty.value, '  commonEnty.value.');
   await dellibrary(commonEnty.value)
+  pageNum()
   // 更新列表
   initData('')
   message.success('删除成功')
+
 }
 // 关闭弹框
 const onClose = () => {
@@ -176,9 +176,11 @@ const onClose = () => {
   rowData.value.name = ""
   formData.value.name = ""
   opTitle.value = ""
+  rowData.value.dnId = ''
 };
 const confirm = (recoed) => {
-  console.log(recoed.dnId);
+  // console.log(recoed.dnId);
+  pageNum()
   delFn(recoed.dnId)
   initData('')
 };

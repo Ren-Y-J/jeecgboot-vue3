@@ -7,10 +7,6 @@
 						<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
 					</a-form-item>
 					<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
-					<a-button @click="resetbtn">
-						<reload-outlined />
-						重置
-					</a-button>
 				</div>
 			</a-form>
 		</div>
@@ -92,9 +88,12 @@
 				<a-input placeholder="记录名称" v-model:value="formState.name" />
 			</a-form-item>
 
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }"
-			:rules="[{ required: true, message: '请选择类型!' }]"
-			name="type"
+			<a-form-item
+				label="类型"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+				:rules="[{ required: true, message: '请选择类型!' }]"
+				name="type"
 			>
 				<a-radio-group v-model:value="formState.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
@@ -138,16 +137,22 @@
 			</div>
 
 			<a-form-item
-			 :rules="[{ required: true, message: '请输入记录名称!' }]"
-			 name="name"
-			 label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				:rules="[{ required: true, message: '请输入记录名称!' }]"
+				name="name"
+				label="记录名称"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-input placeholder="记录名称" v-model:value="formState_1.name" />
 			</a-form-item>
 
 			<a-form-item
-			 :rules="[{ required: true, message: '请选择类型!' }]"
-			 name="type"
-			 label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				:rules="[{ required: true, message: '请选择类型!' }]"
+				name="type"
+				label="类型"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-radio-group v-model:value="formState_1.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
 					<a-radio value="1">AAAA </a-radio>
@@ -182,17 +187,23 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
-			<a-form-item 
-			:rules="[{ required: true, message: '请输入记录名称!' }]"
-			name="name"
-			label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+				:rules="[{ required: true, message: '请输入记录名称!' }]"
+				name="name"
+				label="记录名称"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-input placeholder="记录名称" v-model:value="formState_edit.name" />
 			</a-form-item>
 
-			<a-form-item 
-			:rules="[{ required: true, message: '请选择类型!' }]"
-			name="type"
-			label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+				:rules="[{ required: true, message: '请选择类型!' }]"
+				name="type"
+				label="类型"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-radio-group v-model:value="formState_edit.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
 					<a-radio value="1">AAAA </a-radio>
@@ -243,7 +254,7 @@
 			ttl: '',
 			content: '',
 			zoneId: '',
-			stauts: '1',
+			status: '1',
 		},
 		formState_1: {
 			name: '',
@@ -261,7 +272,7 @@
 			content: '',
 			id: '',
 			zoneId: '',
-			stauts: '1',
+			status: '1',
 		},
 		search: '',
 		groupData: [],
@@ -295,7 +306,7 @@
 	const getData = () => {
 		let url = location.search;
 		id.value = localStorage.getItem('zoneId');
-		
+
 		formState_1.value.zoneId = id.value;
 		formState.value.zoneId = id.value;
 		formState_edit.value.zoneId = id.value;
@@ -329,7 +340,7 @@
 	const addBtn = () => {
 		// 获取线路
 		GetLine(`${id.value}`).then((res) => {
-			console.log(res,'9-9---9-9-')
+			console.log(res, '9-9---9-9-');
 			let transformedData = res.map((item) => {
 				return {
 					value: item.lineId,
@@ -344,7 +355,7 @@
 	const formRef = ref(null);
 	const handleOk = async () => {
 		// 校验表单
-		if(addRecord.value == false){
+		if (addRecord.value == false) {
 			try {
 				await formRef_.value.validate();
 			} catch (error) {
@@ -352,7 +363,7 @@
 				return;
 			}
 		}
-		if(addRecord.value == true){
+		if (addRecord.value == true) {
 			try {
 				await formRef.value.validate();
 				await formRef_.value.validate();
@@ -361,8 +372,7 @@
 				return;
 			}
 		}
-		
-		
+
 		let formData = [];
 		if (addRecord.value == true) {
 			formData.push(formState.value, formState_1.value);
@@ -389,12 +399,10 @@
 		console.log(record, 'record');
 		// 获取线路
 		GetLine(`${id.value}`).then((res) => {
-			let data = JSON.parse(res.lineId);
-			console.log(data, 'res999');
-			let transformedData = data.map((item) => {
+			let transformedData = res.map((item) => {
 				return {
-					value: item,
-					label: item,
+					value: item.lineId,
+					label: item.lineName,
 				};
 			});
 			groupData.value = transformedData;
@@ -406,9 +414,7 @@
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-				console.log(formState_edit.value.lineId,'formState_edit.value.lineId')
 			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
-		
 		});
 		edit_visible.value = true;
 	};
@@ -426,9 +432,9 @@
 		formState_1.value.content = '';
 		formState_1.value.zoneId = '';
 	};
-	
-		const formRef_edit = ref(null);
-	const handleOk_edit = async() => {
+
+	const formRef_edit = ref(null);
+	const handleOk_edit = async () => {
 		try {
 			await formRef_edit.value.validate();
 		} catch (error) {

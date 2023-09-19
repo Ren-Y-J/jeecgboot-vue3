@@ -13,10 +13,6 @@
 						</a-form-item>
 
 						<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
-						<a-button @click="resetbtn">
-							<reload-outlined />
-							重置
-						</a-button>
 					</div>
 				</a-form>
 			</div>

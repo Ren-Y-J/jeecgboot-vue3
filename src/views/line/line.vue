@@ -92,11 +92,16 @@
                 不限地址段 }}</a-button> -->
             </template>
             <template v-if="column.dataIndex === 'ipAddress'">
-              <!-- border-bottom: 1px solid #109eff; -->
-              <a-button class='examPaper_header' type="link" target="_blank" @click="GoDep(record)"
-                style="cursor:pointer; ">{{
-                  record.ipAddress }}</a-button>
+              <a-button type="primary" ghost @click="GoDep(record)"
+                style="cursor:pointer;border: none;border-bottom: 1px solid; ">
+                {{ record.ipAddress }}
+              </a-button>
             </template>
+            <!-- <template v-if="column.dataIndex === 'ipAddress'"> -->
+            <!-- <a-button class='examPaper_header' type="link" target="_blank" @click="GoDep(record)"
+                style="cursor:pointer; ">{{
+                  record.ipAddress }}</a-button> -->
+            <!-- </template> -->
             <template v-if="column.dataIndex === 'status'">
 
               <div v-if='record.status == 1'
@@ -208,7 +213,6 @@
                   <a-select placeholder="请选择" ref="select" v-model:value="editformState.aclId" style="width: 160px"
                     @focus="focus" @change="handleChanges" mode="tags" :size="size" :options="allaclId"
                     :field-names="{ label: 'aclName', value: 'aclId' }">
-
                   </a-select>
                 </a-space>
               </a-form-item>
@@ -218,7 +222,7 @@
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                 @focus="focus" @change="handleChangehost">
-                <a-select-option :value="item.hostId" v-for="     item      in      allhostId     " :key="item.hostId
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
@@ -235,7 +239,7 @@
               <a-space>
                 <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                   @focus="focus" @change="handleChangsort">
-                  <a-select-option :value="item.hostId" v-for="     item      in      allhostId     " :key="item.hostId
+                  <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                     ">{{ item.ipAddress }} </a-select-option>
                   <!-- <div>
                   <span>{{ item.hostName }}</span>
@@ -467,7 +471,7 @@ const getaclId = async () => {
   console.log(res, 'resACL选择1111');
   // allaclId.value = res.map(item => item.aclId)
   allaclId.value = res
-
+  console.log(allaclId.value);
 
 
 }
@@ -604,7 +608,7 @@ const editisOpen = async (record) => {
   editopTitle.value = '修改线路配置'
   // 这是把路线的id参数还起请求
   console.log(editlineRules.aclId);
-
+  console.log(allaclId.value, 'allaclId.value');
   if (record.lineId) {
     let res = await lineInfo(`${record.lineId}`)
     console.log(res.aclId, '回显999');

@@ -55,8 +55,8 @@
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 							<div class="pointer" style="margin-right: 10px" @click="openSOA(record)">
@@ -152,14 +152,14 @@
 				</a-select>
 			</a-form-item>
 			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
-				<a-select ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
+				<a-select @change="changehosts" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
 					}}</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item
-				:rules="[{ required: true, message: '请输入域名!' }]"
+				:rules="[{ required: true, message: '请输入网络地址!' }]"
 				name="IP"
 				label="网络地址"
 				:labelCol="{ span: 5 }"
@@ -389,7 +389,6 @@
 	// 回显SOA
 	const openSOA = (record) => {
 		visible_SOA.value = true;
-
 		zoneId.value = record.zoneId;
 		SOAEcho(`${record.zoneId}`).then((res) => {
 			let data = JSON.parse(res.soaInfo);
@@ -576,7 +575,7 @@
 			router.push(`/place/reverse_deploy?${id}`);
 		}
 	};
-	const stopBtn = (record) => {
+	const stopBtn = (record)	 => {
 		if (record.status == 1) {
 			stopStatus({
 				status: 0,
