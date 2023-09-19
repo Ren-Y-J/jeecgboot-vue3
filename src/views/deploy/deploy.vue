@@ -9,7 +9,6 @@
 			<span>主机信息</span>
 			<br />
 			<div class="line" />
-
 			<div class="container">
 				<div>
 					状态:{{ statusName }}
@@ -29,7 +28,6 @@
 				<div>
 					端口:{{ ShowDataAllData.port }}
 					<br />
-
 					机架:{{ ShowDataAllData.floor }}
 				</div>
 			</div>
@@ -40,11 +38,15 @@
 			<span>配置主机</span>
 			<br />
 			<div class="line" />
-			<a-tabs v-model:activeKey="activeKey">
+			<a-tabs @change="changet_bas" v-model:activeKey="activeKey">
 				<a-tab-pane key="0" tab="基本配置"></a-tab-pane>
 				<a-tab-pane key="1" tab="线路配置">线路配置</a-tab-pane>
-				<a-tab-pane key="2" tab="域配置">域配置</a-tab-pane>
-				<a-tab-pane key="3" tab="记录配置">记录配置</a-tab-pane>
+				<a-tab-pane key="2" tab="域配置">
+					<Area @toggleComponent="toggleComponent" />
+				</a-tab-pane>
+				<a-tab-pane key="3" tab="记录配置">
+					<Deploy />
+				</a-tab-pane>
 				<a-tab-pane key="4" tab="策略配置">策略配置</a-tab-pane>
 			</a-tabs>
 			<!-- 基本配置 -->
@@ -63,14 +65,16 @@
 
 					<a-form-item label="递归查询" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-switch
-						 checkedValue='1'
-						 unCheckedValue='0'
-						 checked-children="开启" un-checked-children="关闭" v-model:checked="formState_bas.recursionOn" />
+							checkedValue="1"
+							unCheckedValue="0"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.recursionOn"
+						/>
 						<a-checkbox
 							v-if="formState_bas.recursionOn == 1"
 							class="custom-checkbox"
 							style="margin-left: 30px"
-							
 							v-model:checked="formState_bas.limitRecursionRange"
 							>限制范围</a-checkbox
 						>
@@ -106,8 +110,8 @@
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.rateLimitOn"
 						/>
 						<a-tooltip placement="topLeft">
@@ -144,11 +148,10 @@
 					<div class="line" />
 					优化配置
 					<a-form-item
-					
 						label="DNS日志设置"
 						:labelCol="{ span: 8 }"
 						:wrapperCol="{ span: 8 }"
-						name="loggingTypeList" 
+						name="loggingTypeList"
 						:rules="[{ required: true, message: '请输入名称!' }]"
 					>
 						<a-checkbox-group v-model:value="formState_bas.loggingTypeList" style="width: 100%">
@@ -172,8 +175,8 @@
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.nxRedirectOn"
 						/>
 						<a-tooltip>
@@ -224,9 +227,7 @@
 						</a-radio-group>
 					</a-form-item>
 
-					<a-form-item 
-				
-					 v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
 							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
@@ -327,8 +328,8 @@
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.prefetch"
 						/>
 						<a-tooltip>
@@ -356,8 +357,8 @@
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.dnssecValidation"
 						/>
 						<a-tooltip>
@@ -368,8 +369,8 @@
 						</a-tooltip>
 					</a-form-item>
 					<a-form-item v-show="formState_bas.dnssecValidation == true" label="DNSSEC" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<!-- <a-checkbox-group v-model:value="formState_bas.dnssecEnable" style="width: 100%">
-							<a-checkbox value="many-answers">开启DNSSEC验证 </a-checkbox>
+						<a-checkbox-group v-model:value="formState_bas.dnssecEnable" style="width: 100%">
+							<a-checkbox value="1">开启DNSSEC验证 </a-checkbox>
 							<a-tooltip>
 								<template #title>
 									<span style="font-size: 8px"
@@ -378,15 +379,15 @@
 								</template>
 								<exclamation-circle-filled />
 							</a-tooltip>
-						</a-checkbox-group> -->
+						</a-checkbox-group>
 					</a-form-item>
 					<a-form-item label="EDNS" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-switch
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.edns"
 						/>
 						<a-tooltip>
@@ -396,14 +397,14 @@
 							<exclamation-circle-filled />
 						</a-tooltip>
 					</a-form-item>
-					
+
 					<a-form-item label="递归攻击防护" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-switch
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.recursionProtect"
 						/>
 						<a-tooltip>
@@ -414,14 +415,14 @@
 						</a-tooltip>
 						<a-button @click="BtnOk" class="btnok" type="primary">提交</a-button>
 					</a-form-item>
-					
+
 					<a-form-item label="最小化应答" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-switch
 							style="margin-right: 10px"
 							checked-children="开启"
 							un-checked-children="关闭"
-							checkedValue='1'
-							unCheckedValue='0'
+							checkedValue="1"
+							unCheckedValue="0"
 							v-model:checked="formState_bas.minRes"
 						/>
 						<a-tooltip>
@@ -431,7 +432,6 @@
 							<exclamation-circle-filled />
 						</a-tooltip>
 					</a-form-item>
-					
 				</a-form>
 			</div>
 		</div>
@@ -442,6 +442,8 @@
 	import { UpOutlined, DownOutlined, ExclamationCircleFilled } from '@ant-design/icons-vue'; //icon引入
 	import { ShowData, EditList, ShowDataAll, transList, AclList } from './deploy.ts';
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
+	import Area from './component/deploy_area.vue';
+	import Deploy from './component/deploy_record.vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
 		initData: '',
@@ -466,9 +468,8 @@
 			minCacheTtl: '90',
 			maxCacheTtl: '604800',
 			minNcacheTtl: '90',
-			resolverQueryTimeout: '',
+			resolverQueryTimeout: '10',
 			recursiveClients: '10000',
-			minCacheTtl: '',
 			prefetch: '',
 			transferFormat: '',
 			dnssecValidation: '0',
@@ -476,16 +477,25 @@
 			edns: '0',
 			recursionProtect: '0',
 			allowRecursionList: [],
-			recursiveClients: '',
-			limitRecursionRange:'',
-			recursionOn:'0',
-			minRes:'0'
+			limitRecursionRange: '',
+			recursionOn: '0',
+			minRes: '0',
 		},
 		groupData: [],
 		style_switch: '',
 		groupData_Acl: [],
 	});
+
 	const { initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl } = toRefs(data);
+	const handleClose = () => {
+		activeKey.value = 3;
+	};
+
+	const toggleComponent = (componentName) => {
+		activeKey.value = '3';
+		console.log(componentName,'componentName')
+	};
+
 	const GetData = () => {
 		// 转发列表
 		transList().then((res) => {
@@ -512,7 +522,6 @@
 		let url = location.search;
 		pageID.value = url.replace('?', '');
 		formState_bas.value.hostId = pageID.value;
-
 		ShowData(`${pageID.value}`).then((res) => {
 			initData.value = res;
 			console.log(res, 'ShowData');
@@ -528,46 +537,28 @@
 			}
 			ShowDataAllData.value.physDiskTotal = (res.physDiskTotal / 100000000).toFixed(2);
 			ShowDataAllData.value.physMemTotal = (res.physMemTotal / 100000000).toFixed(2);
-			console.log(ShowDataAllData.value, 'ShowDataAllData.value');
 		});
 	};
 	GetData();
-	const formRef_bas = ref(null);
+	const changet_bas = () => {
+		localStorage.setItem('pageID', pageID.value);
+	};
 	const BtnOk = async () => {
-	console.log(formState_bas.value,'formState_bas.valueformState_bas.value' )
-		// 校验表单
-		console.log(formState_bas.value.dnssecValidation,'formState_bas.value.dnssecValidation')
-		
-		if ( formState_bas.value.loggingTypeList==''){
+		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
-		}
-		else {
-			// formState_bas.value.dnssecValidation = formState_bas.value.dnssecValidation ? 1 : 0;
-			// formState_bas.value.checked = formState_bas.value.checked ? 1 : 0;
-			// formState_bas.value.checkedBox = formState_bas.value.checkedBox ? 1 : 0;
-			// formState_bas.value.rateLimitOn = formState_bas.value.rateLimitOn ? 1 : 0;
-			// formState_bas.value.prefetch = formState_bas.value.prefetch ? 1 : 0;
-			// formState_bas.value.dnssecValidation = formState_bas.value.dnssecValidation ? 1 : 0;
-			
-			
+		} else {
+			formState_bas.value.dnssecEnable = formState_bas.value.dnssecEnable.toString();
 			formState_bas.value.limitRecursionRange = formState_bas.value.limitRecursionRange ? 1 : 0;
-			
 			formState_bas.value.nxRedirectOn = formState_bas.value.nxRedirectOn ? 1 : 0;
-			// formState_bas.value.recursionProtect = formState_bas.value.recursionProtect ? 1 : 0;
 			EditList(formState_bas.value)
 				.then((res) => {
 					console.log(res, 'res9-9-9-9-');
+					message.success('配置成功！');
 				})
 				.catch((error) => {
 					console.log(error, 'error');
 				});
 		}
-		
-		
-		
-		
-		
-		
 	};
 </script>
 

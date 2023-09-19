@@ -7,7 +7,7 @@ enum RoleApi {
   line='/line/manage/all',
   stop='/zone/manage/switch',//停用
   SOA='/zone/manage/update/soa'
-}     
+}    
 // 获取所有正向列表
 export const GetList = (params) => defHttp.post({ url: RoleApi.list, params });
 // 获取所有反向列表
