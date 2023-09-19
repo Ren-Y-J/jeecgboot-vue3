@@ -152,14 +152,14 @@
 				</a-select>
 			</a-form-item>
 			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
-				<a-select ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
+				<a-select @change="changehosts" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
 						item.hostName
 					}}</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item
-				:rules="[{ required: true, message: '请输入域名!' }]"
+				:rules="[{ required: true, message: '请输入网络地址!' }]"
 				name="IP"
 				label="网络地址"
 				:labelCol="{ span: 5 }"
@@ -575,7 +575,7 @@
 			router.push(`/place/reverse_deploy?${id}`);
 		}
 	};
-	const stopBtn = (record) => {
+	const stopBtn = (record)	 => {
 		if (record.status == 1) {
 			stopStatus({
 				status: 0,
