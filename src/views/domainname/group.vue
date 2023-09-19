@@ -141,6 +141,8 @@ const options = ref([
   { label: '0', value: '删除' },
 
 ])
+// 对象包数组 
+const commonEnty = ref({ values: [] })
 const initData = async (zone) => {
   let res = await grouplist({ ...formData.value, zone })
   console.log(res.records);
@@ -171,7 +173,7 @@ const rowSelection = async (selectedRowKeys, selectedRows) => {
   //这个是勾选的id存放的位置 我点清空我id复空
 }
 const isOpen = async (record) => {
-  console.log(record, 'record.createTime');
+  console.log(record.id, 'rowdata里的id是否存在进行判断');
   visible.value = true
   // clusterId标题用rowdata里的id是否存在进行判断,页面关闭的时候也清空一下
 
@@ -179,6 +181,7 @@ const isOpen = async (record) => {
     let res = await groupInfo(`${record.id}`)
     console.log(res);
     rowData.value = res
+    console.log(rowData.value, ' rowData.value');
     opTitle.value = "域名修改"
   } else {
     opTitle.value = "域名添加"
@@ -191,23 +194,26 @@ const addoreditFn = async () => {
     // console.log(error);
     return console.log(error)
   }
+  console.log(rowData.value.id, 'rowData.value.id');
   if (rowData.value.id) {
     await editgroup(rowData.value)
     visible.value = false
     message.success('修改成功')
     initData()
+    onClose()
   } else {
     await addgroup(rowData.value)
     visible.value = false
     message.success('添加成功')
     initData()
+    onClose()
   }
 
 }
 const handleChanges = (value) => {
-  console.log(value);
-  console.log(rowData.dnId);
-  console.log(typeof rowData.dnId);
+  // console.log(value);
+  // console.log(rowData.dnId);
+  // console.log(typeof rowData.dnId);
 }
 const changeFn = (P, Ps) => {
   formData.value.pageNum = P
@@ -221,7 +227,7 @@ const onShowSizeChange = (current, pageSize) => {
 // 批量删除
 const handlChangeFn = async (val) => {
   // visibledel.value = true
-  console.log(val, 'val');
+  // console.log(val, 'val');
   selects.value = val//select点击删除的的value字段0字符串类型
   if (number.value == 0) { //number.value个数数字类型  allclusterId.value.length勾选的id是几个字符串类型
     message.error('请勾选需要删除的集群')
@@ -235,7 +241,7 @@ const handlChangeFn = async (val) => {
         style: 'color:rgba(0, 0, 0, 0.85);font-size: 14px;',
       }, '是否删除选中数据'),
       onOk() {
-        console.log('OK');
+        // console.log('OK');
         if (selects.value == '0' && !allclusterId.value.length == 0) {
           delgroup({ values: allclusterId.value }).then(res => {
             // console.log(res);
@@ -262,6 +268,14 @@ const handlChangeFn = async (val) => {
   }
 
 }
+const onClose = () => {
+  visible.value = false;
+  fromRefgroup.value.resetFields()
+  opTitle.value = ""
+  rowData.value.zone = ""
+  rowData.value.dnId = ""
+  rowData.value.id = ''
+}
 const delFn = async (record) => {
   // 拿到点击删除的id
   // console.log(record, 'record1');
@@ -276,7 +290,8 @@ const delFn = async (record) => {
 
 }
 const confirm = (record) => {
-  console.log(record.clusterId, 'record2');
+  console.log(record, 'record2');
+  pageNum()
   delFn(record.id)
   initData()
 };

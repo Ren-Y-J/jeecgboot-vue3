@@ -130,13 +130,9 @@
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.Geography" label="地理位置" name="aclRelName" style='margin-top: 26px'>
               <!-- :rules="[{ required: true, message: 'Please input your username!' }]" -->
-              <!-- <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入地理位置" 你要打字z/> 
-             在之内别动嗯嗯这个我没定义刚刚那个是selsed的value 现在没问题了有我这v-model要绑定的是最后一个字段name
-: 
-"石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端 -->
-              <!-- 这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端 
-
--->
+              <!-- <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入地理位置" /> 
+             在之内别动嗯嗯这个我没定义刚刚那个是selsed的value 现在没问题了有我这v-model要绑定的是最后一个字段name: "石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端 -->
+              <!-- 这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端 -->
               <a-cascader v-model:value="activeAere" :options="getdistrictList"
                 :fieldNames="{ label: 'name', value: 'code', children: 'child' }" placeholder="请选择"
                 @change="changecodeFn" />
@@ -305,27 +301,7 @@ const changeradioFn = (value) => {
     // aclInfoData.value.status = '1'
     // valueradio.value = '1'
   }
-  // console.log(value, 'value');
-  // // isShow.value = values
-  // console.log(typeof value, 'value');
-  // if (value == '0') {
-  //   isShownetwork.value = true
-  //   isShowGeography.value = false
-  //   isShowoperator.value = false
-  // } else if (value == '1') {
-  //   isShowGeography.value = true
-  //   isShownetwork.value = false
-  //   isShowoperator.value = false
-  // } else if (value == '2') {
-  //   isShowoperator.value = true
-  //   isShownetwork.value = false
-  //   isShowGeography.value = false
 
-  // } else {
-  //   isShownetwork.value = true
-  //   // isShowGeography.value = true
-  //   // isShowoperator.value = true
-  // }
 }
 const addaclRelNameFn = async (record) => {
   let aclId = record.aclId
