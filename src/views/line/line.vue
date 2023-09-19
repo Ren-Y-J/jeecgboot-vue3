@@ -160,7 +160,7 @@
               <a-radio :value="1">ACL选择</a-radio>
             </a-radio-group>
           </a-form-item>
-          <div v-show="radiovalue == 1">
+          <div v-if="radiovalue == 1">
             <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
             <div style="margin-left:130px ;">
               <!--  -->
@@ -206,7 +206,7 @@
             </a-radio-group>
           </a-form-item>
 
-          <div v-show="editradiovalue == 1">
+          <div v-if="editradiovalue == 1">
             <div style="margin-left:130px ;">
               <a-form-item label="" :validateTrigger="['change', 'blur']" :rules="editlineRules.aclId" name="aclId"
                 style='margin-top: 10px'>
