@@ -86,19 +86,18 @@
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'aclId'">
               <!-- border-bottom: 1px solid #109eff; -->
-              <!-- <div v-if="editformState.value.aclId !== []" type="link"> {{ record.aclId }}</div>
-              <div v-else>{{ 不限地址段 }}</div> -->
-              <!-- <a-button v-if="record.aclId = []">{{
-                不限地址段 }}</a-button> -->
+              <div v-if="record.aclId == null" type="link"> 不限地址段 </div>
+              <div v-else>{{ record.aclId }}</div>
+
             </template>
             <template v-if="column.dataIndex === 'ipAddress'">
               <!-- <a-button type="primary" ghost @click="GoDep(record)"
                 style="cursor:pointer;border: none;border-bottom: 1px solid; ">
                 {{ record.ipAddress }}
               </a-button> -->
-              <div style="display: flex; justify-content: center; align-items: center" class='cursor:pointer'
-                @click='GoDep(record)'>
-                <span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }}
+              <div style="display: flex; justify-content: center; align-items: center">
+                <span style="text-decoration: underline; text-decoration-color: blue; color: blue;cursor:pointer"
+                  @click='GoDep(record)'>{{ record.ipAddress }}
                 </span>
               </div>
             </template>
@@ -183,7 +182,10 @@
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
                 @change="handleChange">
                 <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                  ">{{ item.hostName }}</a-select-option>
+                  ">
+                  <!-- {{ item.hostName }} -->
+                  {{ item.ipAddress }}
+                </a-select-option>
               </a-select>
             </a-space>
           </a-form-item>
@@ -219,7 +221,7 @@
               </a-form-item>
             </div>
           </div>
-          <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
+          <!-- <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                 @focus="focus" @change="handleChangehost">
@@ -227,7 +229,7 @@
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
-          </a-form-item>
+          </a-form-item> -->
         </a-form>
       </a-modal>
       <!-- 线路排序 -->
@@ -279,7 +281,9 @@
 <script name='line' setup>
 import { ref, defineComponent, reactive, watch } from 'vue'
 import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName, upswitch } from './line'
+import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 import { message } from 'ant-design-vue';
+
 
 // 我没引入
 const columns = [{
@@ -487,8 +491,8 @@ const isOpen = async (record) => {
     console.log(res, '回显999');
     formState.value = res
 
-    // 等于字符串你Jparse干嘛，转成数组为啥要转呐，而且我一开始在这做的判断0传
-    // 不是，你那个接口0还是1都是json字符串，我0是空数组，你的意思是0 的时候传 1是
+
+    // 接口0还是1都是json字符串，0是空数组，1是数组包字符串
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
       console.log(formState.value.aclId);
@@ -515,7 +519,7 @@ const handleOk = async () => {
   }
   console.log(lineIds.value, 'id');
   console.log(formState.value.formState, '//')
-  // 这个在1的时候后端说类型要加 JSON.stringify 。
+  // 这个在1的时候类型要加 JSON.stringify 。
   formState.value.aclId = JSON.stringify(formState.value.aclId);
   let res = await addaclIdAll(formState.value)
   console.log(res, 'resdata');
@@ -604,8 +608,6 @@ const editformState = ref({
 
 const editisOpen = async (record) => {
   editvisible.value = true
-  console.log(record, 'record');
-
   editopTitle.value = '修改线路配置'
   // 这是把路线的id参数还起请求
   console.log(editlineRules.aclId);
@@ -615,14 +617,12 @@ const editisOpen = async (record) => {
     console.log(res.aclId, '回显999');
 
     editformState.value = res
-    // if (editformState.value.aclId != []) {
-    //   editradiovalue.value = 1
-    // } else if (editformState.value.aclId = []) {
-    //   editradiovalue.value = 0
-    // }
-    // 等于字符串Jparse，转成数组为啥要转呐，而且我一开始在这做的判断0传
-    // 那个接口0还是1都是json字符串，
-    // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
+    if (res.aclId != '[]') {
+      editradiovalue.value = 1
+    } else {
+      editradiovalue.value = 0
+    }
+    // 那个接口0还是1都是json字符串
     if (typeof (res.aclId) == 'string') {
       console.log(editformState.value.aclId, '这是编辑配置的aclId');
       editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
