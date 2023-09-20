@@ -403,26 +403,30 @@ formDataName.value.forEach((item)=>{
   item.lineId = JSON.stringify(item.lineId);
  })
 console.log(formDataName.value);
-let Domain_name = ""//域名
-let my_name = ''
-let my_type = ''
-let my_content = ''
-let my_ttl = ''
-let my_lineId = ''
 formDataName.value.forEach((item)=>{
- Domain_name = item.zoneId
- console.log(strform);
- if(Domain_name == ""){
-  message.error('请选择域名');
+  console.log(item,'11111');
+ if(item.zoneId == ""){
+  message.error('请选择域名')
+ }else if(item.name == ''){
+   message.error('请填写记录名称')
+ }else if(item.type == ''){
+   message.error('请选择类型')
+ }else if(item.content == ''){
+   message.error('请填写记录值')
+ }else if(item.ttl == ''){
+   message.error('请填写TTL')
+ }else if(item.lineId == undefined){
+   message.error('请选择线路')
+ }else{
+    addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
+			message.success('添加成功');
+			visible.value = false;//关闭弹框
+			onClose();
+			getcordList();
+	});
  }
-
 })
-  // addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
-	// 		message.success('添加成功');
-	// 		visible.value = false;//关闭弹框
-	// 		onClose();
-	// 		getcordList();
-	// });
+   
 
 }
 
@@ -501,7 +505,13 @@ getcordList()//调用列表数据
 //点击添加记录按钮，出现第二个弹框  formStateData.value.push(formState.value)
 const addRecordBtn = () => {
     formDataName.value.push({
-      id:new Date().getTime()
+      id:new Date().getTime(),
+      name: '',
+			type: '',
+			lineId: undefined,
+			ttl: '',
+			content: '',
+			zoneId:''
     })
 	};
   
