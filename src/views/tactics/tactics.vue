@@ -91,7 +91,6 @@
 					@change="changeFn"
 				/>
 			</div> 
-
   </div>
   <!-- 添加策略组弹框 -->
   <div>
@@ -602,13 +601,16 @@ const deleteGroup = ()=>{
   if(ids.value.length == 0){
     message.error('请勾选需要删除的策略组')
   }
-  dellistAll(ids.value).then((res)=>{
-    // console.log(res,'shanchu');
-     number.value = 0
-    message.success('删除成功')
-    getcordList()
-  })
-}
+  else{
+	dellistAll(ids.value).then((res)=>{
+	    // console.log(res,'shanchu');
+	     number.value = 0
+	    message.success('删除成功')
+	    getcordList()
+	  })
+	}  
+  }
+
 
 
 </script>

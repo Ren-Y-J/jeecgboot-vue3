@@ -236,9 +236,22 @@
 
 <script setup>
 	import { GetList, DelList, GetLine, AddList, EditList, BackLine, stopStatus } from './deploy.ts';
-	import { reactive, toRefs, ref, watchEffect } from 'vue';
+	import { reactive, toRefs, ref, watchEffect,defineProps,watch } from 'vue';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 	import { message } from 'ant-design-vue';
+
+	const props = defineProps({
+		//子组件接收父组件传递过来的值
+		info: String,
+	});
+	//使用父组件传递过来的值
+	const { info } = toRefs(props);
+	
+	watch(()=>props.workOrder,(newValue,oldValue)=>{
+		console.log(info.value, '正向域');
+		
+	},{immediate:true,deep:true})
+	
 	const data = reactive({
 		id: '',
 		pageNum: 1,
@@ -305,17 +318,16 @@
 
 	const getData = () => {
 		let url = location.search;
-		
+
 		id.value = localStorage.getItem('zoneId');
 
 		formState_1.value.zoneId = id.value;
 		formState.value.zoneId = id.value;
 		formState_edit.value.zoneId = id.value;
-		let hostID=''
-hostID = url.replace('?', '');
+		let hostID = '';
+		hostID = url.replace('?', '');
 
 		GetList({
-			
 			zoneId: id.value,
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,

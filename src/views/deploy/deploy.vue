@@ -40,14 +40,17 @@
 			<div class="line" />
 			<a-tabs @change="changet_bas" v-model:activeKey="activeKey">
 				<a-tab-pane key="0" tab="基本配置"></a-tab-pane>
-				<a-tab-pane key="1" tab="线路配置">线路配置</a-tab-pane>
+				<a-tab-pane key="1" tab="线路配置">
+					<Line/>
+				</a-tab-pane>
 				<a-tab-pane key="2" tab="域配置">
 					<Area @toggleComponent="toggleComponent" />
 				</a-tab-pane>
 				<a-tab-pane key="3" tab="记录配置">
-					<Deploy v-if="deptype == '0'" />
-					<DeployReverse v-if="deptype == '1'" />
+					<Deploy :info="parentMsg" v-if="deptype == '0'" />
+					<DeployReverse :info="parentMsg" v-if="deptype == '1'" />
 				</a-tab-pane>
+
 				<a-tab-pane key="4" tab="策略配置">策略配置</a-tab-pane>
 			</a-tabs>
 			<!-- 基本配置 -->
@@ -434,11 +437,11 @@
 
 <script setup>
 	import { UpOutlined, DownOutlined, ExclamationCircleFilled } from '@ant-design/icons-vue'; //icon引入
-	import { ShowData, EditList, ShowDataAll, transList, AclList } from './deploy.ts';
+	import { ShowData, EditList, ShowDataAll, transList, AclList,GetDeployList } from './deploy.ts';
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import Area from './component/deploy_area.vue';
 	import Deploy from './component/deploy_record.vue';
-
+import Line from './component/line_dep.vue'
 	import DeployReverse from './component/reverse_deploy.vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
@@ -488,15 +491,25 @@
 		activeKey.value = 3;
 	};
 
+	const parentMsg = ref('');
 	const toggleComponent = (componentName) => {
+		
 		activeKey.value = '3';
-		console.log(componentName, 'componentName');
-
 		localStorage.setItem('Dep_type', componentName);
+		
+		let id =localStorage.getItem('zoneId');
 		if (componentName == '0') {
+		
+			
+			
+			parentMsg.value = componentName;
 			deptype.value = '0';
 		} else if (componentName == '1') {
 			deptype.value = '1';
+			parentMsg.value =componentName
+			
+			
+			
 		}
 	};
 	const GetData = () => {
@@ -532,7 +545,7 @@
 			formState_bas.value.recursionType = res.confContent.recursionType;
 			formState_bas.value.rateLimitOn = res.confContent.rateLimitOn;
 			formState_bas.value.responsesPerSecond = res.confContent.responsesPerSecond;
-			formState_bas.value.loggingTypeList =res.confContent.loggingTypeList.map(String);
+			formState_bas.value.loggingTypeList = res.confContent.loggingTypeList.map(String);
 			formState_bas.value.nxRedirectOn = res.confContent.nxRedirectOn;
 			formState_bas.value.nxDomainType = res.confContent.nxDomainType;
 			formState_bas.value.advancedOption = res.confContent.advancedOption;
