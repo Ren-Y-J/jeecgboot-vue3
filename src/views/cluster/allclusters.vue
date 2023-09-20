@@ -807,13 +807,6 @@ const AlldelFn = () => {
     }
 
 
-    // .jeecg-basic-table-form-container .ant-form {
-    //   padding: 12px 10px 13px 10px;
-    //   margin-bottom: 8px;
-    //   background-color: #fff;
-    //   border-radius: 2px;
-    // }
-
     .ant-card-body {
       padding: 12px 10px 13px 10px !important;
     }

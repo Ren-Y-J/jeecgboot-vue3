@@ -651,7 +651,6 @@ const openmodal = (record)=>{
 }
 //修改确定按钮
 const editOK = ()=>{
- 
   formState_edit.value.lineId = JSON.stringify(formState_edit.value.lineId);
 		editlist(formState_edit.value).then((res) => {
       console.log(res,formState_edit.value.lineId,'qd');
@@ -659,7 +658,6 @@ const editOK = ()=>{
 			getcordList();
 			visible_edit.value = false;
 		});
-    
 }
 //多选
 const state = reactive({
