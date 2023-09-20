@@ -46,9 +46,8 @@
           </template>
         </template>
       </a-alert>
-      <!-- <a-alert message="未选中任何数据" type="info" show-icon /> -->
     </div>
-    <!-- :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :rowKey="(record) => record.lineId"-->
+ <!-- 列表数据 -->
     <div>
       <a-table :columns="columns" :data-source="listData"
             :pagination="false" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
@@ -69,12 +68,10 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <div>
                       <span  class="pointer" style="color: #2e7dff; margin-right: 8px">配置策略</span>
-                      <!-- confirm点击确认的回调  @confirm="confirm(record)"-->
-                    <span class="pointer"  style="color: #2e7dff; margin-right: 8px" v-if='record.policiesEnable == true' @click="stopService(record)">停用</span>
-                    <span class="pointer"  style="color: #2e7dff; margin-right: 8px" v-if='record.policiesEnable == false' @click="enable(record)">启用</span>
-                      <!-- <span class="pointer"  style="color: #2e7dff; margin-right: 8px" >停用</span> -->
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px" v-if='record.policiesEnable == true' @click="stopService(record)">停用</span>
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px" v-if='record.policiesEnable == false' @click="enable(record)">启用</span>
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px" @click="editGroup(record)">修改</span>
-                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)" @cancel="cancel">
+                      <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)" @cancel="cancel">
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
                       </a-popconfirm>
                     </div>
@@ -101,7 +98,6 @@
     <a-modal  v-model:visible="visible_add" title="添加策略组" width="600px" style="top:200px" @ok="Policyadd">
         <a-form ref='formRef' :model="formState"  name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <!--  -->
           <a-form-item label="策略组名称" :rules="[{ required: true, message: '请输入策略组名称!' }]" style='margin-top: 26px' name="policiesName">
             <a-input v-model:value="formState.policiesName" placeholder="请输入策略组名称" />
           </a-form-item>
@@ -109,7 +105,6 @@
             <a-button type="primary" @click="addTime">配置启用时段</a-button>
             <a-alert message="配置启用时段" type="info" show-icon class="icon"/>
           </a-form-item>
-          <!-- :rules="fromaclinfoRules.aclType" -->
           <a-form-item label="启用状态" :rules="[{ required: true, message: '请选择启用状态!' }]" name="policiesEnable" style='margin-top: 26px'>
             <a-radio-group v-model:value="formState.policiesEnable"  @change="changeradioFn">
               <a-radio :value="true">启用</a-radio>
@@ -152,7 +147,6 @@
             </a-row>
           </a-checkbox-group>
           </a-form-item>
-          <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
           <div class="label_text">时段：</div>
           <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName" :key="item" >
              <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss" :placeholder='placeholder' />
@@ -228,7 +222,6 @@
             </a-row>
           </a-checkbox-group>
           </a-form-item>
-          <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
           <div class="label_text">时段：</div>
           <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName_edit" :key="item" >
              <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss" :placeholder='placeholder'  />
@@ -379,14 +372,11 @@ const editGroup = (record)=>{
   formState_edit.value.policiesTimeType = JSON.parse(record.policiesTimeType)
   formState_edit.value.policiesTimeType = formState_edit.value.policiesTimeType.map(String)
   formState_edit.value.policiesTimeRange = record.policiesTimeRange
-  //  console.log(formState_edit.value,'formState_edit.value111');
 }
 
 // 停用按钮
 const stopService = (record)=>{
-// console.log(record);
 record.policiesEnable = false
-
 }
 // 启用按钮
 const enable = (record)=>{
@@ -458,9 +448,7 @@ const addTime_edit = ()=>{
 const Policyadd = async()=>{
    try {
     await formRef.value.validate()
-  //  await formRef_.value.validate()
   } catch (error) {
-    // console.log(error);
     return console.log(error)
   }
   visible_add.value = false
@@ -501,7 +489,7 @@ const checkboxTime = (value)=>{
 
 // 启用时段确定按钮v
 const handleadd =async ()=>{
-     try {
+    try {
     await formRef.value.validate()
   //  await formRef_.value.validate()
   } catch (error) {

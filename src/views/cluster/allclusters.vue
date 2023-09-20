@@ -599,11 +599,11 @@ const AlldelFn = () => {
     justify-content: start;
     flex-direction: column;
 
-    /deep/ .ant-alert-info {
-      background-color: #e6f7ff;
-      border: 1px solid #91d5ff;
-      ;
-    }
+    // /deep/ .ant-alert-info {
+    //   background-color: #e6f7ff;
+    //   border: 1px solid #91d5ff;
+    //   ;
+    // }
 
     #components-popover-demo-placement .ant-btn {
       width: 70px;

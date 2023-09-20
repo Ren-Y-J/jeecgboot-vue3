@@ -93,7 +93,7 @@
 		>
 			<a-form-item
 				label="域名"
-				:labelCol="{ span: 5 }"
+			:labelCol="{ span: 5 }"
 				:wrapperCol="{ span: 15 }"
 				:rules="[{ required: true, message: '请输入域名!' }]"
 				name="name"
