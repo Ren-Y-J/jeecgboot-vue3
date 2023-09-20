@@ -15,3 +15,5 @@ export const ShowDataAll = (params) => defHttp.get({ url: '/hosts/' + params });
 export const transList = (params) => defHttp.post({ url: DeployApi.trans, params });
 // ACL
 export const AclList = (params) => defHttp.post({ url: DeployApi.Acl, params });
+
+export const GetDeployList = (params) => defHttp.post({ url:'/reverse/zone/rel/list', params });
