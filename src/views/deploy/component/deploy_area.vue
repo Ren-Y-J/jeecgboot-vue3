@@ -230,6 +230,8 @@
 	import { reactive, ref, toRefs, watchEffect, defineProps, defineEmits } from 'vue';
 	import { message } from 'ant-design-vue';
 	import { router } from '/@/router';
+	
+	
 	const columns = [
 		{
 			title: '名称',
@@ -320,9 +322,13 @@
 		pageID,
 	} = toRefs(data);
 	const changetabs = () => {
+		
+		let url = location.search;
+	let hostId = url.replace('?', '');
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
 			GetList({
+				hostId:hostId,
 				type: 0,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -333,7 +339,8 @@
 		}
 		if (placetype.value == '1') {
 			GetReverseList({
-				type: 0,
+					hostId:hostId,
+				type: 1,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
 			}).then((res) => {
@@ -383,8 +390,11 @@
 		GetHostsAll({}).then((res) => {
 			HostsData.value = res;
 		});
+		let url = location.search;
+		let hostId = url.replace('?', '');
 		if (placetype.value == '0') {
 			GetList({
+				hostId:hostId,
 				type: 0,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -395,7 +405,8 @@
 		}
 		if (placetype.value == '1') {
 			GetReverseList({
-				type: 0,
+					hostId:hostId,
+				type: 1,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
 			}).then((res) => {
@@ -421,6 +432,7 @@
 		getData();
 	};
 	const addBtn = () => {
+		
 		GetLine({
 			value: pageID.value,
 		}).then((res) => {
@@ -465,7 +477,9 @@
 			console.log(error);
 			return;
 		}
+		
 		AddLine({
+			
 			hostId: pageID.value,
 			type: 0,
 			zoneName: formState.value.name,
@@ -490,7 +504,7 @@
 			return;
 		}
 		AddReverseList({
-			hostId: formState.value.hosts,
+			hostId: pageID.value,
 			type: formState.value.type_1,
 			reverseIpAddr: formState_.value.IP,
 			lineId: JSON.stringify(formState_.value.lineId),
@@ -542,11 +556,9 @@
 		localStorage.setItem('zoneId', record.zoneId);
 		if (placetype.value == '0') {
 			emit('toggleComponent', '0');
-			// router.push(`/place/deploy?${id}`);
 		}
 		if (placetype.value == '1') {
 			emit('toggleComponent', '1');
-			// router.push(`/place/reverse_deploy?${id}`);
 		}
 	};
 	const stopBtn = (record) => {

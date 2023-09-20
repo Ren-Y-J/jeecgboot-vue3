@@ -49,8 +49,8 @@
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -191,9 +191,21 @@
 
 <script setup>
 	import { GetList, DelList, GetLine, AddList, EditList, BackLine, stopStatus } from './reverse_deploy.ts';
-	import { reactive, toRefs, ref, watchEffect } from 'vue';
+	import { reactive, toRefs, ref, watchEffect,watch } from 'vue';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 	import { message } from 'ant-design-vue';
+	
+	
+	const props = defineProps({
+		//子组件接收父组件传递过来的值
+		info: String,
+	});
+	//使用父组件传递过来的值
+	const { info } = toRefs(props);
+	
+	watch(()=>props.workOrder,(newValue,oldValue)=>{
+		console.log(info.value, '反向域名');
+	},{immediate:true,deep:true})
 	const data = reactive({
 		id: '',
 		pageNum: 1,
@@ -256,7 +268,6 @@
 	];
 
 	const getData = () => {
-		let url = location.search;
 		// id.value = url.replace('?', '');
 
 		id.value = localStorage.getItem('zoneId');
@@ -265,7 +276,12 @@
 		formState.value.zoneId = id.value;
 		formState_edit.value.zoneId = id.value;
 
+
+	let url = location.search;
+		let hostid = url.replace('?', '');
+
 		GetList({
+			hostId:hostid,
 			zoneId: id.value,
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,

@@ -29,7 +29,7 @@
     <div class="iconBtn">
       <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"
         ><plus-outlined />添加策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组</a-button>
+      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组1</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="deleteGroup"><delete-outlined />删除策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="synOK"><reload-outlined />同步策略组</a-button>
     </div>
@@ -94,7 +94,6 @@
 					@change="changeFn"
 				/>
 			</div> 
-
   </div>
   <!-- 添加策略组弹框 -->
   <div>

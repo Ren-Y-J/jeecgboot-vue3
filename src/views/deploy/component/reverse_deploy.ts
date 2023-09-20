@@ -6,6 +6,7 @@ enum RoleApi {
   del = '/reverse/zone/rel/delete',//删
  line='/line/manage/all',
 }
+
 // 所有列表
 export const GetList = (params) => defHttp.post({ url: RoleApi.list, params });
 // 删除
