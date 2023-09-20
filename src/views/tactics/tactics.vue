@@ -29,7 +29,6 @@
     <div class="iconBtn">
       <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"
         ><plus-outlined />添加策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="deleteGroup"><delete-outlined />删除策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="synOK"><reload-outlined />同步策略组</a-button>
     </div>
@@ -602,13 +601,16 @@ const deleteGroup = ()=>{
   if(ids.value.length == 0){
     message.error('请勾选需要删除的策略组')
   }
-  dellistAll(ids.value).then((res)=>{
-    // console.log(res,'shanchu');
-     number.value = 0
-    message.success('删除成功')
-    getcordList()
-  })
-}
+  else{
+	dellistAll(ids.value).then((res)=>{
+	    // console.log(res,'shanchu');
+	     number.value = 0
+	    message.success('删除成功')
+	    getcordList()
+	  })
+	}  
+  }
+
 
 
 </script>
