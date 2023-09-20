@@ -732,10 +732,10 @@
 		padding: 8px;
 	}
 
-	:deep(.ant-alert-info) {
-		background-color: #e6f7ff;
-		border: 1px solid #91d5ff;
-	}
+	// :deep(.ant-alert-info) {
+	// 	background-color: #e6f7ff;
+	// 	border: 1px solid #91d5ff;
+	// }
 	:deep(.ant-table-selection-column) {
 		height: 30px;
 	}

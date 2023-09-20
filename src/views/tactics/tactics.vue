@@ -29,7 +29,7 @@
     <div class="iconBtn">
       <a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"
         ><plus-outlined />添加策略组</a-button>
-      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组1</a-button>
+      <a-button :style="{ margin: '0px 8px ' }" type="primary" ><edit-outlined />修改策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="deleteGroup"><delete-outlined />删除策略组</a-button>
       <a-button :style="{ margin: '0px 8px ' }" type="primary" @click="synOK"><reload-outlined />同步策略组</a-button>
     </div>
@@ -47,12 +47,11 @@
           </template>
         </template>
       </a-alert>
-      <!-- <a-alert message="未选中任何数据" type="info" show-icon /> -->
     </div>
-    <!-- :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :rowKey="(record) => record.lineId"-->
+ <!-- 列表数据 -->
     <div>
       <a-table :columns="columns" :data-source="listData"
-           :pagination="false" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+            :pagination="false" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
             :rowKey="(record) => record.policiesId"
            bordered>
             <template #bodyCell="{ column,record }">
@@ -70,11 +69,10 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <div>
                       <span  class="pointer" style="color: #2e7dff; margin-right: 8px">配置策略</span>
-                      <!-- confirm点击确认的回调  @confirm="confirm(record)"-->
-                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px">停用</span>
-                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px">修改</span>
-                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
-                        @cancel="cancel">
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px" v-if='record.policiesEnable == true' @click="stopService(record)">停用</span>
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px" v-if='record.policiesEnable == false' @click="enable(record)">启用</span>
+                      <span class="pointer"  style="color: #2e7dff; margin-right: 8px" @click="editGroup(record)">修改</span>
+                      <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)" @cancel="cancel">
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
                       </a-popconfirm>
                     </div>
@@ -98,19 +96,17 @@
   <!-- 添加策略组弹框 -->
   <div>
     <a-modal  v-model:visible="visible_add" title="添加策略组" width="600px" style="top:200px" @ok="Policyadd">
-        <a-form  :model="formState"  name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+        <a-form ref='formRef' :model="formState"  name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-          <!--  -->
-          <a-form-item label="策略组名称"  style='margin-top: 26px' name="policiesName">
+          <a-form-item label="策略组名称" :rules="[{ required: true, message: '请输入策略组名称!' }]" style='margin-top: 26px' name="policiesName">
             <a-input v-model:value="formState.policiesName" placeholder="请输入策略组名称" />
           </a-form-item>
           <a-form-item label="启用时段"  style='margin-top: 26px'>
             <a-button type="primary" @click="addTime">配置启用时段</a-button>
             <a-alert message="配置启用时段" type="info" show-icon class="icon"/>
           </a-form-item>
-          <!-- :rules="fromaclinfoRules.aclType" -->
-          <a-form-item label="启用状态" name="aclType" style='margin-top: 26px'>
-            <a-radio-group v-model:value="formState.policiesEnable" name="policiesEnable" @change="changeradioFn">
+          <a-form-item label="启用状态" :rules="[{ required: true, message: '请选择启用状态!' }]" name="policiesEnable" style='margin-top: 26px'>
+            <a-radio-group v-model:value="formState.policiesEnable"  @change="changeradioFn">
               <a-radio :value="true">启用</a-radio>
               <a-radio :value="false">停用</a-radio>
             </a-radio-group>
@@ -122,10 +118,10 @@
   <div>
     <a-modal   :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" style="top:200px"
     v-model:visible="visible_Time" title="配置启用时段" width="600px" @ok="handleadd" @cancel="reset">
-       <a-form  :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+       <a-form ref='formRef' :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
-        <a-form-item label="启用周期" name="aclType" style='margin-top: 26px' class="lable_form">
-          <a-checkbox-group v-model:value="formState.policiesTimeType" name="policiesTimeType" style="width: 100%" @change="checkboxTime" class="radio_right">
+        <a-form-item label="启用周期" name="policiesTimeType" style='margin-top: 26px' class="lable_form" :rules="[{ required: true, message: '请选择启用周期!' }]" >
+          <a-checkbox-group v-model:value="formState.policiesTimeType"  style="width: 100%" @change="checkboxTime" class="radio_right">
             <a-row>
               <a-col :span="5">
                 <a-checkbox value="1">周一</a-checkbox>
@@ -151,7 +147,6 @@
             </a-row>
           </a-checkbox-group>
           </a-form-item>
-          <!-- <a-form-item label="时段：" style='margin-top: 26px' ></a-form-item> -->
           <div class="label_text">时段：</div>
           <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName" :key="item" >
              <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss" :placeholder='placeholder' />
@@ -175,15 +170,15 @@
 
    <!-- 修改策略组弹框 -->
   <div>
-    <a-modal  v-model:visible="visible_editsyn" title="修改策略组" width="600px" style="top:200px" >
+    <a-modal  v-model:visible="visible_editsyn" title="修改策略组" width="600px" style="top:200px" @ok="Policyedit">
         <a-form  :model="formState_edit"  name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="策略组名称"  style='margin-top: 26px' name="policiesName">
             <a-input v-model:value="formState_edit.policiesName" placeholder="请输入策略组名称" />
           </a-form-item>
           <a-form-item label="启用时段"  style='margin-top: 26px'>
-            <a-button type="primary" @click="addTime">配置启用时段</a-button>
-            <a-alert message="配置启用时段" type="info" show-icon class="icon"/>
+            <a-button type="primary" @click="addTime_edit">配置启用时段</a-button>
+            <a-alert message="配置启用时段" type="success" show-icon class="icon_edit"/>
           </a-form-item>
           <a-form-item label="启用状态" name="aclType" style='margin-top: 26px'>
             <a-radio-group v-model:value="formState_edit.policiesEnable" name="policiesEnable" @change="changeradioFn">
@@ -194,13 +189,58 @@
         </a-form>
     </a-modal>
   </div>
+  <!-- 修改策略组的配置时段 -->
+   <div>
+    <a-modal   :scroll="{ x: 'calc(700px + 50%)', y: '510' }" :body-style="modalStyle" style="top:200px"
+    v-model:visible="visible_Time_edit" title="修改策略组" width="600px" @ok="edit_time" >
+       <a-form  :model="formState_edit" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
+        <a-form-item label="启用周期" name="aclType" style='margin-top: 26px' class="lable_form">
+          <a-checkbox-group v-model:value="formState_edit.policiesTimeType" name="policiesTimeType" style="width: 100%" @change="checkboxTime" class="radio_right">
+            <a-row>
+              <a-col :span="5">
+                <a-checkbox value="1">周一</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="2">周二</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="3">周三</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="4">周四</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="5">周五</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="6">周六</a-checkbox>
+              </a-col>
+              <a-col :span="5">
+                <a-checkbox value="7">周日</a-checkbox>
+              </a-col>
+            </a-row>
+          </a-checkbox-group>
+          </a-form-item>
+          <div class="label_text">时段：</div>
+          <a-form-item class="form_time" name="policiesTimeRange"  v-for="item in formDataName_edit" :key="item" >
+             <a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss" :placeholder='placeholder'  />
+              <div class="addtimeform">
+                <plus-circle-filled style="color:#BFBFBF" @click="addIconTime" v-show="item.id == 1" />
+                <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
+              </div>
+          </a-form-item>
+      </a-form>
+    </a-modal>
+  </div>
   
 </template>
 
 
 <script setup>
+
 import { message,Modal } from 'ant-design-vue';
-import { list,dellist,synclist,addlist,dellistAll } from './tactics'
+import { list,dellist,synclist,addlist,dellistAll,editlist } from './tactics'
 import {  SearchOutlined, ReloadOutlined,PlusCircleFilled,CloseCircleFilled  } from '@ant-design/icons-vue'
 import { computed, defineComponent, reactive, toRefs, ref,createVNode,watch  } from 'vue';
 
@@ -250,8 +290,10 @@ const data = reactive({
   visible_add:false,
   visible_Time:false,
   visible_syn:false,
-  visible_editsyn:true,
+  visible_editsyn:false,
+  visible_Time_edit:false,
   formDataName:[{id:1,state_value:''}],
+  formDataName_edit:[{id:1,state_value:''}],
   formName:{
      policiesName:'',
   },
@@ -262,6 +304,7 @@ const data = reactive({
     policiesTimeRange:[]
   },
    formState_edit:{
+    policiesId:'',
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
@@ -276,6 +319,7 @@ const data = reactive({
   timecycle:[],
   pageNum: 1,
 	pageSize: 10,
+  status_false:''
 });
 const {
   listData,
@@ -289,13 +333,19 @@ const {
   visible_syn,
   visible_editsyn,
   formDataName,
+  formDataName_edit,
   formState,
+  formState_edit,
+  visible_Time_edit,
   policiesTimeRange,
   formData,
   timecycle,
   pageNum,
-	pageSize,
+	pageSize, 
+  status_false
 } = toRefs(data)
+
+const formRef = ref(null);//添加按钮弹框需要的ref
 
 const Cordquery = ref({
   pageNum: 1,
@@ -303,25 +353,65 @@ const Cordquery = ref({
 })
 const placeholder = ref(['开始时间', '结束时间'])
 const timePicker = ref(null)
-//列表数据
+//列表数据v
 const getcordList = () => {
   list(Cordquery.value).then(res => {
-    // console.log(res,'shuju ');
     listData.value = res.records
     total.value = res.total
-    let status_able = listData.value.map(item=>item.policiesEnable)
-    // console.log(status_able,'1254');
-    // console.log(listData.value, '0000');
   })
 }
 getcordList()
+
+// 修改按钮
+const editGroup = (record)=>{
+  visible_editsyn.value = true
+  // console.log(record,'record');
+  formState_edit.value.policiesId = record.policiesId
+  formState_edit.value.policiesName = record.policiesName
+  formState_edit.value.policiesEnable = record.policiesEnable
+  formState_edit.value.policiesTimeType = JSON.parse(record.policiesTimeType)
+  formState_edit.value.policiesTimeType = formState_edit.value.policiesTimeType.map(String)
+  formState_edit.value.policiesTimeRange = record.policiesTimeRange
+}
+
+// 停用按钮
+const stopService = (record)=>{
+record.policiesEnable = false
+}
+// 启用按钮
+const enable = (record)=>{
+  record.policiesEnable = true
+}
+
+// 修改时段确定按钮
+const edit_time = ()=>{
+    visible_Time_edit.value = false
+    let dif_time = ''
+    let editpoliciesTime = []
+    let editCancel = formDataName_edit.value.forEach(item=>{
+     dif_time =item.state_value.toString()
+    let comma = dif_time.split(',')
+    let comma_join = comma.join('-')
+    editpoliciesTime.push(comma_join)
+    formState_edit.value.policiesTimeRange = editpoliciesTime
+    })
+}
+
+// 修改弹框确定按钮
+const Policyedit = ()=>{
+    editlist(formState_edit.value).then((res)=>{
+      message.success('修改成功')
+    })
+    visible_editsyn.value = false
+    getcordList()
+}
 
 //点击页面搜索按钮v
 const handleQuery =()=>{
   list({
     pageNum: pageNum.value,
 		pageSize: pageSize.value,
-    policiesName:formState.value.policiesName,//获取响应式记录名称
+    policiesName:formData.value.policiesName,//获取响应式记录名称
   }).then((res)=>{
     listData.value = res.records//把数据给到存放表单的数组中
     pageNum.value = 1;
@@ -346,12 +436,21 @@ const addTactics =()=>{
 // 配置启用时段按钮v
 const addTime = ()=>{
   visible_Time.value = true
-  console.log(timecycle.value,'value');
-
+   placeholder.value = ['开始时间', '结束时间']
+}
+ 
+// 修改启用时段按钮v
+const addTime_edit = ()=>{
+  visible_Time_edit.value = true
 }
 
 // 添加策略组确定按钮v
-const Policyadd = ()=>{
+const Policyadd = async()=>{
+   try {
+    await formRef.value.validate()
+  } catch (error) {
+    return console.log(error)
+  }
   visible_add.value = false
   //给需要传的数据赋值
   formState.value.policiesTimeType = timecycle.value
@@ -360,13 +459,10 @@ const Policyadd = ()=>{
   formData.value.policiesTimeType = formState.value.policiesTimeType
   formData.value.policiesTimeRange = formState.value.policiesTimeRange
   // 调用添加策略组接口
+  console.log(formData.value,'formData.value');
   addlist(formData.value).then((res=>{
-    console.log(res,'ann ');
-   
     message.success("添加成功")
     getcordList()
-    
-    
   }))
  clearData()//清空表单数据
 }
@@ -381,6 +477,7 @@ const clearData = () => {
   formState.value.policiesEnable = ''
   formState.value.policiesTimeType = []
   formState.value.policiesTimeRange = []
+  formDataName.value.state_value = ""
   timecycle.value = []
   placeholder.value = ['开始时间', '结束时间']
 	};
@@ -391,10 +488,18 @@ const checkboxTime = (value)=>{
 }
 
 // 启用时段确定按钮v
-const handleadd = ()=>{
+const handleadd =async ()=>{
+    try {
+    await formRef.value.validate()
+  //  await formRef_.value.validate()
+  } catch (error) {
+    // console.log(error);
+    return console.log(error)
+  }
   visible_Time.value = false
   let arrTime =''
   let policiesTime = []//获取的时间段的数组
+  // console.log(formDataName.value,'formDataName.value');
   let strCancel = formDataName.value.forEach(item=>{//数据是对象包数组的形式，遍历里面的每一项
   arrTime =item.state_value.toString()//用toString()转成字符串形式
   let arrToStr = arrTime.split(',')//逗号分隔
@@ -404,9 +509,10 @@ const handleadd = ()=>{
   })
 }
 
-// 启用时段重置按钮
+// 启用时段重置按钮（时间会显示在上面，无法重置）
 const reset = ()=>{
-   formState.value.policiesTimeType = []
+  formRef.value.resetFields()//触发表单验证
+  formState.value.policiesTimeType = []
   formState.value.policiesTimeRange = []
   timecycle.value = []
   placeholder.value = ['开始时间', '结束时间']
@@ -445,16 +551,21 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
 })
 
 //点击配置启用时段的添加时间图标v
-  const addIconTime = ()=>{
+  const addIconTime = ()=>{//添加时段
       formDataName.value.push({
+      id:new Date().getTime()
+    }),
+    formDataName_edit.value.push({//修改时段
       id:new Date().getTime()
     })
   }
   
 // 配置启用时段删除时间图标v
    const XiconBtn = (id) => {
-    console.log(id);
     formDataName.value = formDataName.value.filter(item=>{
+      return item.id != id
+    })
+    formDataName_edit.value = formDataName_edit.value.filter(item=>{
       return item.id != id
     })
 	};
@@ -592,6 +703,21 @@ const deleteGroup = ()=>{
   text-align: center;
   margin: 30px;
 }
-
+.icon_edit{
+ 
+ 
+  display: inline-flex;
+  ::v-deep(.ant-alert-icon){
+    color: #2BDC70!important;
+    margin-left: 30px!important;
+  }
+  /deep/ .ant-alert-message{
+    color: #2BDC70;
+  }
+}
+ /deep/ .ant-alert-success{
+  background-color: #fff!important;
+  border: #fff!important;
+  }
 
 </style>

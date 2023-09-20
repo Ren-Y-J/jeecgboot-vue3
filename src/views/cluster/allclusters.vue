@@ -599,11 +599,11 @@ const AlldelFn = () => {
     justify-content: start;
     flex-direction: column;
 
-    /deep/ .ant-alert-info {
-      background-color: #e6f7ff;
-      border: 1px solid #91d5ff;
-      ;
-    }
+    // /deep/ .ant-alert-info {
+    //   background-color: #e6f7ff;
+    //   border: 1px solid #91d5ff;
+    //   ;
+    // }
 
     #components-popover-demo-placement .ant-btn {
       width: 70px;
@@ -806,13 +806,6 @@ const AlldelFn = () => {
       }
     }
 
-
-    // .jeecg-basic-table-form-container .ant-form {
-    //   padding: 12px 10px 13px 10px;
-    //   margin-bottom: 8px;
-    //   background-color: #fff;
-    //   border-radius: 2px;
-    // }
 
     .ant-card-body {
       padding: 12px 10px 13px 10px !important;
