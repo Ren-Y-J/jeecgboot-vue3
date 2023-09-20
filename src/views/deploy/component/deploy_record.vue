@@ -18,8 +18,8 @@
 				<template #bodyCell="{ column, record }">
 					<!-- 状态 -->
 					<template v-if="column.dataIndex === 'status'">
-						<span v-show="record.status == 0">禁用</span>
-						<span v-show="record.status == 1">启用</span>
+						<span v-show="record.status == 1">禁用</span>
+						<span v-show="record.status == 0">启用</span>
 					</template>
 					<!-- 域类型 -->
 					<template v-if="column.dataIndex === 'type'">
@@ -305,13 +305,17 @@
 
 	const getData = () => {
 		let url = location.search;
+		
 		id.value = localStorage.getItem('zoneId');
 
 		formState_1.value.zoneId = id.value;
 		formState.value.zoneId = id.value;
 		formState_edit.value.zoneId = id.value;
+		let hostID=''
+hostID = url.replace('?', '');
 
 		GetList({
+			
 			zoneId: id.value,
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
