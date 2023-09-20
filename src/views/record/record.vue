@@ -104,13 +104,13 @@
                <!-- 操作 @click="Delbtn(record)" @click="GoDep(record)"-->
                <template #bodyCell="{ column,record }">
                   <template v-if="column.dataIndex === 'status'">
-                    <div v-if='record.status == 1'
+                    <div v-if="record.status == 1 || record.status == null"
                       style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
                       <a-tag color="green">已启用</a-tag>
                     </div>
                     <div v-if='record.status == 0'
                       style="text-align: center; display: flex;   justify-content: center;  align-items: center;">
-                      <a-tag color="green">警用</a-tag>
+                      <a-tag color="green">禁用</a-tag>
                     </div>
                   </template>
                   <template v-if="column.dataIndex === 'operation'">
@@ -179,7 +179,7 @@
 				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)" v-show="item.id!=1"/>
             </div>
               <a-form-item label="记录名称"  :rules="[{ required: true, message:'请输入记录名称' }]" name="name" style='margin-top: 18px'>
-                <a-input @change="chengeInput" :ref="item.id" v-model:value="item.name" placeholder="请输入记录名称" style='width:50%' />
+                <a-input @change="chengeInput" :ref="item.id" v-model:value="formState.name" placeholder="请输入记录名称" style='width:50%' />
               </a-form-item>
               <a-form-item label="类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 18 }" :rules="[{ required: true, message:'请选择类型' }]" name="type" style='margin-top: 0px'>
               <a-radio-group v-model:value="item.type" >
@@ -194,7 +194,7 @@
               </a-radio-group>
               </a-form-item>
               <a-form-item label="记录值" :rules="[{ required: true, message:'请输入记录值' }]" name="content" style='margin-top: 18px'>
-                <a-input v-model:value="item.content" placeholder="请输入记录值" style='width:50%' />
+                <a-input v-model:value="formState.content" placeholder="请输入记录值" style='width:50%' />
               </a-form-item>
               <a-form-item label="TTL" :rules="[{ required: true, message:'请输入大于0的整数,'}]" name="ttl" style='margin-top: 18px'>
                 <!-- <a-input v-model:value="formState.ttl" placeholder="请输入TTL" style='width:50%' /> -->
@@ -205,13 +205,13 @@
 							min="1"
 							style="width:50%"
 							placeholder="请输入大于0的TTL"
-							v-model:value="item.ttl"
+							v-model:value="formState.ttl"
 						></a-input-number>
               </a-form-item>
               <a-form-item label="线路" :rules="[{ required: true, message:'请选择线路' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
                   <!-- mode="tags"设置 Select 的模式为多选或标签   :field-names自定义节点 label、value、options 的字段-->
-              <a-select placeholder="请选择线路" ref="select" v-model:value="item.lineId" style="width: 150px"
+              <a-select placeholder="请选择线路" ref="select" v-model:value="formState.lineId" style="width: 150px"
                 @focus="focus" @change="handleChangsortadd" :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
               </a-space>
@@ -220,7 +220,10 @@
           </div>
           </a-form>
           <div class="Addrecord line" style="margin-bottom: 10px"  @click="addRecordBtn">
-            <plus-circle-outlined /><span >添加记录</span>
+            <div class="addtimeform">
+              <plus-circle-outlined />
+            </div>
+            <span >添加记录</span>
           </div>
       </a-modal>
    </div>
@@ -356,7 +359,7 @@ const data = reactive({
   listAllData:[],
   addRecord: false,
   selects : 0,
-  formDataName:[{id:1}],
+  formDataName:[{id:1,name:'',type:'',content:'',ttl:'',lineId:''}],
   delicon:true,
   formState: {
       id:new Date().getDate(),
@@ -429,12 +432,12 @@ const addFn = async () => {//点击确定按钮
 			zoneId:formState.zoneId
   });
     formState.value.lineId = JSON.stringify( formState.value.lineId);
-    addlist(formState).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
-			message.success('添加成功');
-			visible.value = false;//关闭弹框
-			onClose();
-			getcordList();
-		});
+    // addlist(formState).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
+		// 	message.success('添加成功');
+		// 	visible.value = false;//关闭弹框
+		// 	onClose();
+		// 	getcordList();
+		// });
 
 }
 // 添加弹框内的change事件
@@ -694,7 +697,7 @@ const state = reactive({
     margin-left: 20px;
 }
 .select{
-    margin:8px 0px 0px 0px;
+    margin:8px 0px -10px 0px;
 }
 .type{
   display: flex;
@@ -782,8 +785,16 @@ const state = reactive({
     height: 500px!important;
     
  }
-  /deep/ .anticon svg{
-      margin-right: 10px;
- }
+//   /deep/ .anticon svg{
+//       margin-right: 10px;
+//  }
+.addtimeform{
+  display: inline;
+   margin-right: 10px;
+}
+.table{
+
+}
+
 
 </style>
