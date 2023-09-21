@@ -81,7 +81,7 @@ import { router } from '/@/router';
 const columns = [
 
   {
-    title: '分机组',
+    title: '主机组',
     dataIndex: 'groupName',
     align: 'center',
   },
@@ -205,7 +205,7 @@ const AlldelFn = () => {
 const GoDep = (record) => {
   let id = record.groupId;
   window.open('/deploy?' + id);
-  
+
 };
 </script>
 <style scoped lang="less">
