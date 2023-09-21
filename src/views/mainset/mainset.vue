@@ -203,11 +203,9 @@ const AlldelFn = () => {
 
 }
 const GoDep = (record) => {
-  let groupId = record.groupId;
-  router.push(`/deploy?${groupId}`)
-  // let id = record.groupId
-
-  // window.open('/deploy?' + id);
+  let id = record.groupId;
+  window.open('/deploy?' + id);
+  
 };
 </script>
 <style scoped lang="less">
