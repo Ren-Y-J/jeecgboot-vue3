@@ -16,7 +16,7 @@
                 <a-form-item style="margin-bottom: 0px;" label="类型" name="type" :labelCol="{ span: 7 }" 
                   :wrapperCol="{ span: 10 }" v-model:value="queryParams.type" >
                   <a-space>
-                    <a-select ref="select"  style="width: 120px" @focus="focus" placeholder="请输入" 
+                    <a-select ref="select"  style="width: 120px" @focus="focus" placeholder="请选择" 
                       @change="handleChange"  v-model:value="queryParams.type">
                       <a-select-option value="0">A</a-select-option>
                     <a-select-option value="1">AAAA</a-select-option>
@@ -165,8 +165,8 @@
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="[{ required: true }]"   style='margin-top: 26px' >
             <a-space>
-              <a-select placeholder="请选择域名" ref="select" v-model:value="formState.zoneId" style="width: 245px"
-                @focus="focus" @change="changeNames" :options="listAllData" >
+              <a-select ref="select" style="width: 245px" @focus="focus" :placeholder="placeholder"  v-model:value="formState.zoneId" 
+                 @change="changeNames" :options="listAllData" >
               </a-select>
             </a-space>
           </a-form-item>
@@ -396,6 +396,7 @@ const {
 } = toRefs(data)
 
 const formRef = ref(null);//添加按钮弹框需要的ref
+const placeholder = ref("请选择");
 const addFn = () => {//点击确定按钮
 
 formDataName.value.forEach((item)=>{
@@ -468,12 +469,14 @@ const getcordList = ()=>{
     listData.value = res.records//把数据放进存放表单的地方
     total.value = res.total//总数
   })
+  placeholder.value = "请选择"
 }
 getcordList()//调用列表数据
 
 //添加按钮，让里面的数据清空
  const showModal = () => {
       visible.value = true;//显示弹框
+      placeholder.value = "请选择"
      formDataName.value.name = ''
      formDataName.value.type = ''
      formDataName.value.content = ''
