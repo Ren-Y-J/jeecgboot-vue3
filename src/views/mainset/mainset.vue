@@ -14,7 +14,7 @@
           <a-col :md="4" :sm="5">
             <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; ">
               <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="searchFn">
-                搜索</a-button>
+                <search-outlined /> 搜索</a-button>
               <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
             </span>
           </a-col>
@@ -44,6 +44,10 @@
                     <span v-show="record.status == 0" style="color: #1890ff">启用</span>
                   </a-popconfirm>
                 </div>
+                <div class="pointer" style="margin-right: 10px">
+                  <a-button type="link" @click="GoDep(record)">配置</a-button>
+                </div>
+
               </div>
             </template>
           </template>
@@ -71,7 +75,9 @@
 <script name='mainset' setup>
 import { defineComponent, reactive, ref, toRefs } from 'vue';
 import { mainsetlist, addmainset, edimainset, delmainset } from "./mainset.ts";
+import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue';
+import { router } from '/@/router';
 const columns = [
 
   {
@@ -196,7 +202,13 @@ const AlldelFn = () => {
   initData()
 
 }
+const GoDep = (record) => {
+  let groupId = record.groupId;
+  router.push(`/deploy?${groupId}`)
+  // let id = record.groupId
 
+  // window.open('/deploy?' + id);
+};
 </script>
 <style scoped lang="less">
 .mainset {

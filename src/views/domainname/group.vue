@@ -78,6 +78,7 @@
 <script name='group' setup>
 import { defineComponent, reactive, ref, toRefs } from 'vue';
 import { grouplist, libraryAll, addgroup, editgroup, groupInfo, delgroup } from "./group.ts"
+import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';

@@ -63,6 +63,7 @@
 </template>
 <script name='domainname' setup>
 import { defineComponent, reactive, ref, toRefs } from 'vue';
+import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import Group from "./group.vue"
 import Library from "./library.vue"
 

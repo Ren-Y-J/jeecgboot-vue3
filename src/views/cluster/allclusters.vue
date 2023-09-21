@@ -681,9 +681,9 @@ const AlldelFn = () => {
       justify-content: flex-end;
     }
 
-    // .ant-card-body {
-    //   padding: 6px !important;
-    // }
+    .ant-card-body {
+      padding: 6px !important;
+    }
 
     // .ant-card-body {
     //   padding: 6px !important;
