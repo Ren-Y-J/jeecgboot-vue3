@@ -237,9 +237,10 @@
 
 
 <script setup>
-
+import dayjs from 'dayjs';
+import moment from 'moment';
 import { message,Modal } from 'ant-design-vue';
-import { list,dellist,synclist,addlist,dellistAll,editlist } from './tactics'
+import { list,dellist,synclist,addlist,dellistAll,editlist,BackLine } from './tactics'
 import {  SearchOutlined, ReloadOutlined,PlusCircleFilled,CloseCircleFilled  } from '@ant-design/icons-vue'
 import { computed, defineComponent, reactive, toRefs, ref,createVNode,watch  } from 'vue';
 
@@ -292,7 +293,13 @@ const data = reactive({
   visible_editsyn:false,
   visible_Time_edit:false,
   formDataName:[{id:1,state_value:''}],
-  formDataName_edit:[{id:1,state_value:''}],
+  formDataName_edit:[{id:1,state_value:''}
+  //   {id:1,state_value:[
+  //   '12:00:00','13:00:00'
+  // ]},{id:1,state_value:[
+  //   '12:00:00','13:00:00'
+  // ]}
+  ],
   formName:{
      policiesName:'',
   },
@@ -303,17 +310,27 @@ const data = reactive({
     policiesTimeRange:[]
   },
    formState_edit:{
-    policiesId:'',
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
-    policiesTimeRange:[]
+    policiesTimeRange:[
+
+
+    ]
   },
   formData:{
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
     policiesTimeRange:[]
+  },
+  enable_edit:{
+    policiesId:'',
+    policiesEnable:'',
+  },
+   enable_start:{
+    policiesId:'',
+    policiesEnable:'',
   },
   timecycle:[],
   pageNum: 1,
@@ -333,8 +350,10 @@ const {
   visible_editsyn,
   formDataName,
   formDataName_edit,
+  enable_edit,
   formState,
   formState_edit,
+  enable_start,
   visible_Time_edit,
   policiesTimeRange,
   formData,
@@ -364,22 +383,53 @@ getcordList()
 // 修改按钮
 const editGroup = (record)=>{
   visible_editsyn.value = true
-  // console.log(record,'record');
-  formState_edit.value.policiesId = record.policiesId
-  formState_edit.value.policiesName = record.policiesName
-  formState_edit.value.policiesEnable = record.policiesEnable
-  formState_edit.value.policiesTimeType = JSON.parse(record.policiesTimeType)
+  BackLine(record.policiesId).then((res)=>{//回显接口
+  console.log(res,'res');
+  formState_edit.value.policiesId = res.policiesId
+  formState_edit.value.policiesName = res.policiesName
+  formState_edit.value.policiesEnable = res.policiesEnable
+  formState_edit.value.policiesTimeType = JSON.parse(res.policiesTimeType)
   formState_edit.value.policiesTimeType = formState_edit.value.policiesTimeType.map(String)
-  formState_edit.value.policiesTimeRange = record.policiesTimeRange
+ 
+
+  formState_edit.value.policiesTimeRange = res.policiesTimeRange.replace(/[\[\]"]/g, '').split('-').join(',')
+  
+  // //  formDataName_edit.value.state_value = formState_edit.value.policiesTimeRange
+  // console.log(formState_edit.value.policiesTimeRange,'formState_edit.value.policiesTimeRange');
+  let editpoliciesTime = []
+  editpoliciesTime.push(formState_edit.value.policiesTimeRange)
+console.log(editpoliciesTime,'editpoliciesTime');
+  let transformedA = editpoliciesTime[0].split(',').map(item => item.trim());
+  // let transformedA = editpoliciesTime.map(item => item.split(',').slice(0, 2).join(','));
+    formDataName_edit.value.forEach((item)=>{
+    item.state_value = transformedA
+  })
+  console.log(transformedA,'editpoliciesTime222222');
+  })
 }
 
 // 停用按钮
 const stopService = (record)=>{
-record.policiesEnable = false
+  record.policiesEnable = false
+  enable_edit.value.policiesId = record.policiesId
+  enable_edit.value.policiesEnable = record.policiesEnable
+editlist(enable_edit.value).then((res)=>{
+    message.success("停用成功")
+    getcordList()
+})
+
 }
+
 // 启用按钮
 const enable = (record)=>{
   record.policiesEnable = true
+  enable_start.value.policiesId = record.policiesId
+  enable_start.value.policiesEnable = record.policiesEnable
+editlist(enable_start.value).then((res)=>{
+    message.success("启用成功")
+    getcordList()
+})
+
 }
 
 // 修改时段确定按钮
@@ -387,8 +437,10 @@ const edit_time = ()=>{
     visible_Time_edit.value = false
     let dif_time = ''
     let editpoliciesTime = []
-    let editCancel = formDataName_edit.value.forEach(item=>{
+    // console.log(formDataName_edit.value,'formDataName_edit.value');
+   formDataName_edit.value.forEach(item=>{   
      dif_time =item.state_value.toString()
+     console.log(dif_time,'dif_time');
     let comma = dif_time.split(',')
     let comma_join = comma.join('-')
     editpoliciesTime.push(comma_join)
@@ -400,9 +452,9 @@ const edit_time = ()=>{
 const Policyedit = ()=>{
     editlist(formState_edit.value).then((res)=>{
       message.success('修改成功')
+      getcordList()
     })
     visible_editsyn.value = false
-    getcordList()
 }
 
 //点击页面搜索按钮v
@@ -430,6 +482,7 @@ const AlldelFn = () => {
 // 添加策略组按钮v
 const addTactics =()=>{
   visible_add.value = true
+  clearData()//清空表单数据
 }
 
 // 配置启用时段按钮v
@@ -441,6 +494,7 @@ const addTime = ()=>{
 // 修改启用时段按钮v
 const addTime_edit = ()=>{
   visible_Time_edit.value = true
+
 }
 
 // 添加策略组确定按钮v
@@ -458,7 +512,7 @@ const Policyadd = async()=>{
   formData.value.policiesTimeType = formState.value.policiesTimeType
   formData.value.policiesTimeRange = formState.value.policiesTimeRange
   // 调用添加策略组接口
-  console.log(formData.value,'formData.value');
+  // console.log(formData.value,'formData.value');
   addlist(formData.value).then((res=>{
     message.success("添加成功")
     getcordList()
@@ -476,7 +530,9 @@ const clearData = () => {
   formState.value.policiesEnable = ''
   formState.value.policiesTimeType = []
   formState.value.policiesTimeRange = []
-  formDataName.value.state_value = ""
+  formDataName.value.forEach((item)=>{
+    item.state_value = ''
+  })
   timecycle.value = []
   placeholder.value = ['开始时间', '结束时间']
 	};
@@ -498,7 +554,7 @@ const handleadd =async ()=>{
   visible_Time.value = false
   let arrTime =''
   let policiesTime = []//获取的时间段的数组
-  // console.log(formDataName.value,'formDataName.value');
+  console.log(formDataName.value,'formDataName.value');
   let strCancel = formDataName.value.forEach(item=>{//数据是对象包数组的形式，遍历里面的每一项
   arrTime =item.state_value.toString()//用toString()转成字符串形式
   let arrToStr = arrTime.split(',')//逗号分隔
@@ -508,15 +564,17 @@ const handleadd =async ()=>{
   })
 }
 
-// 启用时段重置按钮（时间会显示在上面，无法重置）
+// 启用时段重置按钮v
 const reset = ()=>{
   formRef.value.resetFields()//触发表单验证
   formState.value.policiesTimeType = []
   formState.value.policiesTimeRange = []
+  formDataName.value.forEach((item)=>{
+    item.state_value = ''
+  })
+  // formDataName.value.state_value = []
   timecycle.value = []
   placeholder.value = ['开始时间', '结束时间']
-  timePicker.value.clear()
-  console.log(timecycle.value,'141111');
 }
 
 // 同步策略组按钮v
