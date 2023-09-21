@@ -197,13 +197,11 @@
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="主机组" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="role" :rules="formRules.role">
-					<a-select v-model:value="formState.role" @change="handleChange" placeholder="请选择主机组">
-						
-						
-						<a-select-option v-for=" (item, index ) in HostsGroupData " :key='index' :value="item.groupId">{{item.groupName}}</a-select-option>
-						
-						
+				<a-form-item label="角色" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="role" :rules="formRules.role">
+					<a-select v-model:value="formState.role" @change="handleChange" placeholder="请选择角色">
+						<a-select-option value="1">权威</a-select-option>
+						<a-select-option value="2">递归</a-select-option>
+						<a-select-option value="3">权威+递归</a-select-option>
 					</a-select>
 				</a-form-item>
 				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rack" :rules="formRules.rack">
@@ -266,9 +264,11 @@
 					<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{ item.clusterName }}</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name='role' :rules="formRules.role">
-				<a-select placeholder="请选择主机组" v-model:value="formState_edit.role" @change="handleChange">
-					<a-select-option v-for=" (item, index ) in HostsGroupData " :key='index' :value="item.groupId">{{item.groupName}}</a-select-option>
+			<a-form-item label="角色" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name='role' :rules="formRules.role">
+				<a-select placeholder="请选择角色" v-model:value="formState_edit.role" @change="handleChange">
+					<a-select-option value="1">权威</a-select-option>
+					<a-select-option value="2">递归</a-select-option>
+					<a-select-option value="3">权威+递归</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="机架" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name='floor' :rules="formRules.rack">
@@ -283,7 +283,7 @@
 	import { message } from 'ant-design-vue';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, toRefs, ref, watchEffect, defineComponent, onMounted } from 'vue';
-	import { addlist, getlist, dellist, showlist, editlist, grouplist,HostsGroup } from './hosts.ts';
+	import { addlist, getlist, dellist, showlist, editlist, grouplist } from './hosts.ts';
 	import { router } from '/@/router';
 	const data = reactive({
 		visible: false,
@@ -326,7 +326,6 @@
 		groupData: '',
 		hostId: '',
 		number: 0,
-		HostsGroupData:''
 	});
 
 	const {
@@ -351,14 +350,13 @@
 		clusterName,
 		number,
 		formState,
-		HostsGroupData
+		
 	} = toRefs(data);
 
 	const getgrouplist = () => {
 		grouplist().then((res) => {
 			groupData.value = res;
 		});
-	
 	};
 
 	getgrouplist();
@@ -483,25 +481,14 @@
 	getData();
 	const openadd = () => {
 		visible.value = true;
-		// name.value = '';
-		// ip.value = '';
-		// port.value = '';
-		// rootpwd.value = '';
-		// clusterId.value = undefined;
-		// role.value = undefined;
-		// rack.value = '';
-		GetHostsGroupData()
-		
+		name.value = '';
+		ip.value = '';
+		port.value = '';
+		rootpwd.value = '';
+		clusterId.value = undefined;
+		role.value = undefined;
+		rack.value = '';
 	};
-const GetHostsGroupData = ()=>{
-	HostsGroup().then((res)=>{
-		console.log(res,'HostsGroupData')
-		HostsGroupData.value=res
-	})
-}
-
-
-
 
 	const formRef = ref(null);
 	const btnOK = async () => {
@@ -566,7 +553,6 @@ const GetHostsGroupData = ()=>{
 		}
 	// 编辑框回显
 	const openmodal = (record) => {
-			GetHostsGroupData()
 		visible_edit.value = true;
 		showlist(`${record.hostId}`).then((res) => {
 			console.log(res, 9);
@@ -646,6 +632,7 @@ const GetHostsGroupData = ()=>{
 		
 		
 		
+		// ipAddress.value = '';
 	};
 	const onShowSizeChange = (current, pageSize) => {
 		pageSize = pageSize.value;
@@ -674,6 +661,25 @@ const GetHostsGroupData = ()=>{
 		});
 	};
 
+	// watchEffect(() => {
+	// 	if (visible.value == false) {
+	// 		rulesmessage_name.value = '';
+	// 		rulesmessage.value = '';
+	// 		rulesmessage_1.value = '';
+	// 		rulesmessage_rootpwd.value = '';
+	// 		clusterId.value = undefined;
+	// 		role.value = undefined;
+	// 	}
+	// 	if (visible_del.value == false) {
+	// 		rulesmessage.value = '';
+	// 		rulesmessage_rootpwd.value = '';
+	// 	}
+	// 	if (visible_edit.value == false) {
+	// 		rulesmessage.value = '';
+	// 		rulesmessage_1.value = '';
+	// 		rulesmessage_rootpwd.value = '';
+	// 	}
+	// });
  
 	// 多选
 	const state = reactive({
@@ -708,9 +714,7 @@ const GetHostsGroupData = ()=>{
 		router.push(`/hosts/host_board_disk?${id}`);
 	};
 	const GoDep = (record) => {
-		console.log(record,'record---')
-		
-		let id = record.groupId;
+		let id = record.hostId;
 		window.open('/deploy?' + id);
 	};
 </script>

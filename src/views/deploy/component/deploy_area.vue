@@ -324,11 +324,11 @@
 	const changetabs = () => {
 		
 		let url = location.search;
-	let hostId = url.replace('?', '');
+	let groupId = url.replace('?', '');
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
 			GetList({
-				hostId:hostId,
+				groupId:groupId,
 				type: 0,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -339,7 +339,7 @@
 		}
 		if (placetype.value == '1') {
 			GetReverseList({
-					hostId:hostId,
+					groupId:groupId,
 				type: 1,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -391,10 +391,10 @@
 			HostsData.value = res;
 		});
 		let url = location.search;
-		let hostId = url.replace('?', '');
+		let groupId = url.replace('?', '');
 		if (placetype.value == '0') {
 			GetList({
-				hostId:hostId,
+				groupId:groupId,
 				type: 0,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -405,7 +405,7 @@
 		}
 		if (placetype.value == '1') {
 			GetReverseList({
-					hostId:hostId,
+					groupId:groupId,
 				type: 1,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,

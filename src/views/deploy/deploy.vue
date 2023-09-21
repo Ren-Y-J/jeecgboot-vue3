@@ -1,11 +1,12 @@
 <template>
 	<div class="title">
-		<span>主机配置{{ ShowDataAllData.ipAddress }}</span>
+		<!-- <span>主机组配置{{ ShowDataAllData.ipAddress }}</span> -->
+		<span>主机组配置</span>
 	</div>
 
 	<div class="padding">
 		<!-- 主机信息 -->
-		<div class="header">
+		<!-- 	<div class="header">
 			<span>主机信息</span>
 			<br />
 			<div class="line" />
@@ -31,7 +32,7 @@
 					机架：{{ ShowDataAllData.floor }}
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<!-- 配置主机 -->
 
 		<div class="body">
@@ -41,7 +42,7 @@
 			<a-tabs @change="changet_bas" v-model:activeKey="activeKey">
 				<a-tab-pane key="0" tab="基本配置"></a-tab-pane>
 				<a-tab-pane key="1" tab="线路配置">
-					<Line/>
+					<Line />
 				</a-tab-pane>
 				<a-tab-pane key="2" tab="域配置">
 					<Area @toggleComponent="toggleComponent" />
@@ -51,7 +52,9 @@
 					<DeployReverse :info="parentMsg" v-if="deptype == '1'" />
 				</a-tab-pane>
 
-				<a-tab-pane key="4" tab="策略配置">策略配置</a-tab-pane>
+				<a-tab-pane key="4" tab="策略配置">
+					<Tactics />
+				</a-tab-pane>
 			</a-tabs>
 			<!-- 基本配置 -->
 			<div v-show="activeKey == 0" style="padding: 10px">
@@ -422,6 +425,7 @@
 							unCheckedValue="0"
 							v-model:checked="formState_bas.minRes"
 						/>
+
 						<a-tooltip>
 							<template #title>
 								<span style="font-size: 8px">启用最小化应答，将简化响应包，提升服务器性能</span>
@@ -437,11 +441,12 @@
 
 <script setup>
 	import { UpOutlined, DownOutlined, ExclamationCircleFilled } from '@ant-design/icons-vue'; //icon引入
-	import { ShowData, EditList, ShowDataAll, transList, AclList,GetDeployList } from './deploy.ts';
+	import { ShowData, EditList, ShowDataAll, transList, AclList, GetDeployList } from './deploy.ts';
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import Area from './component/deploy_area.vue';
 	import Deploy from './component/deploy_record.vue';
-import Line from './component/line_dep.vue'
+	import Tactics from './component/Tactics.vue';
+	import Line from './component/line_dep.vue';
 	import DeployReverse from './component/reverse_deploy.vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({
@@ -452,7 +457,7 @@ import Line from './component/line_dep.vue'
 		statusName: '',
 		activeKey: '0',
 		formState_bas: {
-			hostId: '',
+			groupId: '',
 			checked: '',
 			checkedBox: false,
 			forwarderList: [],
@@ -493,23 +498,16 @@ import Line from './component/line_dep.vue'
 
 	const parentMsg = ref('');
 	const toggleComponent = (componentName) => {
-		
 		activeKey.value = '3';
 		localStorage.setItem('Dep_type', componentName);
-		
-		let id =localStorage.getItem('zoneId');
+
+		let id = localStorage.getItem('zoneId');
 		if (componentName == '0') {
-		
-			
-			
 			parentMsg.value = componentName;
 			deptype.value = '0';
 		} else if (componentName == '1') {
 			deptype.value = '1';
-			parentMsg.value =componentName
-			
-			
-			
+			parentMsg.value = componentName;
 		}
 	};
 	const GetData = () => {
@@ -537,7 +535,7 @@ import Line from './component/line_dep.vue'
 
 		let url = location.search;
 		pageID.value = url.replace('?', '');
-		formState_bas.value.hostId = pageID.value;
+		formState_bas.value.groupId = pageID.value;
 		ShowData(`${pageID.value}`).then((res) => {
 			initData.value = res;
 			formState_bas.value.checked = res.confContent.checked;
@@ -568,16 +566,8 @@ import Line from './component/line_dep.vue'
 			formState_bas.value.minRes = res.confContent.minRes;
 		});
 		ShowDataAll(`${pageID.value}`).then((res) => {
+			console.log(res, 'ShowDataAll');
 			ShowDataAllData.value = res;
-			if (res.status == 0) {
-				statusName.value = '异常';
-			} else if (res.status == 1) {
-				statusName.value = '正常';
-			} else {
-				statusName.value = '空';
-			}
-			ShowDataAllData.value.physDiskTotal = (res.physDiskTotal / 100000000).toFixed(2);
-			ShowDataAllData.value.physMemTotal = (res.physMemTotal / 100000000).toFixed(2);
 		});
 	};
 	GetData();
@@ -585,7 +575,6 @@ import Line from './component/line_dep.vue'
 		localStorage.setItem('pageID', pageID.value);
 	};
 	const BtnOk = async () => {
-		console.log(formState_bas.value.loggingTypeList, 'formState_bas.value.6666666666');
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {

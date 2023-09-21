@@ -29,7 +29,8 @@
       <a-card>
         <a-button type="primary" style="margin-bottom: 4px;" @click="isOpen"><plus-outlined />添加</a-button>
         <!-- :row-selection="rowSelection" -->
-        <a-table :columns="columns" :data-source="data" :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 510 }">
+        <a-table :columns="columns" :data-source="data" :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 510 }"
+          bordered>
           <template #bodyCell="{ column, record }">
             <!-- <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
@@ -125,13 +126,12 @@
               <a-radio-group v-model:value="value" name="radioGroup" @change="changstatusFn(value)">
                 <a-radio value="1">启用</a-radio>
                 <a-radio value="0">禁用</a-radio>
-
               </a-radio-group>
             </a-form-item>
             <a-form-item :rules="fromaclinfoRules.Geography" label="地理位置" name="aclRelName" style='margin-top: 26px'>
 
               <a-input v-model:value="aclInfoData.aclRelName" placeholder="请输入地理位置" /> 
-             在之内别动嗯嗯这个我没定义刚刚那个是selsed的value 现在没问题了有我这v-model要绑定的是最后一个字段name: "石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端
+             这v-model要绑定的是最后一个字段name: "石家庄市"把选中的市放到参数aclInfoData.value.aclRelName 然后发起请求传给后端
               这个value的值就是code，是的但是要把code 赋值给aclInfoData.value.aclRelName然后就发起请求传给后端
               <a-cascader v-model:value="activeAere" :options="getdistrictList"
                 :fieldNames="{ label: 'name', value: 'code', children: 'child' }" placeholder="请选择"
@@ -285,21 +285,15 @@ const handleChange = (value) => {
 }
 const changeradioFn = (value) => {
   console.log(value, 'value');
-  // radiovalue.value = value
   console.log(radiovalue.value, value)
   aclInfoData.value.aclType = radiovalue.value
   if (aclInfoData.value.aclType == 0) {
     aclInfoData.value.aclRelName = ""
-    // aclInfoData.value.status = '1'
-    // valueradio.value = '1'
   } else if (aclInfoData.value.aclType == 1) {
     aclInfoData.value.aclRelName = ""
-    // aclInfoData.value.status = '1'
-    // valueradio.value = '1'
   } else {
     aclInfoData.value.aclRelName = ""
-    // aclInfoData.value.status = '1'
-    // valueradio.value = '1'
+
   }
 
 }
@@ -307,13 +301,9 @@ const addaclRelNameFn = async (record) => {
   let aclId = record.aclId
   console.log(aclId);
   aclInfoData.value.aclId = aclId
-  // console.log(aclInfoData.value.aclId);
   visibleinfo.value = true
   opTitles.value = "新增ACL详情"
 
-  // let aclId = record.aclId
-
-  // router.push(`/acl/addaclInfo?${aclId}`)
 }
 const handleOkaclRelNameFn = async () => {
   try {
@@ -334,8 +324,6 @@ const handleOkaclRelNameFn = async () => {
 const initData = async () => {
   console.log('搜索11111');
   acllist(formData.value).then(res => {
-    // console.log(res.records, 'res11');
-    // console.log(res.total, 'res11');
     data.value = res.records
     totals.value = res.total
   });
@@ -354,9 +342,7 @@ const onShowSizeChange = (current, pageSize) => {
 const onFinish = values => {
   // console.log('Success:', values);
 };
-// const onFinishFailed = errorInfo => {
-//   // console.log('Failed:', errorInfo);
-// };
+
 const isOpen = async (record) => {
   console.log(record, 'record');
   visible.value = true
@@ -442,7 +428,7 @@ const AlldelFn = () => {
 function onGoToaclInfo(record) {
   let aclId = record.aclId
   router.push(`/acl/aclInfo?${aclId}`)
-  ///acl/aclInfo?1697083862184730626
+  //acl/aclInfo?1697083862184730626
 }
 </script>
 <style scoped lang="less">

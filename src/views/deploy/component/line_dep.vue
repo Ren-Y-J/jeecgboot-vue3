@@ -248,7 +248,7 @@ const formState = ref({
   aclId: [],
   host: null,//主机
   lineName: "",
-  hostId:''
+  groupId:''
 })
 const changeradioFn = (value) => {
 
@@ -262,7 +262,7 @@ const commonEnty = ref({ values: [] })//// 对象包数组
 const formData = ref({
   pageNum: 1,
   pageSize: 10,
-  host: '',
+  groupId: '',
 });
 const state = reactive({
   selectedRowKeys: [],
@@ -271,11 +271,12 @@ const pageID = ref('')
 const initData = async () => {
 	let url = location.search;
 		pageID.value = url.replace('?', '');
-		formState.value.hostId=pageID.value
+		formState.value.groupId=pageID.value
 	formState.value.host=pageID.value 
 	
-formData.value.host=pageID.value 
-	console.log(formData.value.host,'formData.value.hostformData.value.host')
+	
+	
+formData.value.groupId=pageID.value 
   let { records, total } = await list(formData.value)
   
   data.value = records

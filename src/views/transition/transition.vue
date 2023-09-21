@@ -1,9 +1,9 @@
 <template>
 	<div style="padding: 10px">
 		<!-- 头部搜索 -->
-		<div class="page" >
+		<div class="page">
 			<a-form>
-				<div style='display: flex;'>
+				<div style="display: flex">
 					<a-form-item label="名称" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
 						<a-input v-model:value="name" placeholder="请输入名称"></a-input>
 					</a-form-item>
@@ -22,7 +22,7 @@
 			<a-button type="primary" @click="addOpen"> <search-outlined />添加转发服务器</a-button>
 			<a-table
 				:rowKey="(record) => record.hostId"
-				style='margin-top:5px'
+				style="margin-top: 5px"
 				:pagination="false"
 				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
 				:columns="columns"
@@ -40,11 +40,11 @@
 					<template v-if="column.dataIndex === 'operation'">
 						<div style="display: flex; justify-content: center; align-items: center">
 							<div class="pointer" style="margin-right: 5px" @click="editBtn(record)">
-							<span class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
+								<span class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
 							</div>
 							<div class="pointer">
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-										<span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
+									<span class="pointer" style="color: #2e7dff; margin-right: 8px">删除</span>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -113,7 +113,6 @@
 				</a-form-item>
 			</a-form>
 		</a-modal>
-		
 	</div>
 </template>
 
@@ -204,6 +203,13 @@
 				console.log(error);
 				return;
 			}
+
+			for (let i = 0; i < IPlists.value.length; i++) {
+				if (IPlists.value[i].ip == undefined) {
+					message.error('第' + (i + 1) + '条IP不能为空');
+					return;
+				}
+			}
 			IPlists.value = IPlists.value.filter((item) => item.ip !== undefined);
 			addlist({
 				ipList: IPlists.value,
@@ -211,13 +217,19 @@
 				note: formState.value.note,
 			}).then((res) => {
 				message.success('添加成功');
-				 formRef.value.resetFields()
+				formRef.value.resetFields();
 				getData();
 				add_visible.value = false;
 			});
 		}
-		
+
 		if (modelType.value == 1) {
+			for (let i = 0; i < IPlists.value.length; i++) {
+				if (IPlists.value[i].ip == undefined) {
+					message.error('第' + (i + 1) + '条IP不能为空');
+					return;
+				}
+			}
 			editlist({
 				id: recordID.value,
 				ipList: IPlists.value,
@@ -241,12 +253,23 @@
 			ip: IPlists.value.ip,
 			note: IPlists.value.note,
 		};
+		console.log(IPlists.value, 'IPlists.value');
+
+		for (let i = 0; i < IPlists.value.length; i++) {
+			if (IPlists.value[i].ip == undefined) {
+				message.error( '请输入第' + (i + 1) + '条IP');
+				return;
+			}
+		}
+		
+		
+		
+		
 		if (IPlists.value[0].ip == '') {
 			message.error('请输入IP');
 		} else {
 			IPlists.value.push(cope);
 		}
-		console.log(IPlists.value[0].ip, 'cope');
 	};
 	const editBtn = (record) => {
 		recordID.value = record.id;
@@ -298,8 +321,8 @@
 		if (add_visible.value == false) {
 			name.value = '';
 			note.value = '';
-			formState.value.name='';
-				formState.value.note='';
+			formState.value.name = '';
+			formState.value.note = '';
 			IPlists.value = [
 				{
 					ip: '',

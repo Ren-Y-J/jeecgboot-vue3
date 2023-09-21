@@ -84,11 +84,24 @@
           :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
           :rowKey="(record) => record.lineId" bordered>
           <template #bodyCell="{ column, record }">
-
-            <template v-if="column.dataIndex === 'ipAddress'">
-              <div @click="GoDep(record)" style="cursor:pointer;"> {{ record.ipAddress }}</div>
+            <template v-if="column.dataIndex === 'aclId'">
+              <!-- border-bottom: 1px solid #109eff; -->
+              <div v-if="record.aclId == null" type="link"> 不限地址段 </div>
+              <div v-else>{{ record.aclId }}</div>
 
             </template>
+            <template v-if="column.dataIndex === 'ipAddress'">
+              <!-- <a-button type="primary" ghost @click="GoDep(record)"
+                style="cursor:pointer;border: none;border-bottom: 1px solid; ">
+                {{ record.ipAddress }}
+              </a-button> -->
+              <div style="display: flex; justify-content: center; align-items: center">
+                <span style="text-decoration: underline; text-decoration-color: blue; color: blue;cursor:pointer"
+                  @click='GoDep(record)'>{{ record.ipAddress }}
+                </span>
+              </div>
+            </template>
+
             <template v-if="column.dataIndex === 'status'">
 
               <div v-if='record.status == 1'
@@ -146,7 +159,7 @@
               <a-radio :value="1">ACL选择</a-radio>
             </a-radio-group>
           </a-form-item>
-          <div v-show="radiovalue == 1">
+          <div v-if="radiovalue == 1">
             <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
             <div style="margin-left:130px ;">
               <!--  -->
@@ -168,8 +181,11 @@
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
                 @change="handleChange">
-                <a-select-option :value="item.hostId" v-for=" item  in  allhostId " :key="item.hostId
-                  ">{{ item.hostName }}</a-select-option>
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
+                  ">
+                  <!-- {{ item.hostName }} -->
+                  {{ item.ipAddress }}
+                </a-select-option>
               </a-select>
             </a-space>
           </a-form-item>
@@ -191,7 +207,8 @@
               <a-radio :value="1">ACL选择</a-radio>
             </a-radio-group>
           </a-form-item>
-          <div v-show="editradiovalue == 1">
+
+          <div v-if="editradiovalue == 1">
             <div style="margin-left:130px ;">
               <a-form-item label="" :validateTrigger="['change', 'blur']" :rules="editlineRules.aclId" name="aclId"
                 style='margin-top: 10px'>
@@ -199,21 +216,20 @@
                   <a-select placeholder="请选择" ref="select" v-model:value="editformState.aclId" style="width: 160px"
                     @focus="focus" @change="handleChanges" mode="tags" :size="size" :options="allaclId"
                     :field-names="{ label: 'aclName', value: 'aclId' }">
-
                   </a-select>
                 </a-space>
               </a-form-item>
             </div>
           </div>
-          <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
+          <!-- <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                 @focus="focus" @change="handleChangehost">
-                <a-select-option :value="item.hostId" v-for=" item  in  allhostId " :key="item.hostId
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
-          </a-form-item>
+          </a-form-item> -->
         </a-form>
       </a-modal>
       <!-- 线路排序 -->
@@ -226,7 +242,7 @@
               <a-space>
                 <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                   @focus="focus" @change="handleChangsort">
-                  <a-select-option :value="item.hostId" v-for=" item  in  allhostId " :key="item.hostId
+                  <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
                     ">{{ item.ipAddress }} </a-select-option>
                   <!-- <div>
                   <span>{{ item.hostName }}</span>
@@ -238,7 +254,7 @@
             </a-form-item>
             <!-- <a-form-item> -->
             <!-- style="padding-left: 60px;" -->
-            <ul v-for="( item, index ) in  lineNameList " style="padding-left: 56px;">
+            <ul v-for="(     item, index     ) in      lineNameList     " style="padding-left: 56px;">
               <!-- border:0.5px solid #EBEBEB; -->
               <span
                 style="border-top:0.5px solid #EBEBEB;border-bottom:0.5px solid #EBEBEB; width: 404px;display: inline-block;padding-top: 6px;padding-bottom: 6px;">
@@ -265,7 +281,9 @@
 <script name='line' setup>
 import { ref, defineComponent, reactive, watch } from 'vue'
 import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName, upswitch } from './line'
+import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 import { message } from 'ant-design-vue';
+
 
 // 我没引入
 const columns = [{
@@ -458,7 +476,7 @@ const getaclId = async () => {
   console.log(res, 'resACL选择1111');
   // allaclId.value = res.map(item => item.aclId)
   allaclId.value = res
-
+  console.log(allaclId.value);
 
 
 }
@@ -473,8 +491,8 @@ const isOpen = async (record) => {
     console.log(res, '回显999');
     formState.value = res
 
-    // 等于字符串你Jparse干嘛，转成数组为啥要转呐，而且我一开始在这做的判断0传
-    // 不是，你那个接口0还是1都是json字符串，我0是空数组，你的意思是0 的时候传 1是
+
+    // 接口0还是1都是json字符串，0是空数组，1是数组包字符串
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
       console.log(formState.value.aclId);
@@ -501,7 +519,7 @@ const handleOk = async () => {
   }
   console.log(lineIds.value, 'id');
   console.log(formState.value.formState, '//')
-  // 这个在1的时候后端说类型要加 JSON.stringify 。
+  // 这个在1的时候类型要加 JSON.stringify 。
   formState.value.aclId = JSON.stringify(formState.value.aclId);
   let res = await addaclIdAll(formState.value)
   console.log(res, 'resdata');
@@ -590,36 +608,24 @@ const editformState = ref({
 
 const editisOpen = async (record) => {
   editvisible.value = true
-  console.log(record, 'record');
-
   editopTitle.value = '修改线路配置'
   // 这是把路线的id参数还起请求
+  console.log(editlineRules.aclId);
+  console.log(allaclId.value, 'allaclId.value');
   if (record.lineId) {
     let res = await lineInfo(`${record.lineId}`)
-    console.log(res, '回显999');
-    editformState.value = res
-    let originalArray = res.aclId
-    console.log(originalArray);
-    // let convertedArray = originalArray.map(str => str.replace(/[\[\]]/g, ""));
+    console.log(res.aclId, '回显999');
 
-    // console.log(convertedArray);
-    // editformState.value.aclId = JSON.parse(convertedArray)
-    // 等于字符串Jparse，转成数组为啥要转呐，而且我一开始在这做的判断0传
-    // 那个接口0还是1都是json字符串，
-    // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
+    editformState.value = res
+    if (res.aclId != '[]') {
+      editradiovalue.value = 1
+    } else {
+      editradiovalue.value = 0
+    }
+    // 那个接口0还是1都是json字符串
     if (typeof (res.aclId) == 'string') {
       console.log(editformState.value.aclId, '这是编辑配置的aclId');
-      // let aclIds = res.aclId.map(String);
-      // console.log(aclIds);
-      // editformState.value.aclId = JSON.parse(aclIds)
-      let originalArray = res.aclId
-      let convertedArray = originalArray.map(str => str.replace(/[\[\]]/g, ""));
-
-      console.log(convertedArray);
-      editformState.value.aclId = JSON.parse(convertedArray)
-
-      console.log(editformState.value.aclId);
-      // editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
+      editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
       console.log(editformState.value.aclId, '这是编辑配置的aclId');
     } else {
       editformState.value.aclId = [] //这是0
@@ -628,7 +634,6 @@ const editisOpen = async (record) => {
   } else {
     editopTitle.value = "新增线路配置"
   }
-
 }
 const editonCloseaclFn = async () => {
   editvisible.value = false
@@ -658,17 +663,14 @@ const edithandleOk = async () => {
   editonCloseaclFn()
 }
 const editchangeradioFn = (value) => {
-  // console.log(value, 'value这是拿acl的id的路线');
+  // console.log(value, 'value这是拿acl的id的路线'); // 就是选acl的时候，对应的内容清空
   if (editradiovalue.value == 1 && editformState.value.aclId.length == 0) { //那0传的是数组
     editformState.value.aclId = []
   }
 }
 const handleChanges = (value) => {
   console.log(value, 'aaa');
-  // let originalArray = value
-  // editformState.value.aclId = originalArray.map(String);
 
-  // console.log(editformState.value.aclId);
 }
 // 这块写的是线路排序
 const sortvisible = ref(false)
@@ -785,6 +787,17 @@ const delAll = () => {
   .contion {
     ::v-deep(.ant-card-body) {
       padding: 6px !important;
+    }
+
+    .examPaper_header::after {
+      content: '';
+      width: 100%;
+      height: 1px;
+      display: block;
+      margin: 4px auto;
+      // #109eff
+      // border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+      border-bottom: 1px solid #109eff;
     }
 
   }

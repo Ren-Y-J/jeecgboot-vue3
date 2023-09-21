@@ -6,27 +6,29 @@
           @finish="onFinish" @finishFailed="onFinishFailed">
           <a-row :gutter="1">
             <a-col :md="6" :sm="24">
-              <a-form-item label="所有主机" name="" style='display: flex;' :label-col="{ span: 8 }"
-                :wrapper-col="{ span: 16 }">
+              <a-form-item style="margin-bottom: 0px;" label="名称" name="lineName" :labelCol="{ span: 6 }"
+                :wrapperCol="{ span: 16 }">
+                <a-input v-model:value="formData.lineName" placeholder="请输入ACL名称" />
+              </a-form-item>
+
+            </a-col>
+            <a-col :md="3" :sm="24">
+              <a-form-item label="主机组" name="" style='display: flex;' :label-col="{ span: 7 }"
+                :wrapper-col="{ span: 10 }">
                 <a-space>
-                  <a-select placeholder="请选择" ref="select" v-model:value="formData.host" style="width: 160px"
+                  <a-select placeholder="请选择" ref="select" v-model:value="formData.groupId" style="width: 160px"
                     @focus="focus" @change="handleChangeFn">
-                    <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                      ">{{ item.ipAddress }}</a-select-option>
+                    <a-select-option :value="item.groupId" v-for="item in allhostIds" :key="item.groupId
+                      ">{{ item.groupName }}</a-select-option>
                   </a-select>
                 </a-space>
               </a-form-item>
-              <!-- <a-form-item style="margin-bottom: 0px;" label="名称" name="aclName" :labelCol="{ span: 6 }"
-                :wrapperCol="{ span: 16 }">
-                <a-input v-model:value="formData.aclName" placeholder="请输入ACL名称" />
-              </a-form-item> -->
+
             </a-col>
             <a-col :md="4" :sm="5">
               <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; ">
                 <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                   <search-outlined />搜索</a-button>
-                <!-- <a-button :style="{ margin: '0px 5px ' }" type="primary"
-                  @click="AlldelFn"><reload-outlined />重置</a-button> -->
                 <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
               </span>
             </a-col>
@@ -35,11 +37,10 @@
       </a-card>
 
     </div>
-    <!-- :row-selection="rowSelection" -->
+
     <div class="contion">
       <a-card>
         <div class="btn">
-          <!-- type="success"style="color: #fff;background:#44b363"  -->
           <div class="left">
             <a-button type="primary" @click="isOpen">添加线路</a-button>
             <a-button type="primary" @click="isOpensort">线路排序</a-button>
@@ -86,19 +87,19 @@
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'aclId'">
               <!-- border-bottom: 1px solid #109eff; -->
-              <!-- <div v-if="editformState.value.aclId !== []" type="link"> {{ record.aclId }}</div>
-              <div v-else>{{ 不限地址段 }}</div> -->
-              <!-- <a-button v-if="record.aclId = []">{{
-                不限地址段 }}</a-button> -->
+              <div v-if="record.aclId == null" type="link"> 不限地址段 </div>
+              <div v-else>{{ record.aclId }}</div>
+
             </template>
-            <template v-if="column.dataIndex === 'ipAddress'">
+            <template v-if="column.dataIndex === 'groupId'">
               <!-- <a-button type="primary" ghost @click="GoDep(record)"
                 style="cursor:pointer;border: none;border-bottom: 1px solid; ">
                 {{ record.ipAddress }}
               </a-button> -->
-              <div style="display: flex; justify-content: center; align-items: center" class='cursor:pointer'
-                @click='GoDep(record)'>
-                <span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }}
+              <div style="display: flex; justify-content: center; align-items: center">
+                <span style="text-decoration: underline; text-decoration-color: blue; color: blue;cursor:pointer"
+                  @click='GoDep(record)'>{{ record.groupName }}
+
                 </span>
               </div>
             </template>
@@ -125,11 +126,8 @@
                 <a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="SwitchFn(record)">
                   <a-button v-show="record.status == 0" type="link">启用</a-button>
                   <a-button v-show="record.status == 1" type="link">禁用</a-button>
-
                 </a-popconfirm>
-
               </div>
-
             </template>
 
           </template>
@@ -161,7 +159,7 @@
             </a-radio-group>
           </a-form-item>
           <div v-if="radiovalue == 1">
-            <!-- 这块显示的时候是点击>ACL选择，他要传的字段是数组包字符还要stringify这是昨天新增试出来的 -->
+            <!-- 这块显示的时候是点击>ACL选择，传的字段是数组包字符还要stringify -->
             <div style="margin-left:130px ;">
               <!--  -->
               <a-form-item :validateTrigger="['change', 'blur']"
@@ -178,12 +176,14 @@
             </div>
 
           </div>
-          <a-form-item label="所属主机" :rules="fromlineRules.host" name="host" style='margin-top: 26px'>
+          <a-form-item label="所属主机" :rules="fromlineRules.groupId" name="groupId" style='margin-top: 26px'>
             <a-space>
-              <a-select placeholder="请选择" ref="select" v-model:value="formState.host" style="width: 160px" @focus="focus"
-                @change="handleChange">
-                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                  ">{{ item.hostName }}</a-select-option>
+              <a-select placeholder="请选择" ref="select" v-model:value="formState.groupId" style="width: 160px"
+                @focus="focus" @change="handleChange">
+                <a-select-option :value="item.groupId" v-for="item in allhostIds" :key="item.groupId
+                  ">
+                  {{ item.groupName }}
+                </a-select-option>
               </a-select>
             </a-space>
           </a-form-item>
@@ -219,7 +219,7 @@
               </a-form-item>
             </div>
           </div>
-          <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
+          <!-- <a-form-item label="所属主机" :rules="editlineRules.host" name="host" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
                 @focus="focus" @change="handleChangehost">
@@ -227,7 +227,7 @@
                   ">{{ item.hostName }}</a-select-option>
               </a-select>
             </a-space>
-          </a-form-item>
+          </a-form-item> -->
         </a-form>
       </a-modal>
       <!-- 线路排序 -->
@@ -236,24 +236,18 @@
           <a-form ref='sortlineRef' :model="editformState" name="basic" :label-col="{ span: 6 }"
             :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed"
             :validateTrigger="['change']">
-            <a-form-item label="所属主机" :rules="sortlineRules.host" name="host" style='margin-top: 26px'>
+            <a-form-item label="所属主机" :rules="sortlineRules.groupId" name="groupId" style='margin-top: 26px'>
               <a-space>
-                <a-select placeholder="请选择" ref="select" v-model:value="editformState.host" style="width: 160px"
+                <a-select placeholder="请选择" ref="select" v-model:value="editformState.groupId" style="width: 160px"
                   @focus="focus" @change="handleChangsort">
-                  <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                    ">{{ item.ipAddress }} </a-select-option>
-                  <!-- <div>
-                  <span>{{ item.hostName }}</span>
-                </div> -->
+                  <a-select-option :value="item.groupId" v-for="item in allhostIds" :key="item.groupId
+                    ">{{ item.groupName }}</a-select-option>
                 </a-select>
 
               </a-space>
 
             </a-form-item>
-            <!-- <a-form-item> -->
-            <!-- style="padding-left: 60px;" -->
-            <ul v-for="(     item, index     ) in      lineNameList     " style="padding-left: 56px;">
-              <!-- border:0.5px solid #EBEBEB; -->
+            <ul v-for="(item, index) in lineNameList" style="padding-left: 56px;">
               <span
                 style="border-top:0.5px solid #EBEBEB;border-bottom:0.5px solid #EBEBEB; width: 404px;display: inline-block;padding-top: 6px;padding-bottom: 6px;">
                 <li class="itemlineName" style='display: flex;height: 32px;line-height: 32px;padding-left: 4px;'>
@@ -267,8 +261,6 @@
                 </li>
               </span>
             </ul>
-            <!-- </a-form-item> -->
-
           </a-form>
         </a-modal>
       </div>
@@ -278,8 +270,10 @@
 </template>
 <script name='line' setup>
 import { ref, defineComponent, reactive, watch } from 'vue'
-import { list, gethostsAll, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, sortlineName, upswitch } from './line'
+import { list, gethostsAll, gethostsAlls, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, getinfolineNames, sortlineName, upswitch } from './line'
+import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 import { message } from 'ant-design-vue';
+
 
 // 我没引入
 const columns = [{
@@ -299,8 +293,8 @@ const columns = [{
   width: 228,
   align: 'center'
 }, {
-  title: '主机IP',
-  dataIndex: 'ipAddress',
+  title: '主机组',
+  dataIndex: 'groupId',
   width: 228,
   align: 'center'
 },
@@ -329,9 +323,9 @@ const columns = [{
 const formlineRef = ref(null)
 const editlineRef = ref(null)
 const sortlineRef = ref(null)
-const fromlineRules = {//是这个嘛是新增的ruls校验验证      我看看
+const fromlineRules = {//新增的ruls校验验证     
   lineName: [{ required: true, message: "请输入线路名称" }],
-  host: [{ required: true, message: "请选择" }],
+  groupId: [{ required: true, message: "请选择" }],
 }
 const editlineRules = {
   lineName: [{ required: true, message: "请输入线路名称" }],
@@ -340,13 +334,14 @@ const editlineRules = {
 
 }
 const sortlineRules = {
-  host: [{ required: true, message: "请选择" }]
+  groupId: [{ required: true, message: "请选择" }]
 }
 const data = ref([])
 const totals = ref(0)
 const allclusterId = ref([])
 const number = ref(0)
 const allhostId = ref([])
+const allhostIds = ref([]) //获取所有主机组数据
 const allaclId = ref([])
 const visible = ref(false)
 const opTitle = ref('新增线路配置')
@@ -354,20 +349,10 @@ const lineIds = ref('')
 
 // -------------------
 const radiovalue = ref(0);
-// watch([radiovalue.value, editradiovalue.value], (res, RES1) => {
-//   // formlineRef.value.validateFields(['aclId']);
-//   console.log('cp________________________');
-//   formState.value.aclId = []
-//   if (RES1 == 0) {
-//     editformState.value.aclId = []
-//   }
-
-
-// }, { flush: 'post' })
 //---------------
 const formState = ref({
   aclId: [],
-  host: null,//主机
+  groupId: null,//主机
   lineName: "",
 })
 const changeradioFn = (value) => {
@@ -383,7 +368,8 @@ const commonEnty = ref({ values: [] })//// 对象包数组
 const formData = ref({
   pageNum: 1,
   pageSize: 10,
-  host: undefined
+  groupId: undefined,
+  lineName: ''
 
 });
 const state = reactive({
@@ -391,9 +377,7 @@ const state = reactive({
 });
 
 const initData = async () => {
-  // console.log('搜索11111');这是formData
   let { records, total } = await list(formData.value)
-
   data.value = records
   totals.value = total
 }
@@ -426,12 +410,12 @@ const SwitchFn = async (record) => {
   }
 }
 const GoDep = (record) => {
-  let id = record.host;
+  let id = record.groupId;
   window.open('/deploy?' + id);
 };
 const handleChangeFn = async (value) => {
   console.log(value, '66');
-  formData.value.host = value
+  formData.value.groupId = value
   // 代码抽离出去
   // formData.value.pageNum = 1
   // initData(formData.value)
@@ -449,7 +433,8 @@ const handleQuery = async () => {
 }
 const AlldelFn = () => {
   formData.value.pageNum = 1
-  formData.value.host = undefined
+  formData.value.groupId = undefined
+  formData.value.lineName = ''
   initData()
 
 }
@@ -457,14 +442,21 @@ const AlldelFn = () => {
 const gethost = async () => {
   // console.log('搜索11111');
   let res = await gethostsAll()
-  console.log(res, 'res主机');
-  // allhostId.value = res.map(item => item.hostId)
+  // console.log(res, 'res主机');
   allhostId.value = res
-  // console.log(allhostId.value);
+  console.log(allhostId.value);
 
 
 }
 gethost()
+const gethosts = async () => {
+  // console.log('搜索11111');
+  let res = await gethostsAlls()
+  // console.log(res, '获取所有主机组');
+  allhostIds.value = res
+  console.log(allhostIds.value);
+}
+gethosts()
 // resACL选择
 const getaclId = async () => {
   // console.log('搜索11111');
@@ -478,17 +470,17 @@ const getaclId = async () => {
 }
 getaclId()
 const isOpen = async (record) => {
-  console.log(record, 'record');
+  // console.log(record, 'record');
   visible.value = true
   opTitle.value = '新增线路配置'
   // 这是把路线的id参数还起请求
   if (record.lineId) {
     let res = await lineInfo(`${record.lineId}`)
-    console.log(res, '回显999');
+    // console.log(res, '回显999');
     formState.value = res
 
-    // 等于字符串你Jparse干嘛，转成数组为啥要转呐，而且我一开始在这做的判断0传
-    // 不是，你那个接口0还是1都是json字符串，我0是空数组，你的意思是0 的时候传 1是
+
+    // 接口0还是1都是json字符串，0是空数组，1是数组包字符串
     // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
     if (typeof (res.aclId) == 'string') {
       console.log(formState.value.aclId);
@@ -515,10 +507,10 @@ const handleOk = async () => {
   }
   console.log(lineIds.value, 'id');
   console.log(formState.value.formState, '//')
-  // 这个在1的时候后端说类型要加 JSON.stringify 。
+  // 这个在1的时候类型要加 JSON.stringify 。
   formState.value.aclId = JSON.stringify(formState.value.aclId);
   let res = await addaclIdAll(formState.value)
-  console.log(res, 'resdata');
+  // console.log(res, 'resdata');
   initData()
   visible.value = false
   message.success('添加成功')
@@ -604,8 +596,6 @@ const editformState = ref({
 
 const editisOpen = async (record) => {
   editvisible.value = true
-  console.log(record, 'record');
-
   editopTitle.value = '修改线路配置'
   // 这是把路线的id参数还起请求
   console.log(editlineRules.aclId);
@@ -615,14 +605,12 @@ const editisOpen = async (record) => {
     console.log(res.aclId, '回显999');
 
     editformState.value = res
-    // if (editformState.value.aclId != []) {
-    //   editradiovalue.value = 1
-    // } else if (editformState.value.aclId = []) {
-    //   editradiovalue.value = 0
-    // }
-    // 等于字符串Jparse，转成数组为啥要转呐，而且我一开始在这做的判断0传
-    // 那个接口0还是1都是json字符串，
-    // 这边是回显，理论上不要做判断，保险起见还是判断一下，不能保证数据格式
+    if (res.aclId != '[]') {
+      editradiovalue.value = 1
+    } else {
+      editradiovalue.value = 0
+    }
+    // 那个接口0还是1都是json字符串
     if (typeof (res.aclId) == 'string') {
       console.log(editformState.value.aclId, '这是编辑配置的aclId');
       editformState.value.aclId = JSON.parse(res.aclId)//这是1是对象包字符串
@@ -690,7 +678,8 @@ const lineNameList = ref([])
 const handleChangsort = async (value) => {
   console.log(value, 'ipAddress');
   let id = value
-  let res = await getinfolineName({ value })
+  // let res = await getinfolineName({ value })
+  let res = await getinfolineNames({ value })
   console.log(res, 'res518');
   lineNameList.value = res
   // let res1 = allhostId.value.map(item => {
