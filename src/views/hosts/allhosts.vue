@@ -145,7 +145,7 @@
 						<div>
 							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
 							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
-							<span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span>
+							<!-- <span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span> -->
 						</div>
 					</template>
 				</template>
@@ -164,7 +164,7 @@
 		</div>
 	</div>
 	<!-- 模态框添加主机 -->
-	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK"   >
+	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK">
 		<!-- 添加 -->
 		<div class="addcomputer">
 			<a-form
@@ -199,11 +199,7 @@
 				</a-form-item>
 				<a-form-item label="主机组" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="role" :rules="formRules.role">
 					<a-select v-model:value="formState.role" @change="handleChange" placeholder="请选择主机组">
-						
-						
 						<a-select-option v-for=" (item, index ) in HostsGroupData " :key='index' :value="item.groupId">{{item.groupName}}</a-select-option>
-						
-						
 					</a-select>
 				</a-form-item>
 				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rack" :rules="formRules.rack">
