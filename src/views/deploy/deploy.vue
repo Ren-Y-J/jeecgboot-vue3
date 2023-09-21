@@ -457,7 +457,7 @@
 		statusName: '',
 		activeKey: '0',
 		formState_bas: {
-			hostId: '',
+			groupId: '',
 			checked: '',
 			checkedBox: false,
 			forwarderList: [],
@@ -535,9 +535,8 @@
 
 		let url = location.search;
 		pageID.value = url.replace('?', '');
-		formState_bas.value.hostId = pageID.value;
+		formState_bas.value.groupId = pageID.value;
 		ShowData(`${pageID.value}`).then((res) => {
-			console.log(res, 'res------------9-9-9-9-9-9-9-');
 			initData.value = res;
 			formState_bas.value.checked = res.confContent.checked;
 			formState_bas.value.forwarderList = res.confContent.forwarderList;
@@ -551,9 +550,7 @@
 			formState_bas.value.maxRecursionDepth = res.confContent.maxRecursionDepth;
 			formState_bas.value.maxRecursionQueries = res.confContent.maxRecursionQueries;
 			formState_bas.value.minCacheTtl = res.confContent.minCacheTtl;
-
 			formState_bas.value.maxCacheTtl = res.confContent.maxCacheTtl;
-
 			formState_bas.value.minNcacheTtl = res.confContent.minNcacheTtl;
 			formState_bas.value.resolverQueryTimeout = res.confContent.resolverQueryTimeout;
 			formState_bas.value.recursiveClients = res.confContent.recursiveClients;
@@ -571,15 +568,6 @@
 		ShowDataAll(`${pageID.value}`).then((res) => {
 			console.log(res, 'ShowDataAll');
 			ShowDataAllData.value = res;
-			// if (res.status == 0) {
-			// 	statusName.value = '异常';
-			// } else if (res.status == 1) {
-			// 	statusName.value = '正常';
-			// } else {
-			// 	statusName.value = '空';
-			// }
-			// ShowDataAllData.value.physDiskTotal = (res.physDiskTotal / 100000000).toFixed(2);
-			// ShowDataAllData.value.physMemTotal = (res.physMemTotal / 100000000).toFixed(2);
 		});
 	};
 	GetData();
@@ -587,7 +575,6 @@
 		localStorage.setItem('pageID', pageID.value);
 	};
 	const BtnOk = async () => {
-		console.log(formState_bas.value.loggingTypeList, 'formState_bas.value.6666666666');
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {

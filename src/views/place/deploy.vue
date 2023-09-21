@@ -73,6 +73,7 @@
 	<!-- 添加 -->
 	<a-modal v-model:visible="visible" title="添加" @ok="handleOk">
 		<a-form
+			v-for="(item, index) in formState"
 			style="margin-top: 10px"
 			ref="formRef_"
 			:model="formState"
@@ -82,21 +83,16 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
-			<a-form-item
-				label="记录名称"
-				:labelCol="{ span: 5 }"
-				:wrapperCol="{ span: 15 }"
-				:rules="[{ required: true, message: '请输入记录名称!' }]"
-				name="name"
-			>
-				<a-input placeholder="记录名称" v-model:value="formState.name" />
+			<div class="pointer" v-if="item.id !== '1'" @click="XiconBtn(index)">
+				<close-circle-filled class="Xicon" />
+			</div>
+
+			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="记录名称" v-model:value="item.name" />
 			</a-form-item>
 
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }"
-			:rules="[{ required: true, message: '请选择类型!' }]"
-			name="type"
-			>
-				<a-radio-group v-model:value="formState.type" style="width: 100%">
+			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-radio-group v-model:value="item.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
 					<a-radio value="1">AAAA </a-radio>
 					<a-radio value="2">CNAME</a-radio>
@@ -108,13 +104,20 @@
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
+				<a-select
+					@change="linechange"
+					v-model:value="item.lineId"
+					mode="multiple"
+					style="width: 100%"
+					placeholder="请选择"
+					:options="groupData"
+				></a-select>
 			</a-form-item>
 			<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="TTL" v-model:value="formState.ttl" />
+				<a-input placeholder="TTL" v-model:value="item.ttl" />
 			</a-form-item>
 			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录值" v-model:value="formState.content" />
+				<a-input placeholder="记录值" v-model:value="item.content" />
 			</a-form-item>
 		</a-form>
 
@@ -134,17 +137,23 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
-			<a-form-item 
-			:rules="[{ required: true, message: '请输入记录名称!' }]"
-			name="name"
-			label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+				:rules="[{ required: true, message: '请输入记录名称!' }]"
+				name="name"
+				label="记录名称"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-input placeholder="记录名称" v-model:value="formState_edit.name" />
 			</a-form-item>
 
-			<a-form-item 
-			:rules="[{ required: true, message: '请选择类型!' }]"
-			name="type"
-			label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+				:rules="[{ required: true, message: '请选择类型!' }]"
+				name="type"
+				label="类型"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-radio-group v-model:value="formState_edit.type" style="width: 100%">
 					<a-radio value="0">A</a-radio>
 					<a-radio value="1">AAAA </a-radio>
@@ -188,15 +197,18 @@
 		total: 0,
 		visible: false,
 		addRecord: false,
-		formState: {
-			name: '',
-			type: '',
-			lineId: undefined,
-			ttl: '',
-			content: '',
-			zoneId: '',
-			status: '1',
-		},
+		formState: [
+			{
+				id: '1',
+				name: '',
+				type: '',
+				lineId: undefined,
+				ttl: '',
+				content: '',
+				zoneId: '',
+				status: '1',
+			},
+		],
 		formState_edit: {
 			name: '',
 			type: '',
@@ -211,8 +223,7 @@
 		groupData: [],
 		edit_visible: false,
 	});
-	const { id, pageNum, pageSize, initdata, total, visible, formState, groupData, addRecord, edit_visible, formState_edit, search } =
-		toRefs(data);
+	const { id, pageNum, pageSize, initdata, total, visible, formState, groupData, addRecord, edit_visible, formState_edit, search } = toRefs(data);
 	const columns = [
 		{
 			title: '正向域名',
@@ -255,10 +266,19 @@
 	};
 	getData();
 	const addRecordBtn = () => {
+		formState.value.push({
+			name: '',
+			type: '',
+			lineId: undefined,
+			ttl: '',
+			content: '',
+			zoneId: '',
+			status: '1',
+		});
 		addRecord.value = true;
 	};
-	const XiconBtn = () => {
-		addRecord.value = false;
+	const XiconBtn = (index) => {
+		formState.value.splice(index, 1);
 	};
 	const delBtn = (record) => {
 		let values1 = [record.id];
@@ -272,7 +292,7 @@
 	const addBtn = () => {
 		// 获取线路
 		GetLine(`${id.value}`).then((res) => {
-			console.log(res,'9-9---9-9-')
+			console.log(res, '9-9---9-9-');
 			let transformedData = res.map((item) => {
 				return {
 					value: item.lineId,
@@ -283,47 +303,46 @@
 		});
 		visible.value = true;
 	};
-	const formRef_ = ref(null);
-	const formRef = ref(null);
 	const handleOk = async () => {
-		// 校验表单
-		if(addRecord.value == false){
-			try {
-				await formRef_.value.validate();
-			} catch (error) {
-				console.log(error);
+		for (let i = 0; i < formState.value.length; i++) {
+			if (formState.value[i].name == '') {
+				message.error('请输入第' + (i + 1) + '条记录名称');
 				return;
 			}
-		}
-		if(addRecord.value == true){
-			try {
-				await formRef.value.validate();
-				await formRef_.value.validate();
-			} catch (error) {
-				console.log(error);
+			if (formState.value[i].type == '') {
+				message.error('请选择第' + (i + 1) + '条类型');
 				return;
 			}
+			if (formState.value[i].lineId == undefined) {
+				message.error('请选择第' + (i + 1) + '条线路发布');
+				return;
+			}
+			if (formState.value[i].ttl == '') {
+				message.error('请输入第' + (i + 1) + '条TTL');
+				return;
+			}
+			if (formState.value[i].content == '') {
+				message.error('请输入第' + (i + 1) + '条记录值');
+				return;
+			}
+			formState.value[i].lineId = JSON.stringify(formState.value[i].lineId);
+			formState.value[i].zoneId = id.value;
 		}
-		
-		
-		// let formData = [];
-		// if (addRecord.value == true) {
-		// 	formData.push(formState.value, formState_1.value);
-		// }
-		// if (addRecord.value == false) {
-		// 	formData.push(formState.value);
-		// }
-
-		formState.forEach((item) => {
-			item.lineId = JSON.stringify(item.lineId);
-			// 添加 zoneId 字段，值为 id.value
-			item.zoneId = id.value;
-		});
 
 		AddList(formState.value).then((res) => {
 			message.success('添加成功');
 			visible.value = false;
-			clearData();
+
+			formState.value.forEach((item) => {
+				item.name = '';
+				item.type = '';
+				item.lineId = undefined;
+				item.content = '';
+				item.ttl = '';
+				item.zoneId = '';
+				item.status = '1';
+			});
+			formState.value.splice(1);
 			getData();
 		});
 	};
@@ -347,9 +366,8 @@
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-				console.log(formState_edit.value.lineId,'formState_edit.value.lineId')
+			console.log(formState_edit.value.lineId, 'formState_edit.value.lineId');
 			// formState_edit.value.lineId = formState_edit.value.lineId.replace(/\\/g, '');
-		
 		});
 		edit_visible.value = true;
 	};
@@ -361,9 +379,9 @@
 		formState.value.content = '';
 		formState.value.zoneId = '';
 	};
-	
-		const formRef_edit = ref(null);
-	const handleOk_edit = async() => {
+
+	const formRef_edit = ref(null);
+	const handleOk_edit = async () => {
 		try {
 			await formRef_edit.value.validate();
 		} catch (error) {
@@ -441,5 +459,6 @@
 		justify-content: flex-end;
 		align-items: flex-start;
 		font-size: 15px;
+		margin-right: 30px;
 	}
 </style>

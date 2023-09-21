@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 enum DeployApi {
-	Edit = '/hosts/conf/update',
+	Edit = '/host/group/conf/update',
 	trans = '/forwardServer/list/all',
 	Acl = '/acl/manage/listAll',
 }
@@ -8,7 +8,7 @@ enum DeployApi {
 // 修改主机 
 export const EditList = (params) => defHttp.post({ url: DeployApi.Edit, params });
 // 回显
-export const ShowData = (params) => defHttp.get({ url: '/hosts/conf/' + params });
+export const ShowData = (params) => defHttp.get({ url: '/host/group/conf/' + params });
 // 回显
 export const ShowDataAll = (params) => defHttp.get({ url: '/hosts/' + params });
 // 转发服务器
