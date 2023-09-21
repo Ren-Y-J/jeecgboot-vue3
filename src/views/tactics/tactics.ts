@@ -13,3 +13,5 @@ export const synclist = (params) => defHttp.get({ url: Tactics.synclist, params 
 export const addlist = (params) => defHttp.post({ url: Tactics.addlist, params });
 export const dellistAll = (params) => defHttp.post({ url: Tactics.dellistAll, params });
 export const editlist = (params) => defHttp.post({ url: Tactics.editlist, params });
+// 回显
+export const BackLine = (params) => defHttp.get({ url:'/policies/option/policy/'+ params });

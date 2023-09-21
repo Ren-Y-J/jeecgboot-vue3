@@ -261,6 +261,10 @@
 				return;
 			}
 		}
+		
+		
+		
+		
 		if (IPlists.value[0].ip == '') {
 			message.error('请输入IP');
 		} else {

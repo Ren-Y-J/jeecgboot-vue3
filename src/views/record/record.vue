@@ -172,7 +172,7 @@
           </a-form-item>
           <div class="line"  v-for="item in formDataName" :key="item">
             <div  style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
-				      <close-circle-filled class="Xicon"  v-show="item.id!=1"/>
+				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)"  v-show="item.id!=1"/>
             </div>
               <a-form-item label="记录名称"  :rules="[{ required: true}]"  style='margin-top: 18px'>
                 <a-input @change="chengeInput" v-model:value="item.name" placeholder="请输入记录名称" style='width:50%' />
@@ -333,7 +333,7 @@ const data = reactive({
   total:0,
   visible:false,
   ttl:"",
-  lineId:"",
+  lineId:undefined,
   pageNum: 1,
 	pageSize: 10,
   commonEnty:{values:[]},
@@ -398,13 +398,38 @@ const {
 const formRef = ref(null);//添加按钮弹框需要的ref
 const formRef_ = ref(null);
 const addFn = () => {//点击确定按钮
+
 formDataName.value.forEach((item)=>{
   item.zoneId = formState.value.zoneId
-  item.lineId = JSON.stringify(item.lineId);
+  // item.lineId = JSON.stringify(item.lineId)
  })
-console.log(formDataName.value);
+// let that=this
+// for(let i=0;i<=formDataName.value.length;i++){
+//      formDataName.value[i].zoneId = formState.value.zoneId
+//     //  formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);
+//     //  break
+//     //  console.log(formDataName.value[i].zoneId,formDataName.value[i].lineId);
+//   // for(let j=0;j<=formDataName.value[i];j++){
+     
+//   //   console.log(formDataName.value[i][j],'1111');
+//   //     // formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);return
+//   // }
+//   // console.log(formDataName.value[i].lineId,'000');
+//   // formDataName.value[i].zoneId = formState.value.zoneId
+//   // console.log(formDataName.value[i].lineId,'formDataName.value[i].lineId');
+//   // formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);return
+// }
+// console.log(formDataName.value,'11111');
+  //    addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
+	// 		message.success('添加成功');
+	// 		visible.value = false;//关闭弹框
+	// 		onClose();
+	// 		getcordList();
+	// });
+// console.log(formDataName.value);
 formDataName.value.forEach((item)=>{
-  console.log(item,'11111');
+  // item.lineId = JSON.stringify(item.lineId)
+  // console.log(item,'11111');
  if(item.zoneId == ""){
   message.error('请选择域名')
  }else if(item.name == ''){
@@ -417,22 +442,31 @@ formDataName.value.forEach((item)=>{
    message.error('请填写TTL')
  }else if(item.lineId == undefined){
    message.error('请选择线路')
+   
  }else{
-    addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
+  addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
 			message.success('添加成功');
 			visible.value = false;//关闭弹框
 			onClose();
 			getcordList();
-	});
+	}); 
  }
 })
-   
-
 }
 
 // 添加弹框内的change事件
 const handleChangsortadd =(value) =>{
-    formState.value.lineId=value
+    // formState.value.lineId=value
+    formDataName.value.lineId=value
+    formDataName.value.forEach((item)=>{
+       if(formDataName.value.id == 1){
+      formDataName.value.lineId = JSON.stringify(formDataName.value.lineId)
+    }
+    })
+    for(let item of  formDataName.value){
+      item.lineId = JSON.stringify(item.lineId);return
+    }
+    
 }
 
 // 关闭弹框
@@ -465,15 +499,13 @@ getcordList()//调用列表数据
 //添加按钮，让里面的数据清空
  const showModal = () => {
       visible.value = true;//显示弹框
-      zoneName.value = "";
-      name.value = "";
-      type.value = "";
-      content.value = ""
-      ttl.value = ""
-      // lineId.value = ""
-     
+     formDataName.value.name = ''
+     formDataName.value.type = ''
+     formDataName.value.content = ''
+     formDataName.value.ttl = ''
+     formDataName.value.lineId = undefined
+     formDataName.value.zoneId = ''
      listAll().then(res=>{ // 调用获取域名接口的数据，显示域名
-    // console.log(res,);
     let listData = res.map((item)=>{//对域名的数据格式化
       return {
         value: item.zoneId,
@@ -502,7 +534,7 @@ getcordList()//调用列表数据
    
     }
 
-//点击添加记录按钮，出现第二个弹框  formStateData.value.push(formState.value)
+//点击添加记录按钮，出现第二个弹框 
 const addRecordBtn = () => {
     formDataName.value.push({
       id:new Date().getTime(),
@@ -520,8 +552,6 @@ const XiconBtn = (id) => {
     formDataName.value = formDataName.value.filter(item=>{
       return item.id != id
     })   
-    // console.log(formDataName.value );
-
 };
 
 //点击页面搜索按钮
@@ -610,7 +640,6 @@ const openmodal = (record)=>{
   }))
     // 获取线路
      listAll().then(res=>{
-    console.log(res,"2222");
     let listData = res.map((item)=>{
       return {
         value: item.zoneId,
@@ -627,7 +656,6 @@ const openmodal = (record)=>{
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
-      console.log(formState_edit.value.lineId,'xianlu ');
 		});
 
 }
