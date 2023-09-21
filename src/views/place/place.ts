@@ -6,7 +6,8 @@ enum RoleApi {
   del = '/zone/manage/delete',//删
   line='/line/manage/all',
   stop='/zone/manage/switch',//停用
-  SOA='/zone/manage/update/soa'
+  SOA='/zone/manage/update/soa',
+  HostGroup='/host/group/get/hostsAll'
 }     
 // 获取所有正向列表
 export const GetList = (params) => defHttp.post({ url: RoleApi.list, params });
@@ -28,3 +29,5 @@ export const GetHostsAll = (params) => defHttp.post({ url:'/hosts/get/hostsAll',
 export const SOAEcho = (params) => defHttp.get({ url:'/zone/manage/value/'+ params });
 // 修改SOA
 export const EditSOA = (params) => defHttp.post({ url:RoleApi.SOA, params });
+// 主机组
+export const HostGroup = (params) => defHttp.post({ url:RoleApi.HostGroup, params });

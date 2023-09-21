@@ -1,27 +1,4 @@
 <template>
-	<div class="allclustersBox">
-		<a-card>
-			<div class="title">
-				<a-form :model="formData" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
-					<a-row :gutter="1">
-						<a-col :md="6" :sm="24">
-							<a-form-item style="margin-bottom: 0px" label="策略组名称" name="name" :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
-								<a-input placeholder="请输入策略组名称" v-model:value="formData.policiesName" />
-							</a-form-item>
-						</a-col>
-						<a-col :md="4" :sm="5">
-							<span style="display: inline-block; display: flex; flex-wrap: nowrap; margin-top: 0px">
-								<div class="searchbtn">
-									<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery"> <search-outlined />搜索</a-button>
-									<a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
-								</div>
-							</span>
-						</a-col>
-					</a-row>
-				</a-form>
-			</div>
-		</a-card>
-	</div>
 	<div class="controls">
 		<div class="iconBtn">
 			<a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"><plus-outlined />添加策略组</a-button>
@@ -329,7 +306,7 @@
 </template>
 <script setup>
 	import { message, Modal } from 'ant-design-vue';
-	import { list, dellist, synclist, addlist, dellistAll, editlist } from './tactics';
+	import { list, dellist, synclist, addlist, dellistAll, editlist } from './Tactics';
 	import { SearchOutlined, ReloadOutlined, PlusCircleFilled, CloseCircleFilled } from '@ant-design/icons-vue';
 	import { computed, defineComponent, reactive, toRefs, ref, createVNode, watch } from 'vue';
 

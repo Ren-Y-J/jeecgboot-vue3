@@ -21,6 +21,7 @@
 				</a-form>
 			</div>
 		</div>
+		
 		<div class="page" style="margin-top: 8px">
 			<div style="margin-bottom: 8px">
 				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
@@ -101,10 +102,10 @@
 				<a-input placeholder="不要包含主机名，如www" v-model:value="formState.name" />
 			</a-form-item>
 			<!-- 主机 -->
-			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
+			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组" :labelCol="{ span: 5 }">
 				<a-select @change="changehosts" ref="select" v-model:value="formState.hosts" style="width: 150px" placeholder="请选择主机">
-					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
-						item.hostName
+					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.groupId" value="3">{{
+						item.groupName
 					}}</a-select-option>
 				</a-select>
 			</a-form-item>
@@ -151,10 +152,10 @@
 					<a-select-option value="4">v6反向解析</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item :rules="[{ required: true, message: '请选择主机!' }]" name="hosts" label="主机" :labelCol="{ span: 5 }">
+			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组" :labelCol="{ span: 5 }">
 				<a-select @change="changehosts" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
-					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.hostId" value="3">{{
-						item.hostName
+					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.groupId" value="3">{{
+						item.groupName
 					}}</a-select-option>
 				</a-select>
 			</a-form-item>
@@ -251,7 +252,7 @@
 	</a-modal>
 </template>
 <script setup>
-	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho, EditSOA } from './place.ts';
+	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho, EditSOA,HostGroup } from './place.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { message } from 'ant-design-vue';
@@ -268,8 +269,8 @@
 			align: 'center',
 		},
 		{
-			title: '主机',
-			dataIndex: 'ipAddress',
+			title: '主机组',
+			dataIndex: 'groupName',
 			align: 'center',
 		},
 		{
@@ -405,9 +406,19 @@
 		});
 	};
 	const getData = () => {
-		GetHostsAll({}).then((res) => {
+		
+		
+		
+		
+		
+		HostGroup({}).then((res) => {
+			console.log(res,'res**---')
 			HostsData.value = res;
 		});
+		
+		
+		
+		
 		if (placetype.value == '0') {
 			GetList({
 				type: 0,
@@ -493,7 +504,7 @@
 			return;
 		}
 		AddLine({
-			hostId: formState.value.hosts,
+			groupId: formState.value.hosts,
 			type: 0,
 			zoneName: formState.value.name,
 			lineId: JSON.stringify(formState.value.lineId),
@@ -516,15 +527,17 @@
 			console.log(error);
 			return;
 		}
+		
+		console.log( formState_.value.hosts,'formState.value.hosts'   )
 		AddReverseList({
-			hostId: formState.value.hosts,
+			groupId: formState_.value.hosts,
 			type: formState.value.type_1,
 			reverseIpAddr: formState_.value.IP,
 			lineId: JSON.stringify(formState_.value.lineId),
 			remark: formState_.value.remark,
 			childZone: formState_.value.childZone,
 		}).then((res) => {
-			visible_1.value = false;
+			// visible_1.value = false;
 			message.success('添加成功');
 			clearData();
 			getData();
