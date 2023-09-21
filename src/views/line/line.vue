@@ -98,7 +98,8 @@
               </a-button> -->
               <div style="display: flex; justify-content: center; align-items: center">
                 <span style="text-decoration: underline; text-decoration-color: blue; color: blue;cursor:pointer"
-                  @click='GoDep(record)'>{{ record.groupId }}
+                  @click='GoDep(record)'>{{ record.groupName }}
+
                 </span>
               </div>
             </template>
@@ -409,7 +410,7 @@ const SwitchFn = async (record) => {
   }
 }
 const GoDep = (record) => {
-  let id = record.host;
+  let id = record.groupId;
   window.open('/deploy?' + id);
 };
 const handleChangeFn = async (value) => {
