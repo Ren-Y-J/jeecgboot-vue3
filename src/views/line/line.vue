@@ -176,7 +176,7 @@
             </div>
 
           </div>
-          <a-form-item label="所属主机" :rules="fromlineRules.groupId" name="groupId" style='margin-top: 26px'>
+          <a-form-item label="主机组" :rules="fromlineRules.groupId" name="groupId" style='margin-top: 26px'>
             <a-space>
               <a-select placeholder="请选择" ref="select" v-model:value="formState.groupId" style="width: 160px"
                 @focus="focus" @change="handleChange">
@@ -236,7 +236,7 @@
           <a-form ref='sortlineRef' :model="editformState" name="basic" :label-col="{ span: 6 }"
             :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed"
             :validateTrigger="['change']">
-            <a-form-item label="所属主机" :rules="sortlineRules.groupId" name="groupId" style='margin-top: 26px'>
+            <a-form-item label="主机组" :rules="sortlineRules.groupId" name="groupId" style='margin-top: 26px'>
               <a-space>
                 <a-select placeholder="请选择" ref="select" v-model:value="editformState.groupId" style="width: 160px"
                   @focus="focus" @change="handleChangsort">
