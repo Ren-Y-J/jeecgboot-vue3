@@ -119,6 +119,10 @@
 <script setup>
 	import { reactive, toRefs, ref, watchEffect } from 'vue';
 	import { getlist, addlist, editlist, dellist } from './transition.ts';
+	
+		import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
+	
+	
 	import { CloseOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 	import { message } from 'ant-design-vue';
 	const data = reactive({

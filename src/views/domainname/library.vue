@@ -49,6 +49,7 @@
 <script name='library' setup>
 import { defineComponent, reactive, ref, toRefs } from 'vue';
 import { librarylist, libraryInfo, addlibrary, editlibrary, dellibrary } from "./library.ts"
+import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue';
 const columns = [
 
@@ -207,7 +208,7 @@ defineExpose({ initData, pageNum })
   background-color: #fff;
 
   .contaion {
-    padding: 8px;
+
 
     .pagination {
       margin: 10px 0 0 0;

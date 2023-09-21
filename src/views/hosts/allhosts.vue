@@ -38,6 +38,22 @@
 							</a-space>
 						</a-form-item>
 					</a-col>
+					<a-col :md="4">
+						<a-form-item style="margin-bottom: 0px" label="主机组" name="status" :labelCol="{ span: 8 }" :wrapperCol="{ span: 10 }">
+							<a-space>
+								<a-select
+									placeholder="请选择"
+									ref="select"
+									style="width: 150px"
+									v-model:value="groupId"
+								>
+									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
+										item.groupName
+									}}</a-select-option>
+								</a-select>
+							</a-space>
+						</a-form-item>
+					</a-col>
 					<a-col :md="4" :sm="5">
 						<div class="searchbtn">
 							<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="seachbtn"> <search-outlined />搜索</a-button>
@@ -145,7 +161,7 @@
 						<div>
 							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
 							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
-							<span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span>
+							<!-- <span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span> -->
 						</div>
 					</template>
 				</template>
@@ -164,7 +180,7 @@
 		</div>
 	</div>
 	<!-- 模态框添加主机 -->
-	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK"   >
+	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK">
 		<!-- 添加 -->
 		<div class="addcomputer">
 			<a-form
@@ -197,13 +213,11 @@
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="主机组" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="role" :rules="formRules.role">
-					<a-select v-model:value="formState.role" @change="handleChange" placeholder="请选择主机组">
-						
-						
-						<a-select-option v-for=" (item, index ) in HostsGroupData " :key='index' :value="item.groupId">{{item.groupName}}</a-select-option>
-						
-						
+				<a-form-item label="主机组" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="groupId" :rules="formRules.role">
+					<a-select v-model:value="formState.groupId" @change="handleChange" placeholder="请选择主机组">
+						<a-select-option v-for="(item, index) in HostsGroupData" :key="index" :value="item.groupId">{{
+							item.groupName
+						}}</a-select-option>
 					</a-select>
 				</a-form-item>
 				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rack" :rules="formRules.rack">
@@ -252,28 +266,32 @@
 				autocomplete="off"
 				validateTrigger="blur"
 			>
-			<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name='ip' :rules="formRules.ip">
-				<a-input  placeholder="请输入IP" v-model:value="formState_edit.ip"></a-input>
-			</a-form-item>
-			<a-form-item label="端口" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }"  name='port' :rules="formRules.port">
-				<a-input  placeholder="请输入端口" v-model:value="formState_edit.port"></a-input>
-			</a-form-item>
-			<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name='okpwd'  :rules="formRules.rootpwd">
-				<a-input v-model:value="formState_edit.okpwd" placeholder="请输入root密码"></a-input>
-			</a-form-item>
-			<a-form-item label="所属集群" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name='clusterId' :rules="formRules.clusterId">
-				<a-select placeholder="请选择集群" v-model:value="formState_edit.clusterId">
-					<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{ item.clusterName }}</a-select-option>
-				</a-select>
-			</a-form-item>
-			<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name='role' :rules="formRules.role">
-				<a-select placeholder="请选择主机组" v-model:value="formState_edit.role" @change="handleChange">
-					<a-select-option v-for=" (item, index ) in HostsGroupData " :key='index' :value="item.groupId">{{item.groupName}}</a-select-option>
-				</a-select>
-			</a-form-item>
-			<a-form-item label="机架" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name='floor' :rules="formRules.rack">
-				<a-input placeholder="请输入机架" v-model:value="formState_edit.floor"></a-input>
-			</a-form-item>
+				<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="ip" :rules="formRules.ip">
+					<a-input placeholder="请输入IP" v-model:value="formState_edit.ip"></a-input>
+				</a-form-item>
+				<a-form-item label="端口" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="port" :rules="formRules.port">
+					<a-input placeholder="请输入端口" v-model:value="formState_edit.port"></a-input>
+				</a-form-item>
+				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd" :rules="formRules.rootpwd">
+					<a-input v-model:value="formState_edit.okpwd" placeholder="请输入root密码"></a-input>
+				</a-form-item>
+				<a-form-item label="所属集群" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name="clusterId" :rules="formRules.clusterId">
+					<a-select placeholder="请选择集群" v-model:value="formState_edit.clusterId">
+						<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{
+							item.clusterName
+						}}</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name="groupId" :rules="formRules.role">
+					<a-select placeholder="请选择主机组" v-model:value="formState_edit.groupId" @change="handleChange">
+						<a-select-option v-for="(item, index) in HostsGroupData" :key="index" :value="item.groupId">{{
+							item.groupName
+						}}</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="机架" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="floor" :rules="formRules.rack">
+					<a-input placeholder="请输入机架" v-model:value="formState_edit.floor"></a-input>
+				</a-form-item>
 			</a-form>
 		</div>
 	</a-modal>
@@ -283,12 +301,13 @@
 	import { message } from 'ant-design-vue';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, toRefs, ref, watchEffect, defineComponent, onMounted } from 'vue';
-	import { addlist, getlist, dellist, showlist, editlist, grouplist,HostsGroup } from './hosts.ts';
+	import { addlist, getlist, dellist, showlist, editlist, grouplist, HostsGroup } from './hosts.ts';
 	import { router } from '/@/router';
 	const data = reactive({
 		visible: false,
 		visible_del: false,
 		visible_edit: false,
+		groupId: undefined,
 		formState: {
 			name: '', //主机名称
 			ip: '',
@@ -297,17 +316,18 @@
 			clusterId: undefined,
 			role: undefined,
 			rack: '',
+			groupId: undefined,
 		},
 		formState_del: {
 			ip: '',
 			okpwd: '',
 		},
-		formState_edit:{
+		formState_edit: {
 			ip: '',
 			port: '',
 			okpwd: '',
 			clusterId: undefined,
-			role: undefined,
+			groupId: undefined,
 			floor: '',
 		},
 		delselect: undefined,
@@ -326,7 +346,7 @@
 		groupData: '',
 		hostId: '',
 		number: 0,
-		HostsGroupData:''
+		HostsGroupData: '',
 	});
 
 	const {
@@ -351,14 +371,14 @@
 		clusterName,
 		number,
 		formState,
-		HostsGroupData
+		HostsGroupData,
+		groupId
 	} = toRefs(data);
 
 	const getgrouplist = () => {
 		grouplist().then((res) => {
 			groupData.value = res;
 		});
-	
 	};
 
 	getgrouplist();
@@ -368,7 +388,7 @@
 		port: [{ required: true, message: '请输入端口!' }],
 		rootpwd: [{ required: true, message: '请输入密码!' }],
 		clusterId: [{ required: true, message: '请选择集群!' }],
-		role: [{ required: true, message: '请选择角色!' }],
+		role: [{ required: true, message: '请选择主机组!' }],
 		rack: [{ required: true, message: '请输入机架!' }],
 	};
 	const columns = [
@@ -435,8 +455,8 @@
 			align: 'center',
 		},
 		{
-			title: '角色',
-			dataIndex: 'roleName',
+			title: '主机组',
+			dataIndex: 'groupName',
 
 			width: 100,
 			align: 'center',
@@ -466,13 +486,13 @@
 			initdata.value.forEach(function (item, index) {
 				item.psy = result[index].psy;
 				var physMemTotal = item.physMemTotal / 1000000000;
-					physMemTotal=physMemTotal.toFixed(2)
+				physMemTotal = physMemTotal.toFixed(2);
 				var physDiskTotal = item.physDiskTotal / 1000000000;
-				physDiskTotal=physDiskTotal.toFixed(2)
+				physDiskTotal = physDiskTotal.toFixed(2);
 				var physDiskUsed = item.physDiskUsed / 1000000000;
-				physDiskUsed=physDiskUsed.toFixed(2)
+				physDiskUsed = physDiskUsed.toFixed(2);
 				var physMemUsed = item.physMemUsed / 1000000000;
-				physMemUsed=physMemUsed.toFixed(2)
+				physMemUsed = physMemUsed.toFixed(2);
 				item.physMemTotal = physMemTotal;
 				item.physDiskTotal = physDiskTotal;
 				item.physDiskUsed = physDiskUsed;
@@ -490,19 +510,15 @@
 		// clusterId.value = undefined;
 		// role.value = undefined;
 		// rack.value = '';
-		GetHostsGroupData()
-		
+		GetHostsGroupData();
 	};
-const GetHostsGroupData = ()=>{
-	HostsGroup().then((res)=>{
-		console.log(res,'HostsGroupData')
-		HostsGroupData.value=res
-	})
-}
-
-
-
-
+	const GetHostsGroupData = () => {
+		HostsGroup().then((res) => {
+			console.log(res, 'HostsGroupData');
+			HostsGroupData.value = res;
+		});
+	};
+	GetHostsGroupData();
 	const formRef = ref(null);
 	const btnOK = async () => {
 		try {
@@ -525,7 +541,7 @@ const GetHostsGroupData = ()=>{
 				port: formState.value.port,
 				rootSec: formState.value.rootpwd,
 				clusterId: formState.value.clusterId,
-				role: formState.value.role,
+				groupId: formState.value.groupId,
 				floor: formState.value.rack,
 			})
 				.then((res) => {
@@ -540,23 +556,82 @@ const GetHostsGroupData = ()=>{
 		}
 	};
 	// 删除
-	const formRef_del =ref(null)
-	const btnOK_del = async() => {
+	const formRef_del = ref(null);
+	const btnOK_del = async () => {
 		try {
 			await formRef_del.value.validate();
 		} catch (error) {
 			console.log(error);
 			return;
 		}
+
+		dellist({
+			hostId: recordID.value,
+			ipAddress: formState_del.value.ip,
+			rootSec: formState_del.value.okpwd,
+		})
+			.then((res) => {
+				message.success('删除成功');
+				visible_del.value = false;
+				clearData();
+				getData();
+			})
+			.catch((error) => {
+				console.log(error, 'error');
+			});
+	};
+	// 编辑框回显
+	const openmodal = (record) => {
+		hostId.value=record.hostId
+		GetHostsGroupData();
+		visible_edit.value = true;
+		showlist(`${record.hostId}`).then((res) => {
+			console.log(res, 9);
+			formState_edit.value.groupId = res.groupId;
+			formState_edit.value.ip = res.ipAddress;
+			formState_edit.value.port = res.port;
+			formState_edit.value.clusterId = res.clusterId;
+			if (res.role == 1) {
+				formState_edit.value.role = '权威';
+			} else if (res.role == 2) {
+				formState_edit.value.role = '递归';
+			} else if (res.role == 3) {
+				formState_edit.value.role = '权威+递归';
+			}
+			formState_edit.value.floor = res.floor;
+		});
+	};
+	// 编辑框提交
+	
+	const formRef_edit = ref(null);
+	const btnOK_edit = async() => {
+		try {
+			await formRef_edit.value.validate();
+		} catch (error) {
+			console.log(error);
+			return;
+		}
 		
-			dellist({
-				hostId: recordID.value,
-				ipAddress: formState_del.value.ip,
-				rootSec: formState_del.value.okpwd,
+		
+		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
+		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
+		if (!reg1.test(formState_edit.value.ip)) {
+			message.error('IP输入错误');
+		} else if (!reg.test(formState_edit.value.port)) {
+			message.error('端口输入错误');
+		} else {
+			editlist({
+				ipAddress: formState_edit.value.ip,
+				port: formState_edit.value.port,
+				rootSec: formState_edit.value.okpwd,
+				clusterId: formState_edit.value.clusterId,
+				groupId: formState_edit.value.groupId,
+				floor: formState_edit.value.floor,
+				hostId: hostId.value,
 			})
 				.then((res) => {
-					message.success('删除成功');
-					visible_del.value = false;
+					message.success('修改成功');
+					visible_edit.value = false;
 					clearData();
 					getData();
 				})
@@ -564,56 +639,6 @@ const GetHostsGroupData = ()=>{
 					console.log(error, 'error');
 				});
 		}
-	// 编辑框回显
-	const openmodal = (record) => {
-			GetHostsGroupData()
-		visible_edit.value = true;
-		showlist(`${record.hostId}`).then((res) => {
-			console.log(res, 9);
-
-			hostId.value = res.hostId;
-			formState_edit.value.ip = res.ipAddress;
-			formState_edit.value.port = res.port;
-				formState_edit.value.clusterId = res.clusterId;
-			if (res.role == 1) {
-					formState_edit.value.role = '权威';
-			} else if (res.role == 2) {
-					formState_edit.value.role = '递归';
-			} else if (res.role == 3) {
-					formState_edit.value.role = '权威+递归';
-			}
-				formState_edit.value.floor = res.floor;
-		});
-	};
-	// 编辑框提交
-	const btnOK_edit = () => {
-		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
-		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
-			if( !reg1.test(formState_edit.value.ip)){
-				message.error('IP输入错误');
-			}else if (    !reg.test(formState_edit.value.port)     ){
-				message.error('端口输入错误');
-			}else{
-				editlist({
-					ipAddress: formState_edit.value.ip,
-					port: formState_edit.value.port,
-					rootSec: formState_edit.value.okpwd,
-					clusterId: formState_edit.value.clusterId,
-					role: formState_edit.value.role,
-					floor: formState_edit.value.floor,
-					hostId: hostId.value,
-				})
-					.then((res) => {
-						message.success('修改成功');
-						visible_edit.value = false;
-						clearData();
-						getData();
-					})
-					.catch((error) => {
-						console.log(error, 'error');
-					});
-			}
-			
 	};
 	const Delbtn = (record) => {
 		recordID.value = record.hostId;
@@ -628,24 +653,15 @@ const GetHostsGroupData = ()=>{
 		formState.value.clusterId = '';
 		formState.value.role = '';
 		formState.value.rack = '';
-        formState_del.value.ip = '';
+		formState_del.value.ip = '';
 		formState_del.value.okpwd = '';
-		
-		formState_edit.value.ip='',
-		formState_edit.value.port='',
-		formState_edit.value.okpwd='',
-		formState_edit.value.clusterId=undefined,
-		formState_edit.value.role=undefined,
-		formState_edit.value.floor=''
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+		(formState_edit.value.ip = ''),
+			(formState_edit.value.port = ''),
+			(formState_edit.value.okpwd = ''),
+			(formState_edit.value.clusterId = undefined),
+			(formState_edit.value.role = undefined),
+			(formState_edit.value.floor = '');
 	};
 	const onShowSizeChange = (current, pageSize) => {
 		pageSize = pageSize.value;
@@ -660,21 +676,45 @@ const GetHostsGroupData = ()=>{
 		clusterName.value = undefined;
 		pageNum.value = 1;
 		pageSize.value = 10;
+		groupId.value=undefined,
 		getData();
 	};
 	const seachbtn = () => {
+		console.log( groupId.value,'groupId.value' )
 		getlist({
-			pageNum: pageNum.value,
-			pageSize: pageSize.value,
 			status: status.value,
 			clusterId: clusterName.value,
+			pageNum: pageNum.value,
+			pageSize: pageSize.value,
+			groupId:groupId.value
 		}).then((res) => {
 			initdata.value = res.records;
 			total.value = res.total;
+			console.log(res, '数据');
+			var result = [];
+			initdata.value.forEach((item) => {
+				var percentage = (item.physDiskUsed / item.physDiskTotal) * 100;
+				var psy = { psy: percentage.toFixed(2) };
+				result.push(psy);
+			});
+			initdata.value.forEach(function (item, index) {
+				item.psy = result[index].psy;
+				var physMemTotal = item.physMemTotal / 1000000000;
+				physMemTotal = physMemTotal.toFixed(2);
+				var physDiskTotal = item.physDiskTotal / 1000000000;
+				physDiskTotal = physDiskTotal.toFixed(2);
+				var physDiskUsed = item.physDiskUsed / 1000000000;
+				physDiskUsed = physDiskUsed.toFixed(2);
+				var physMemUsed = item.physMemUsed / 1000000000;
+				physMemUsed = physMemUsed.toFixed(2);
+				item.physMemTotal = physMemTotal;
+				item.physDiskTotal = physDiskTotal;
+				item.physDiskUsed = physDiskUsed;
+				item.physMemUsed = physMemUsed;
+			});
 		});
 	};
 
- 
 	// 多选
 	const state = reactive({
 		selectedRowKeys: [],
@@ -708,8 +748,8 @@ const GetHostsGroupData = ()=>{
 		router.push(`/hosts/host_board_disk?${id}`);
 	};
 	const GoDep = (record) => {
-		console.log(record,'record---')
-		
+		console.log(record, 'record---');
+
 		let id = record.groupId;
 		window.open('/deploy?' + id);
 	};
