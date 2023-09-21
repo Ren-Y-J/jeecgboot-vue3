@@ -384,13 +384,7 @@ const data = reactive({
   visible_editsyn:false,
   visible_Time_edit:false,
   formDataName:[{id:1,state_value:''}],
-  formDataName_edit:[{id:1,state_value:''}
-  //   {id:1,state_value:[
-  //   '12:00:00','13:00:00'
-  // ]},{id:1,state_value:[
-  //   '12:00:00','13:00:00'
-  // ]}
-  ],
+  formDataName_edit:[{id:1,state_value:['22:00:14','22:00:15']}],
   formName:{
      policiesName:'',
   },
@@ -454,21 +448,22 @@ const {
   status_false
 } = toRefs(data)
 
-	const formRef = ref(null); //添加按钮弹框需要的ref
+const formRef = ref(null); //添加按钮弹框需要的ref
 
-	const Cordquery = ref({
-		pageNum: 1,
-		pageSize: 10,
-	});
-	const placeholder = ref(['开始时间', '结束时间']);
-	const timePicker = ref(null);
+const Cordquery = ref({
+	pageNum: 1,
+	pageSize: 10,
+});
+const placeholder = ref(['开始时间', '结束时间']);
+const timePicker = ref(null);
+
 	//列表数据v
-	const getcordList = () => {
-		list(Cordquery.value).then((res) => {
-			listData.value = res.records;
-			total.value = res.total;
-		});
-	};
+const getcordList = () => {
+	list(Cordquery.value).then((res) => {
+		listData.value = res.records;
+		total.value = res.total;
+	});
+};
 	getcordList();
 
 // 修改按钮
@@ -481,21 +476,35 @@ const editGroup = (record)=>{
   formState_edit.value.policiesEnable = res.policiesEnable
   formState_edit.value.policiesTimeType = JSON.parse(res.policiesTimeType)
   formState_edit.value.policiesTimeType = formState_edit.value.policiesTimeType.map(String)
- 
-
-  formState_edit.value.policiesTimeRange = res.policiesTimeRange.replace(/[\[\]"]/g, '').split('-').join(',')
-  
-  // //  formDataName_edit.value.state_value = formState_edit.value.policiesTimeRange
-  // console.log(formState_edit.value.policiesTimeRange,'formState_edit.value.policiesTimeRange');
-  let editpoliciesTime = []
-  editpoliciesTime.push(formState_edit.value.policiesTimeRange)
-console.log(editpoliciesTime,'editpoliciesTime');
-  let transformedA = editpoliciesTime[0].split(',').map(item => item.trim());
+//   formState_edit.value.policiesTimeRange = res.policiesTimeRange.replace(/[\[\]"]/g, '').split('-').join(',')
+//   let editpoliciesTime = []
+//   editpoliciesTime.push(formState_edit.value.policiesTimeRange)
+//   let transformedA = editpoliciesTime[0].split(',').reduce((acc, curr, index, array) => {
+//     if (index % 2 === 0) {
+//       acc.push(curr + ',' + array[index + 1]);
+//     }
+//     return acc;
+//   }, []);
+//   let transformed = transformedA.map(element => element.trim());
+formState_edit.value.policiesTimeRange =JSON.parse(res.policiesTimeRange);
+//   formState_edit.value.policiesTimeRange = transformed
+//   formDataName_edit.value= transformed
+  console.log(formDataName_edit.value.state_value,'111');
+  console.log(formDataName_edit.value,'formDataName_edit.value');
+//    formDataName_edit.value= transformed;
   // let transformedA = editpoliciesTime.map(item => item.split(',').slice(0, 2).join(','));
-    formDataName_edit.value.forEach((item)=>{
-    item.state_value = transformedA
-  })
-  console.log(transformedA,'editpoliciesTime222222');
+	let obj = {
+		id:0,
+		state_value	
+	}
+	 transformed.forEach((item)=>{
+		console.log(item,'item5555');
+
+
+})
+//   console.log(transformed,'zxsj');
+			
+  
   })
 }
 
