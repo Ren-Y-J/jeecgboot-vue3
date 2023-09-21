@@ -170,9 +170,9 @@
               </a-select>
             </a-space>
           </a-form-item>
-          <div class="line"  v-for="item in formDataName" :key="item">
+          <div class="line"  v-for="(item,index) in formDataName" :key="index">
             <div  style="padding: 15px;padding-bottom:0px;margin-bottom:-30px">
-				      <close-circle-filled class="Xicon" @click="XiconBtn(item.id)"  v-show="item.id!=1"/>
+				      <close-circle-filled class="Xicon" @click="XiconBtn(index)" v-if="item.id !== '1'"/>
             </div>
               <a-form-item label="记录名称"  :rules="[{ required: true}]"  style='margin-top: 18px'>
                 <a-input @change="chengeInput" v-model:value="item.name" placeholder="请输入记录名称" style='width:50%' />
@@ -199,7 +199,7 @@
               </a-form-item>
               <a-form-item label="线路" :rules="[{ required: true }]"  style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="item.lineId" style="width: 150px"
+              <a-select placeholder="请选择线路" ref="select" v-model:value="item.lineId" style="width: 150px" 
                 @focus="focus" @change="handleChangsortadd" :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
               </a-space>
@@ -344,7 +344,7 @@ const data = reactive({
   listAllData:[],
   addRecord: false,
   selects : 0,
-  formDataName:[{id:1,name:'',type:'',content:'',ttl:'',lineId:undefined,zoneId:''}],
+  formDataName:[{id:"1",name:'',type:'',content:'',ttl:'',lineId:undefined,zoneId:''}],
   delicon:true,
   formState: {
 			name: '',
@@ -396,77 +396,52 @@ const {
 } = toRefs(data)
 
 const formRef = ref(null);//添加按钮弹框需要的ref
-const formRef_ = ref(null);
 const addFn = () => {//点击确定按钮
 
 formDataName.value.forEach((item)=>{
+  console.log(item.lineId,'lineId');
   item.zoneId = formState.value.zoneId
-  // item.lineId = JSON.stringify(item.lineId)
  })
-// let that=this
-// for(let i=0;i<=formDataName.value.length;i++){
-//      formDataName.value[i].zoneId = formState.value.zoneId
-//     //  formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);
-//     //  break
-//     //  console.log(formDataName.value[i].zoneId,formDataName.value[i].lineId);
-//   // for(let j=0;j<=formDataName.value[i];j++){
-     
-//   //   console.log(formDataName.value[i][j],'1111');
-//   //     // formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);return
-//   // }
-//   // console.log(formDataName.value[i].lineId,'000');
-//   // formDataName.value[i].zoneId = formState.value.zoneId
-//   // console.log(formDataName.value[i].lineId,'formDataName.value[i].lineId');
-//   // formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);return
-// }
-// console.log(formDataName.value,'11111');
-  //    addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
-	// 		message.success('添加成功');
-	// 		visible.value = false;//关闭弹框
-	// 		onClose();
-	// 		getcordList();
-	// });
-// console.log(formDataName.value);
-formDataName.value.forEach((item)=>{
-  // item.lineId = JSON.stringify(item.lineId)
-  // console.log(item,'11111');
- if(item.zoneId == ""){
+  for(let i=0;i<formDataName.value.length;i++){
+    if(formDataName.value[i].zoneId == ""){
   message.error('请选择域名')
- }else if(item.name == ''){
-   message.error('请填写记录名称')
- }else if(item.type == ''){
-   message.error('请选择类型')
- }else if(item.content == ''){
-   message.error('请填写记录值')
- }else if(item.ttl == ''){
-   message.error('请填写TTL')
- }else if(item.lineId == undefined){
-   message.error('请选择线路')
-   
- }else{
-  addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
+ }
+  if(formDataName.value[i].name == ''){
+   message.error('请填写第' + (i + 1) +'表单记录名称')
+   return;
+ }
+  if(formDataName.value[i].type == ''){
+   message.error('请选择第' + (i + 1) +'表单类型')
+   return;
+ }
+  if(formDataName.value[i].content == ''){
+   message.error('请填写第' + (i + 1) +'表单记录值')
+   return;
+ }
+  if(formDataName.value[i].ttl == ''){
+   message.error('请填写第' + (i + 1) +'表单TTL')
+   return;
+ }
+  if(formDataName.value[i].lineId == undefined){
+   message.error('请选择第' + (i + 1) +'表单线路') 
+   return; 
+ }
+formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);
+// return; 
+  }
+
+console.log(formDataName.value);
+ addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
 			message.success('添加成功');
 			visible.value = false;//关闭弹框
 			onClose();
 			getcordList();
 	}); 
- }
-})
 }
 
 // 添加弹框内的change事件
 const handleChangsortadd =(value) =>{
-    // formState.value.lineId=value
-    formDataName.value.lineId=value
-    formDataName.value.forEach((item)=>{
-       if(formDataName.value.id == 1){
-      formDataName.value.lineId = JSON.stringify(formDataName.value.lineId)
-    }
-    })
-    for(let item of  formDataName.value){
-      item.lineId = JSON.stringify(item.lineId);return
-    }
-    
+    formState.value.lineId=value    
 }
 
 // 关闭弹框
@@ -548,10 +523,8 @@ const addRecordBtn = () => {
 	};
   
 //点击第二个弹框的取消按钮
-const XiconBtn = (id) => {
-    formDataName.value = formDataName.value.filter(item=>{
-      return item.id != id
-    })   
+const XiconBtn = (index) => {
+    formDataName.value .splice(index,1)
 };
 
 //点击页面搜索按钮
