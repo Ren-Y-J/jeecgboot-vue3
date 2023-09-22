@@ -250,7 +250,6 @@
 	const getData = () => {
 		let url = location.search;
 		id.value = url.replace('?', '');
-
 		formState.value.zoneId = id.value;
 		formState_edit.value.zoneId = id.value;
 

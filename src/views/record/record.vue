@@ -165,7 +165,7 @@
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item label="域名" :rules="[{ required: true }]"   style='margin-top: 26px' >
             <a-space>
-              <a-select ref="select" style="width: 245px" @focus="focus" :placeholder="placeholder"  v-model:value="formState.zoneId" 
+              <a-select ref="select" style="width: 245px" @focus="focus" placeholder="请选择域名"  v-model:value="formState.zoneId" 
                  @change="changeNames" :options="listAllData" >
               </a-select>
             </a-space>
@@ -352,7 +352,7 @@ const data = reactive({
 			lineId: undefined,
 			ttl: '',
 			content: '',
-			zoneId:''
+			zoneId:undefined
 		},
     formStateData:[],
     formState_edit: {
@@ -396,8 +396,13 @@ const {
 } = toRefs(data)
 
 const formRef = ref(null);//添加按钮弹框需要的ref
-const placeholder = ref("请选择");
-const addFn = () => {//点击确定按钮
+
+const addFn = (evt) => {//点击确定按钮
+    let target = evt.target;
+	 if(target.nodeName == "SPAN"){
+            target = evt.target.parentNode;
+        }
+        target.blur()
 
 formDataName.value.forEach((item)=>{
   console.log(item.lineId,'lineId');
@@ -449,6 +454,14 @@ const handleChangsortadd =(value) =>{
 const onClose = () => {//点击取消的回调
   visible.value = false;//关闭弹框
   formState.value = {}//第一个表单数据清空 
+  formDataName.value.forEach((item)=>{
+    item.name='',
+    item.type='',
+    item.content='',
+    item.ttl='',
+    item.lineId=undefined,
+    item.zoneId=''
+  })
 };
 
 const queryParams = ref({ // 查询参数，响应式
@@ -469,14 +482,19 @@ const getcordList = ()=>{
     listData.value = res.records//把数据放进存放表单的地方
     total.value = res.total//总数
   })
-  placeholder.value = "请选择"
+  
 }
 getcordList()//调用列表数据
 
 //添加按钮，让里面的数据清空
- const showModal = () => {
+ const showModal = (evt) => {
+      let target = evt.target;
+	 if(target.nodeName == "SPAN"){
+            target = evt.target.parentNode;
+        }
+        target.blur()
       visible.value = true;//显示弹框
-      placeholder.value = "请选择"
+      
      formDataName.value.name = ''
      formDataName.value.type = ''
      formDataName.value.content = ''
@@ -531,7 +549,12 @@ const XiconBtn = (index) => {
 };
 
 //点击页面搜索按钮
-const handleQuery =()=>{
+const handleQuery =(evt)=>{
+      let target = evt.target;
+	 if(target.nodeName == "SPAN"){
+            target = evt.target.parentNode;
+        }
+        target.blur()
   list({
     pageNum: pageNum.value,
 		pageSize: pageSize.value,
@@ -546,9 +569,14 @@ const handleQuery =()=>{
 
 
 //重置按钮，把响应式的queryParams里面的数据初始化
-const AlldelFn = () => {
+const AlldelFn = (evt) => {
+  let target = evt.target;
+	if(target.nodeName == "SPAN"){
+      target = evt.target.parentNode;
+  }
+  target.blur()
   queryParams.value.name = ''
-  queryParams.value.type = ''
+  queryParams.value.type = undefined
   queryParams.value.pageNum = 1
   queryParams.value.pageSize = 10
   getcordList()//刷新数据
@@ -708,6 +736,7 @@ const state = reactive({
 .Addrecord{
     margin-top: 15px;
     text-align: center;
+    cursor: pointer;
 }
  .title {
      
@@ -769,16 +798,13 @@ const state = reactive({
     height: 500px!important;
     
  }
-//   /deep/ .anticon svg{
-//       margin-right: 10px;
-//  }
+
 .addtimeform{
   display: inline;
    margin-right: 10px;
+   cursor: pointer;
 }
-.table{
 
-}
 
 
 </style>
