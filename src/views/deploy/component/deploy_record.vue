@@ -110,7 +110,7 @@
 				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
 			<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="TTL" v-model:value="formState.ttl" />
+				<a-input type='number' placeholder="TTL" v-model:value="formState.ttl" />
 			</a-form-item>
 			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="记录值" v-model:value="formState.content" />
@@ -225,7 +225,7 @@
 				></a-select>
 			</a-form-item>
 			<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="TTL" v-model:value="formState_edit.ttl" />
+				<a-input type='number' placeholder="TTL" v-model:value="formState_edit.ttl" />
 			</a-form-item>
 			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="记录值" v-model:value="formState_edit.content" />

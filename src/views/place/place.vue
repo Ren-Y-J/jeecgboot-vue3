@@ -8,10 +8,18 @@
 			<div class="search">
 				<a-form>
 					<div style="display: flex">
-						<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
+						<a-form-item style="margin-right: 10px" label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
 							<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
 						</a-form-item>
-
+						<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 23 }">
+							<a-space>
+								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
+									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
+										item.groupName
+									}}</a-select-option>
+								</a-select>
+							</a-space>
+						</a-form-item>
 						<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
 						<a-button @click="resetbtn">
 							<reload-outlined />
@@ -21,12 +29,47 @@
 				</a-form>
 			</div>
 		</div>
-		
+
 		<div class="page" style="margin-top: 8px">
-			<div style="margin-bottom: 8px">
-				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
+			<div style="display: flex; margin-bottom: 8px">
+				<a-space>
+					<a-select
+						ref="select"
+						style="width: 120px; margin-right: 8px"
+						@focus="focus"
+						@select="handleChange_del"
+						v-model:value="delselect"
+						placeholder="批量操作"
+					>
+						<a-select-option value="1">删除</a-select-option>
+					</a-select>
+				</a-space>
+				<div>
+					<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
+				</div>
 			</div>
-			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
+			<a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
+				<template #message>
+					<template v-if="number > 0">
+						<span>已选定 {{ number }} 条记录(可跨页)</span>
+						<a-divider type="vertical" />
+						<a @click="clearbtn">清空</a>
+						<a-divider type="vertical" />
+					</template>
+					<template v-else>
+						<span>未选中任何数据</span>
+					</template>
+				</template>
+			</a-alert>
+			<a-table
+				:rowKey="(record) => record.zoneId"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+				:pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
+				:columns="columns"
+				:data-source="initdata"
+				bordered
+			>
 				<template #bodyCell="{ column, record }">
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
@@ -37,31 +80,32 @@
 						</div>
 					</template>
 					<!-- 线路 -->
-					<template v-if="column.dataIndex === 'ipAddress'" >
-						<div style="display: flex; justify-content: center; align-items: center" class='pointer' @click='GoDep(record)'>
+					<template v-if="column.dataIndex === 'ipAddress'">
+						<div style="display: flex; justify-content: center; align-items: center" class="pointer" @click="GoDep(record)">
 							<span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }} </span>
 						</div>
-						
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
-						<div style="display: flex; justify-content: center; align-items: center">
-							<div class="pointer" style="margin-right: 10px">
+						<div style="display: flex;">
+							<div class="pointer" 	>
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<span style="color: #1890ff">删除</span>
+									 <a-button type="link">删除</a-button>
+									
+									
 								</a-popconfirm>
 							</div>
-							<div class="pointer" style="margin-right: 10px" @click="Godeploy(record)">
-								<span style="color: #1890ff">配置</span>
+							<div class="pointer"  @click="Godeploy(record)">
+									 <a-button type="link">配置</a-button>
 							</div>
-							<div class="pointer" style="margin-right: 10px">
+							<div class="pointer" >
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									 <a-button v-show="record.status == 0"  type="link">禁用</a-button>
+									 <a-button v-show="record.status == 1" type="link">启用</a-button>
 								</a-popconfirm>
 							</div>
-							<div class="pointer" style="margin-right: 10px" @click="openSOA(record)">
-								<span style="color: #1890ff">配置SOA</span>
+							<div class="pointer" @click="openSOA(record)">
+									 <a-button type="link">配置SOA</a-button>
 							</div>
 						</div>
 					</template>
@@ -94,7 +138,7 @@
 		>
 			<a-form-item
 				label="域名"
-			:labelCol="{ span: 5 }"
+				:labelCol="{ span: 5 }"
 				:wrapperCol="{ span: 15 }"
 				:rules="[{ required: true, message: '请输入域名!' }]"
 				name="name"
@@ -153,7 +197,7 @@
 				</a-select>
 			</a-form-item>
 			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组" :labelCol="{ span: 5 }">
-				<a-select @change="changehosts" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
+				<a-select @change="changehosts_" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机组">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.groupId" value="3">{{
 						item.groupName
 					}}</a-select-option>
@@ -252,7 +296,19 @@
 	</a-modal>
 </template>
 <script setup>
-	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho, EditSOA,HostGroup } from './place.ts';
+	import {
+		GetList,
+		GetLine,
+		AddLine,
+		GetReverseList,
+		DelLine,
+		AddReverseList,
+		stopStatus,
+		GetHostsAll,
+		SOAEcho,
+		EditSOA,
+		HostGroup,
+	} from './place.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { message } from 'ant-design-vue';
@@ -318,6 +374,7 @@
 			expireTime: '',
 			minimumTime: '',
 		},
+		number: 0,
 		groupData: [],
 		search: '',
 		placetype: '0',
@@ -326,8 +383,14 @@
 		HostsData: '',
 		hosts: undefined,
 		zoneId: '',
+		HostsGroupData: '',
+		groupId: undefined,
+		delselect: undefined,
 	});
 	const {
+		delselect,
+		number,
+		groupId,
 		formState_SOA,
 		visible_SOA,
 		type,
@@ -348,8 +411,49 @@
 		HostsData,
 		hosts,
 		zoneId,
+		HostsGroupData,
 	} = toRefs(data);
+
+	// 多选
+	const state = reactive({
+		selectedRowKeys: [],
+	});
+	const allclusterId = ref([]);
+	const rowSelection = (selectedRowKeys, selectedRows) => {
+		state.selectedRowKeys = selectedRowKeys;
+		allclusterId.value = selectedRows.map((item) => item.zoneId);
+		number.value = allclusterId.value.length;
+	};
+	const clearbtn = () => {
+		allclusterId.value = [];
+		number.value = 0;
+		state.selectedRowKeys = [];
+	};
+	// 批量删除提交
+	const handleChange_del = () => {
+		if (allclusterId.value == '') {
+			message.error('请选择数据');
+			return;
+		}
+		if (delselect.value == 1) {
+			let values1 = allclusterId.value;
+			DelLine({
+				values: values1,
+			}).then((res) => {
+				message.success('删除成功');
+				getData();
+			});
+		}
+	};
+
+	const GetHostsGroupData = () => {
+		HostGroup().then((res) => {
+			HostsGroupData.value = res;
+		});
+	};
+	GetHostsGroupData();
 	const changetabs = () => {
+		allclusterId.value = [];
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
 			GetList({
@@ -393,7 +497,6 @@
 		zoneId.value = record.zoneId;
 		SOAEcho(`${record.zoneId}`).then((res) => {
 			let data = JSON.parse(res.soaInfo);
-			console.log(data, 'recordrecordrecordrecord');
 			data.forEach((item) => {
 				formState_SOA.value.expireTime = item.expireTime;
 				formState_SOA.value.mail = item.mail;
@@ -406,19 +509,10 @@
 		});
 	};
 	const getData = () => {
-		
-		
-		
-		
-		
 		HostGroup({}).then((res) => {
-			console.log(res,'res**---')
 			HostsData.value = res;
 		});
-		
-		
-		
-		
+
 		if (placetype.value == '0') {
 			GetList({
 				type: 0,
@@ -450,6 +544,7 @@
 		pageNum.value = 1;
 		pageSize.value = 10;
 		search.value = '';
+		groupId.value = undefined;
 		getData();
 	};
 	const onShowSizeChange = (current, pageSize) => {
@@ -457,7 +552,18 @@
 		getData();
 	};
 	const changehosts = () => {
-		console.log(formState.value.hosts, 'hosts66+');
+		formState.value.lineId = [];
+
+		// 获取线路
+		GetLine({
+			value: formState.value.hosts,
+		}).then((res) => {
+			const transformedData = res.map(({ lineId: value, lineName: label }) => ({ value, label }));
+			groupData.value = transformedData;
+		});
+	};
+	const changehosts_ = () => {
+		formState_.value.lineId = [];
 		// 获取线路
 		GetLine({
 			value: formState.value.hosts,
@@ -477,6 +583,7 @@
 	const searchBtn = () => {
 		if (placetype.value == '0') {
 			GetList({
+				groupId: groupId.value,
 				zoneName: search.value,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -527,8 +634,7 @@
 			console.log(error);
 			return;
 		}
-		
-		console.log( formState_.value.hosts,'formState.value.hosts'   )
+
 		AddReverseList({
 			groupId: formState_.value.hosts,
 			type: formState.value.type_1,
@@ -537,7 +643,7 @@
 			remark: formState_.value.remark,
 			childZone: formState_.value.childZone,
 		}).then((res) => {
-			// visible_1.value = false;
+			visible_1.value = false;
 			message.success('添加成功');
 			clearData();
 			getData();
@@ -548,6 +654,9 @@
 		formState.value.lineId = [];
 		formState.value.childZone = '';
 		formState.value.remark = '';
+
+		formState.value.hosts = undefined;
+
 		formState.value.type_1 = undefined;
 		formState_.value.lineId = [];
 		formState_.value.IP = '';
@@ -563,7 +672,6 @@
 		formState_SOA.value.minimumTime = '';
 	};
 	const delBtn = (record) => {
-		console.log(record, 'record');
 		let values1 = [record.zoneId];
 		DelLine({
 			values: values1,
@@ -588,7 +696,7 @@
 			router.push(`/place/reverse_deploy?${id}`);
 		}
 	};
-	const stopBtn = (record)	 => {
+	const stopBtn = (record) => {
 		if (record.status == 1) {
 			stopStatus({
 				status: 0,
@@ -609,10 +717,10 @@
 		}
 	};
 	// 跳转
-	const GoDep = (record) =>{
+	const GoDep = (record) => {
 		let id = record.hostId;
 		window.open('/deploy?' + id);
-	}
+	};
 </script>
 
 <style>

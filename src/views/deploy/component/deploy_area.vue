@@ -480,7 +480,7 @@
 		
 		AddLine({
 			
-			hostId: pageID.value,
+			groupId: pageID.value,
 			type: 0,
 			zoneName: formState.value.name,
 			lineId: JSON.stringify(formState.value.lineId),
@@ -496,6 +496,8 @@
 	// 反向域
 	const formRef_ = ref(null);
 	const handleOk_ = async () => {
+		console.log(formState_.value.type_1,'formState.value.type_1' )
+		console.log( '反')
 		try {
 			await formRef_.value.validate();
 		} catch (error) {
@@ -503,9 +505,33 @@
 			console.log(error);
 			return;
 		}
+		 const IPV4 =  /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)(\/(\d|[1-2]\d|3[0-2]))?$/;
+let isValid = IPV4.test(formState_.value.IP);
+
+const IPV6 = /^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
+let isValidV6 = IPV6.test(formState_.value.IP);
+
+if(formState_.value.type_1=='3'){
+	if (!isValid) {
+		message.error('网络地址不符合IPV4规则');
+	  return;
+	}
+}else if ( formState_.value.type_1=='4'  ){
+	if (!isValidV6) {
+		message.error('网络地址不符合IPV6规则');
+	  return;
+	}
+}
+
+
+
+
+
+
+
 		AddReverseList({
-			hostId: pageID.value,
-			type: formState.value.type_1,
+			groupId: pageID.value,
+			type: formState_.value.type_1,
 			reverseIpAddr: formState_.value.IP,
 			lineId: JSON.stringify(formState_.value.lineId),
 			remark: formState_.value.remark,
@@ -517,12 +543,22 @@
 			getData();
 		});
 	};
+	
+	
+	
+	
+	
+	
+	
+	
 	const clearData = () => {
 		formState.value.name = '';
 		formState.value.lineId = [];
 		formState.value.childZone = '';
 		formState.value.remark = '';
 		formState.value.type_1 = undefined;
+		
+			formState_.value.type_1 = undefined;
 		formState_.value.lineId = [];
 		formState_.value.IP = '';
 		formState_.value.remark = '';
@@ -550,6 +586,12 @@
 		if (visible.value == false) {
 			clearData();
 		}
+		if (visible_1.value == false) {
+			clearData();
+		}
+		
+		
+		
 	});
 	const emit = defineEmits(['toggleComponent']);
 	const Godeploy = (record) => {

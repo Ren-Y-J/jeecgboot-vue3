@@ -41,12 +41,7 @@
 					<a-col :md="4">
 						<a-form-item style="margin-bottom: 0px" label="主机组" name="status" :labelCol="{ span: 8 }" :wrapperCol="{ span: 10 }">
 							<a-space>
-								<a-select
-									placeholder="请选择"
-									ref="select"
-									style="width: 150px"
-									v-model:value="groupId"
-								>
+								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
 									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
 										item.groupName
 									}}</a-select-option>
@@ -159,8 +154,8 @@
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div>
-							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
-							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
+							 <a-button @click="openmodal(record)" type="link">编辑</a-button>
+							 	 <a-button @click="Delbtn(record)" type="link">删除</a-button>
 							<!-- <span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span> -->
 						</div>
 					</template>
@@ -199,10 +194,6 @@
 				<a-form-item label="IP" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="ip" :rules="formRules.ip">
 					<a-input v-model:value="formState.ip" placeholder="请输入IP"></a-input>
 				</a-form-item>
-
-				<a-form-item label="端口" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="port" :rules="formRules.port">
-					<a-input @blur="changeinput_2" v-model:value="formState.port" placeholder="请输入端口"></a-input>
-				</a-form-item>
 				<a-form-item label="root密码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rootpwd" :rules="formRules.rootpwd">
 					<a-input @blur="change_rootpwd" v-model:value="formState.rootpwd" placeholder="请输入root密码"></a-input>
 				</a-form-item>
@@ -213,21 +204,21 @@
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="主机组" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="groupId" :rules="formRules.role">
+				<a-form-item label="主机组" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }">
 					<a-select v-model:value="formState.groupId" @change="handleChange" placeholder="请选择主机组">
 						<a-select-option v-for="(item, index) in HostsGroupData" :key="index" :value="item.groupId">{{
 							item.groupName
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rack" :rules="formRules.rack">
+				<a-form-item label="机架" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 					<a-input @blur="change_rack" v-model:value="formState.rack" placeholder="请输入机架"></a-input>
 				</a-form-item>
 			</a-form>
 		</div>
 	</a-modal>
 	<!-- 模态框删除 -->
-	<a-modal v-model:visible="visible_del" title="删除节点" @ok="btnOK_del">
+	<a-modal v-model:visible="visible_del" title="删除主机" @ok="btnOK_del">
 		<!-- 删除 -->
 		<div class="addcomputer">
 			<a-form
@@ -244,8 +235,8 @@
 					<a-input @blur="changeinput" placeholder="请输入服务器IP" v-model:value="formState_del.ip"></a-input>
 					<span v-show="ruleshow" :class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
 				</a-form-item>
-				<a-form-item label="当前用户密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd" :rules="formRules.rootpwd">
-					<a-input @blur="change_rootpwd" placeholder="请输入当前用户密码" v-model:value="formState_del.okpwd"></a-input>
+				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd" :rules="formRules.rootpwd">
+					<a-input @blur="change_rootpwd" placeholder="请输入当前用户root密码" v-model:value="formState_del.okpwd"></a-input>
 					<span v-show="ruleshow_rootpwd" :class="{ success: rulesstatus_rootpwd, error: !rulesstatus_rootpwd }">{{
 						rulesmessage_rootpwd
 					}}</span>
@@ -269,9 +260,6 @@
 				<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="ip" :rules="formRules.ip">
 					<a-input placeholder="请输入IP" v-model:value="formState_edit.ip"></a-input>
 				</a-form-item>
-				<a-form-item label="端口" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="port" :rules="formRules.port">
-					<a-input placeholder="请输入端口" v-model:value="formState_edit.port"></a-input>
-				</a-form-item>
 				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd" :rules="formRules.rootpwd">
 					<a-input v-model:value="formState_edit.okpwd" placeholder="请输入root密码"></a-input>
 				</a-form-item>
@@ -282,14 +270,14 @@
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name="groupId" :rules="formRules.role">
+				<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }">
 					<a-select placeholder="请选择主机组" v-model:value="formState_edit.groupId" @change="handleChange">
 						<a-select-option v-for="(item, index) in HostsGroupData" :key="index" :value="item.groupId">{{
 							item.groupName
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="机架" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="floor" :rules="formRules.rack">
+				<a-form-item label="机架" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }">
 					<a-input placeholder="请输入机架" v-model:value="formState_edit.floor"></a-input>
 				</a-form-item>
 			</a-form>
@@ -372,7 +360,7 @@
 		number,
 		formState,
 		HostsGroupData,
-		groupId
+		groupId,
 	} = toRefs(data);
 
 	const getgrouplist = () => {
@@ -419,12 +407,6 @@
 			align: 'center',
 		},
 		{
-			title: '端口',
-			dataIndex: 'port',
-			width: 100,
-			align: 'center',
-		},
-		{
 			title: '集群',
 			dataIndex: 'clusterName',
 			width: 100,
@@ -457,7 +439,6 @@
 		{
 			title: '主机组',
 			dataIndex: 'groupName',
-
 			width: 100,
 			align: 'center',
 		},
@@ -474,9 +455,13 @@
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
 		}).then((res) => {
+			res.records.forEach((item) => {
+				if (item.cpuUsed == null) {
+					item.cpuUsed = '-';
+				}
+			});
 			initdata.value = res.records;
 			total.value = res.total;
-			console.log(res, '数据');
 			var result = [];
 			initdata.value.forEach((item) => {
 				var percentage = (item.physDiskUsed / item.physDiskTotal) * 100;
@@ -582,7 +567,7 @@
 	};
 	// 编辑框回显
 	const openmodal = (record) => {
-		hostId.value=record.hostId
+		hostId.value = record.hostId;
 		GetHostsGroupData();
 		visible_edit.value = true;
 		showlist(`${record.hostId}`).then((res) => {
@@ -602,17 +587,16 @@
 		});
 	};
 	// 编辑框提交
-	
+
 	const formRef_edit = ref(null);
-	const btnOK_edit = async() => {
+	const btnOK_edit = async () => {
 		try {
 			await formRef_edit.value.validate();
 		} catch (error) {
 			console.log(error);
 			return;
 		}
-		
-		
+
 		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
 		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
 		if (!reg1.test(formState_edit.value.ip)) {
@@ -643,6 +627,10 @@
 	const Delbtn = (record) => {
 		recordID.value = record.hostId;
 		visible_del.value = true;
+		formState_del.value.ip=''
+		formState_del.value.okpwd=''
+		
+		
 	};
 	// 字段初始化
 	const clearData = () => {
@@ -676,17 +664,16 @@
 		clusterName.value = undefined;
 		pageNum.value = 1;
 		pageSize.value = 10;
-		groupId.value=undefined,
-		getData();
+		(groupId.value = undefined), getData();
 	};
 	const seachbtn = () => {
-		console.log( groupId.value,'groupId.value' )
+		console.log(groupId.value, 'groupId.value');
 		getlist({
 			status: status.value,
 			clusterId: clusterName.value,
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
-			groupId:groupId.value
+			groupId: groupId.value,
 		}).then((res) => {
 			initdata.value = res.records;
 			total.value = res.total;
@@ -739,17 +726,19 @@
 		let id = record.hostId;
 		router.push(`/hosts/host_board?${id}`);
 	};
+	// 内存
 	const goboard_stor = (record) => {
 		let id = record.hostId;
 		router.push(`/hosts/host_board_storage?${id}`);
 	};
+	// 磁盘
 	const goboard_disk = (record) => {
-		let id = record.hostId;
+		console.log(record, 'recordrecordrecordrecord');
+		let id = record.groupId;
 		router.push(`/hosts/host_board_disk?${id}`);
 	};
 	const GoDep = (record) => {
 		console.log(record, 'record---');
-
 		let id = record.groupId;
 		window.open('/deploy?' + id);
 	};

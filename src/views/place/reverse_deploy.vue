@@ -53,8 +53,8 @@
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -76,6 +76,7 @@
 	</div>
 	<!-- 添加 -->
 	<a-modal v-model:visible="visible" title="添加" @ok="handleOk">
+		<div style="max-height: 700px; overflow: auto;">
 		<a-form
 			v-for="(item, index) in formState"
 			style="margin-top: 10px"
@@ -108,7 +109,7 @@
 				<a-input placeholder="记录值" v-model:value="item.content" />
 			</a-form-item>
 		</a-form>
-
+</div>
 		<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px">
 			<a-button type="dashed" style="width: 80%" @click="addRecordBtn">增加记录</a-button>
 		</div>

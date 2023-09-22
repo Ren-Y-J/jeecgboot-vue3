@@ -49,8 +49,8 @@
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -72,61 +72,61 @@
 	</div>
 	<!-- 添加 -->
 	<a-modal v-model:visible="visible" title="添加" @ok="handleOk">
-		<a-form
-			v-for="(item, index) in formState"
-			style="margin-top: 10px"
-			ref="formRef_"
-			:model="formState"
-			name="basic"
-			:label-col="{ span: 3 }"
-			:wrapper-col="{ span: 20 }"
-			autocomplete="off"
-			validateTrigger="blur"
-		>
-			<div class="pointer" v-if="item.id !== '1'" @click="XiconBtn(index)">
-				<close-circle-filled class="Xicon" />
-			</div>
-
-			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录名称" v-model:value="item.name" />
-			</a-form-item>
-
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-radio-group v-model:value="item.type" style="width: 100%">
-					<a-radio value="0">A</a-radio>
-					<a-radio value="1">AAAA </a-radio>
-					<a-radio value="2">CNAME</a-radio>
-					<a-radio value="3">NS</a-radio>
-					<a-radio value="7">TXT</a-radio>
-					<a-radio value="4">MX</a-radio>
-					<a-radio value="5">CAA</a-radio>
-					<a-radio value="6">SRV</a-radio>
-				</a-radio-group>
-			</a-form-item>
-			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select
-					@change="linechange"
-					v-model:value="item.lineId"
-					mode="multiple"
-					style="width: 100%"
-					placeholder="请选择"
-					:options="groupData"
-				></a-select>
-			</a-form-item>
-			<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="TTL" v-model:value="item.ttl" />
-			</a-form-item>
-			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录值" v-model:value="item.content" />
-			</a-form-item>
-		</a-form>
-
+		
+		<div style="max-height: 700px; overflow: auto;">
+			<a-form
+				v-for="(item, index) in formState"
+				style="margin-top: 10px"
+				ref="formRef_"
+				:model="formState"
+				name="basic"
+				:label-col="{ span: 3 }"
+				:wrapper-col="{ span: 20 }"
+				autocomplete="off"
+				validateTrigger="blur"
+			>
+				<div class="pointer" v-if="item.id !== '1'" @click="XiconBtn(index)">
+					<close-circle-filled class="Xicon" />
+				</div>
+				<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+					<a-input placeholder="记录名称" v-model:value="item.name" />
+				</a-form-item>
+				<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+					<a-radio-group v-model:value="item.type" style="width: 100%">
+						<a-radio value="0">A</a-radio>
+						<a-radio value="1">AAAA </a-radio>
+						<a-radio value="2">CNAME</a-radio>
+						<a-radio value="3">NS</a-radio>
+						<a-radio value="7">TXT</a-radio>
+						<a-radio value="4">MX</a-radio>
+						<a-radio value="5">CAA</a-radio>
+						<a-radio value="6">SRV</a-radio>
+					</a-radio-group>
+				</a-form-item>
+				<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+					<a-select
+						@change="linechange"
+						v-model:value="item.lineId"
+						mode="multiple"
+						style="width: 100%"
+						placeholder="请选择"
+						:options="groupData"
+					></a-select>
+				</a-form-item>
+				<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+					<a-input type='number'  placeholder="TTL" v-model:value="item.ttl" />
+				</a-form-item>
+				<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+					<a-input placeholder="记录值" v-model:value="item.content" />
+				</a-form-item>
+			</a-form>
+		</div>
 		<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px">
 			<a-button type="dashed" style="width: 80%" @click="addRecordBtn">增加记录</a-button>
 		</div>
 	</a-modal>
 	<!-- 编辑 -->
-	<a-modal v-model:visible="edit_visible" title="编辑" @ok="handleOk_edit">
+	<a-modal  style='hight:20px' v-model:visible="edit_visible" title="编辑" @ok="handleOk_edit">
 		<a-form
 			style="margin-top: 10px"
 			ref="formRef_edit"
@@ -460,4 +460,5 @@
 		font-size: 15px;
 		margin-right: 30px;
 	}
+	
 </style>
