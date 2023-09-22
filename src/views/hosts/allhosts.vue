@@ -457,7 +457,6 @@
 		{
 			title: '主机组',
 			dataIndex: 'groupName',
-
 			width: 100,
 			align: 'center',
 		},
@@ -739,17 +738,19 @@
 		let id = record.hostId;
 		router.push(`/hosts/host_board?${id}`);
 	};
+	// 内存
 	const goboard_stor = (record) => {
 		let id = record.hostId;
 		router.push(`/hosts/host_board_storage?${id}`);
 	};
+	// 磁盘
 	const goboard_disk = (record) => {
-		let id = record.hostId;
+		console.log(record,'recordrecordrecordrecord' )
+		let id = record.groupId;
 		router.push(`/hosts/host_board_disk?${id}`);
 	};
 	const GoDep = (record) => {
 		console.log(record, 'record---');
-
 		let id = record.groupId;
 		window.open('/deploy?' + id);
 	};
