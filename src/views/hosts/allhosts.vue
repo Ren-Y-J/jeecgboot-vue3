@@ -627,6 +627,10 @@
 	const Delbtn = (record) => {
 		recordID.value = record.hostId;
 		visible_del.value = true;
+		formState_del.value.ip=''
+		formState_del.value.okpwd=''
+		
+		
 	};
 	// 字段初始化
 	const clearData = () => {

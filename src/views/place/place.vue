@@ -8,10 +8,9 @@
 			<div class="search">
 				<a-form>
 					<div style="display: flex">
-						<a-form-item style='margin-right:10px' label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
+						<a-form-item style="margin-right: 10px" label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
 							<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
 						</a-form-item>
-
 						<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 23 }">
 							<a-space>
 								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
@@ -21,7 +20,6 @@
 								</a-select>
 							</a-space>
 						</a-form-item>
-
 						<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
 						<a-button @click="resetbtn">
 							<reload-outlined />
@@ -33,10 +31,45 @@
 		</div>
 
 		<div class="page" style="margin-top: 8px">
-			<div style="margin-bottom: 8px">
-				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
+			<div style="display: flex; margin-bottom: 8px">
+				<a-space>
+					<a-select
+						ref="select"
+						style="width: 120px; margin-right: 8px"
+						@focus="focus"
+						@select="handleChange_del"
+						v-model:value="delselect"
+						placeholder="批量操作"
+					>
+						<a-select-option value="1">删除</a-select-option>
+					</a-select>
+				</a-space>
+				<div>
+					<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
+				</div>
 			</div>
-			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
+			<a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
+				<template #message>
+					<template v-if="number > 0">
+						<span>已选定 {{ number }} 条记录(可跨页)</span>
+						<a-divider type="vertical" />
+						<a @click="clearbtn">清空</a>
+						<a-divider type="vertical" />
+					</template>
+					<template v-else>
+						<span>未选中任何数据</span>
+					</template>
+				</template>
+			</a-alert>
+			<a-table
+				:rowKey="(record) => record.zoneId"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+				:pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
+				:columns="columns"
+				:data-source="initdata"
+				bordered
+			>
 				<template #bodyCell="{ column, record }">
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
@@ -339,6 +372,7 @@
 			expireTime: '',
 			minimumTime: '',
 		},
+		number: 0,
 		groupData: [],
 		search: '',
 		placetype: '0',
@@ -348,9 +382,12 @@
 		hosts: undefined,
 		zoneId: '',
 		HostsGroupData: '',
-			groupId: undefined,
+		groupId: undefined,
+		delselect:undefined
 	});
 	const {
+		delselect,
+		number,
 		groupId,
 		formState_SOA,
 		visible_SOA,
@@ -372,16 +409,62 @@
 		HostsData,
 		hosts,
 		zoneId,
-		HostsGroupData
+		HostsGroupData,
 	} = toRefs(data);
+
+	// 多选
+	const state = reactive({
+		selectedRowKeys: [],
+	});
+	const allclusterId = ref([]);
+	const rowSelection = (selectedRowKeys, selectedRows) => {
+		state.selectedRowKeys = selectedRowKeys;
+		allclusterId.value = selectedRows.map((item) => item.zoneId);
+		number.value = allclusterId.value.length;
+	};
+const clearbtn = () => {
+		allclusterId.value = [];
+		number.value = 0;
+		state.selectedRowKeys = [];
+	};
+// 批量删除提交
+const handleChange_del = ()=>{
+	
+	if(delselect.value==1){
+		
+		let values1 = allclusterId.value
+		
+		if (placetype.value == '0') {
+			DelLine({
+				values: values1,
+			}).then((res) => {
+				message.success('删除成功');
+				getData();
+			});
+		}
+		if (placetype.value == '1') {
+			DelLine({
+				values: values1,
+			}).then((res) => {
+				message.success('删除成功');
+				getData();
+			});
+		}
+		
+	}
+	
+}
+
+
+
 	const GetHostsGroupData = () => {
 		HostGroup().then((res) => {
-			console.log(res, 'HostsGroupData');
 			HostsGroupData.value = res;
 		});
 	};
-	GetHostsGroupData()
+	GetHostsGroupData();
 	const changetabs = () => {
+		allclusterId.value=[]
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
 			GetList({
@@ -425,7 +508,6 @@
 		zoneId.value = record.zoneId;
 		SOAEcho(`${record.zoneId}`).then((res) => {
 			let data = JSON.parse(res.soaInfo);
-			console.log(data, 'recordrecordrecordrecord');
 			data.forEach((item) => {
 				formState_SOA.value.expireTime = item.expireTime;
 				formState_SOA.value.mail = item.mail;
@@ -439,7 +521,6 @@
 	};
 	const getData = () => {
 		HostGroup({}).then((res) => {
-			console.log(res, 'res**---');
 			HostsData.value = res;
 		});
 
@@ -474,7 +555,7 @@
 		pageNum.value = 1;
 		pageSize.value = 10;
 		search.value = '';
-		groupId.value=undefined;
+		groupId.value = undefined;
 		getData();
 	};
 	const onShowSizeChange = (current, pageSize) => {
@@ -513,7 +594,7 @@
 	const searchBtn = () => {
 		if (placetype.value == '0') {
 			GetList({
-				groupId:groupId.value,
+				groupId: groupId.value,
 				zoneName: search.value,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -565,7 +646,6 @@
 			return;
 		}
 
-		console.log(formState_.value.hosts, 'formState.value.hosts');
 		AddReverseList({
 			groupId: formState_.value.hosts,
 			type: formState.value.type_1,
@@ -585,6 +665,10 @@
 		formState.value.lineId = [];
 		formState.value.childZone = '';
 		formState.value.remark = '';
+		
+		
+		formState.value.hosts = undefined;
+		
 		formState.value.type_1 = undefined;
 		formState_.value.lineId = [];
 		formState_.value.IP = '';
@@ -600,7 +684,6 @@
 		formState_SOA.value.minimumTime = '';
 	};
 	const delBtn = (record) => {
-		console.log(record, 'record');
 		let values1 = [record.zoneId];
 		DelLine({
 			values: values1,
