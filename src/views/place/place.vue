@@ -383,7 +383,7 @@
 		zoneId: '',
 		HostsGroupData: '',
 		groupId: undefined,
-		delselect:undefined
+		delselect: undefined,
 	});
 	const {
 		delselect,
@@ -422,19 +422,19 @@
 		allclusterId.value = selectedRows.map((item) => item.zoneId);
 		number.value = allclusterId.value.length;
 	};
-const clearbtn = () => {
+	const clearbtn = () => {
 		allclusterId.value = [];
 		number.value = 0;
 		state.selectedRowKeys = [];
 	};
-// 批量删除提交
-const handleChange_del = ()=>{
-	
-	if(delselect.value==1){
-		
-		let values1 = allclusterId.value
-		
-		if (placetype.value == '0') {
+	// 批量删除提交
+	const handleChange_del = () => {
+		if (allclusterId.value == '') {
+			message.error('请选择数据');
+			return;
+		}
+		if (delselect.value == 1) {
+			let values1 = allclusterId.value;
 			DelLine({
 				values: values1,
 			}).then((res) => {
@@ -442,20 +442,7 @@ const handleChange_del = ()=>{
 				getData();
 			});
 		}
-		if (placetype.value == '1') {
-			DelLine({
-				values: values1,
-			}).then((res) => {
-				message.success('删除成功');
-				getData();
-			});
-		}
-		
-	}
-	
-}
-
-
+	};
 
 	const GetHostsGroupData = () => {
 		HostGroup().then((res) => {
@@ -464,7 +451,7 @@ const handleChange_del = ()=>{
 	};
 	GetHostsGroupData();
 	const changetabs = () => {
-		allclusterId.value=[]
+		allclusterId.value = [];
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
 			GetList({
@@ -665,10 +652,9 @@ const handleChange_del = ()=>{
 		formState.value.lineId = [];
 		formState.value.childZone = '';
 		formState.value.remark = '';
-		
-		
+
 		formState.value.hosts = undefined;
-		
+
 		formState.value.type_1 = undefined;
 		formState_.value.lineId = [];
 		formState_.value.IP = '';
