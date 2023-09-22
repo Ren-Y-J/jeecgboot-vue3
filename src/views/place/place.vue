@@ -8,8 +8,18 @@
 			<div class="search">
 				<a-form>
 					<div style="display: flex">
-						<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
+						<a-form-item style='margin-right:10px' label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
 							<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
+						</a-form-item>
+
+						<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 23 }">
+							<a-space>
+								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
+									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
+										item.groupName
+									}}</a-select-option>
+								</a-select>
+							</a-space>
 						</a-form-item>
 
 						<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
@@ -21,7 +31,7 @@
 				</a-form>
 			</div>
 		</div>
-		
+
 		<div class="page" style="margin-top: 8px">
 			<div style="margin-bottom: 8px">
 				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
@@ -37,11 +47,10 @@
 						</div>
 					</template>
 					<!-- 线路 -->
-					<template v-if="column.dataIndex === 'ipAddress'" >
-						<div style="display: flex; justify-content: center; align-items: center" class='pointer' @click='GoDep(record)'>
+					<template v-if="column.dataIndex === 'ipAddress'">
+						<div style="display: flex; justify-content: center; align-items: center" class="pointer" @click="GoDep(record)">
 							<span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }} </span>
 						</div>
-						
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
@@ -94,7 +103,7 @@
 		>
 			<a-form-item
 				label="域名"
-			:labelCol="{ span: 5 }"
+				:labelCol="{ span: 5 }"
 				:wrapperCol="{ span: 15 }"
 				:rules="[{ required: true, message: '请输入域名!' }]"
 				name="name"
@@ -153,7 +162,7 @@
 				</a-select>
 			</a-form-item>
 			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组" :labelCol="{ span: 5 }">
-				<a-select @change="changehosts" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机">
+				<a-select @change="changehosts_" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机组">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.groupId" value="3">{{
 						item.groupName
 					}}</a-select-option>
@@ -252,7 +261,19 @@
 	</a-modal>
 </template>
 <script setup>
-	import { GetList, GetLine, AddLine, GetReverseList, DelLine, AddReverseList, stopStatus, GetHostsAll, SOAEcho, EditSOA,HostGroup } from './place.ts';
+	import {
+		GetList,
+		GetLine,
+		AddLine,
+		GetReverseList,
+		DelLine,
+		AddReverseList,
+		stopStatus,
+		GetHostsAll,
+		SOAEcho,
+		EditSOA,
+		HostGroup,
+	} from './place.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { message } from 'ant-design-vue';
@@ -326,8 +347,11 @@
 		HostsData: '',
 		hosts: undefined,
 		zoneId: '',
+		HostsGroupData: '',
+			groupId: undefined,
 	});
 	const {
+		groupId,
 		formState_SOA,
 		visible_SOA,
 		type,
@@ -348,7 +372,15 @@
 		HostsData,
 		hosts,
 		zoneId,
+		HostsGroupData
 	} = toRefs(data);
+	const GetHostsGroupData = () => {
+		HostGroup().then((res) => {
+			console.log(res, 'HostsGroupData');
+			HostsGroupData.value = res;
+		});
+	};
+	GetHostsGroupData()
 	const changetabs = () => {
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
@@ -406,19 +438,11 @@
 		});
 	};
 	const getData = () => {
-		
-		
-		
-		
-		
 		HostGroup({}).then((res) => {
-			console.log(res,'res**---')
+			console.log(res, 'res**---');
 			HostsData.value = res;
 		});
-		
-		
-		
-		
+
 		if (placetype.value == '0') {
 			GetList({
 				type: 0,
@@ -450,6 +474,7 @@
 		pageNum.value = 1;
 		pageSize.value = 10;
 		search.value = '';
+		groupId.value=undefined;
 		getData();
 	};
 	const onShowSizeChange = (current, pageSize) => {
@@ -457,7 +482,18 @@
 		getData();
 	};
 	const changehosts = () => {
-		console.log(formState.value.hosts, 'hosts66+');
+		formState.value.lineId = [];
+
+		// 获取线路
+		GetLine({
+			value: formState.value.hosts,
+		}).then((res) => {
+			const transformedData = res.map(({ lineId: value, lineName: label }) => ({ value, label }));
+			groupData.value = transformedData;
+		});
+	};
+	const changehosts_ = () => {
+		formState_.value.lineId = [];
 		// 获取线路
 		GetLine({
 			value: formState.value.hosts,
@@ -477,6 +513,7 @@
 	const searchBtn = () => {
 		if (placetype.value == '0') {
 			GetList({
+				groupId:groupId.value,
 				zoneName: search.value,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -527,8 +564,8 @@
 			console.log(error);
 			return;
 		}
-		
-		console.log( formState_.value.hosts,'formState.value.hosts'   )
+
+		console.log(formState_.value.hosts, 'formState.value.hosts');
 		AddReverseList({
 			groupId: formState_.value.hosts,
 			type: formState.value.type_1,
@@ -537,7 +574,7 @@
 			remark: formState_.value.remark,
 			childZone: formState_.value.childZone,
 		}).then((res) => {
-			// visible_1.value = false;
+			visible_1.value = false;
 			message.success('添加成功');
 			clearData();
 			getData();
@@ -588,7 +625,7 @@
 			router.push(`/place/reverse_deploy?${id}`);
 		}
 	};
-	const stopBtn = (record)	 => {
+	const stopBtn = (record) => {
 		if (record.status == 1) {
 			stopStatus({
 				status: 0,
@@ -609,10 +646,10 @@
 		}
 	};
 	// 跳转
-	const GoDep = (record) =>{
+	const GoDep = (record) => {
 		let id = record.hostId;
 		window.open('/deploy?' + id);
-	}
+	};
 </script>
 
 <style>
