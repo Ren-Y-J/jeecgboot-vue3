@@ -154,8 +154,8 @@
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div>
-							<span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
-							<span class="pointer" @click="Delbtn(record)" style="color: #2e7dff; margin-right: 8px">删除</span>
+							 <a-button @click="openmodal(record)" type="link">编辑</a-button>
+							 	 <a-button @click="Delbtn(record)" type="link">删除</a-button>
 							<!-- <span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span> -->
 						</div>
 					</template>

@@ -49,8 +49,8 @@
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
+									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -88,11 +88,9 @@
 				<div class="pointer" v-if="item.id !== '1'" @click="XiconBtn(index)">
 					<close-circle-filled class="Xicon" />
 				</div>
-			
 				<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 					<a-input placeholder="记录名称" v-model:value="item.name" />
 				</a-form-item>
-			
 				<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 					<a-radio-group v-model:value="item.type" style="width: 100%">
 						<a-radio value="0">A</a-radio>
@@ -116,16 +114,13 @@
 					></a-select>
 				</a-form-item>
 				<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-					<a-input placeholder="TTL" v-model:value="item.ttl" />
+					<a-input type='number'  placeholder="TTL" v-model:value="item.ttl" />
 				</a-form-item>
 				<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 					<a-input placeholder="记录值" v-model:value="item.content" />
 				</a-form-item>
 			</a-form>
-			
-			
 		</div>
-		
 		<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px">
 			<a-button type="dashed" style="width: 80%" @click="addRecordBtn">增加记录</a-button>
 		</div>

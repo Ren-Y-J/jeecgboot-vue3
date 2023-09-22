@@ -87,23 +87,25 @@
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
-						<div style="display: flex; justify-content: center; align-items: center">
-							<div class="pointer" style="margin-right: 10px">
+						<div style="display: flex;">
+							<div class="pointer" 	>
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<span style="color: #1890ff">删除</span>
+									 <a-button type="link">删除</a-button>
+									
+									
 								</a-popconfirm>
 							</div>
-							<div class="pointer" style="margin-right: 10px" @click="Godeploy(record)">
-								<span style="color: #1890ff">配置</span>
+							<div class="pointer"  @click="Godeploy(record)">
+									 <a-button type="link">配置</a-button>
 							</div>
-							<div class="pointer" style="margin-right: 10px">
+							<div class="pointer" >
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 0" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 1" style="color: #1890ff">启用</span>
+									 <a-button v-show="record.status == 0"  type="link">禁用</a-button>
+									 <a-button v-show="record.status == 1" type="link">启用</a-button>
 								</a-popconfirm>
 							</div>
-							<div class="pointer" style="margin-right: 10px" @click="openSOA(record)">
-								<span style="color: #1890ff">配置SOA</span>
+							<div class="pointer" @click="openSOA(record)">
+									 <a-button type="link">配置SOA</a-button>
 							</div>
 						</div>
 					</template>

@@ -39,14 +39,10 @@
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div style="display: flex; justify-content: center; align-items: center">
-							<div class="pointer" style="margin-right: 5px" @click="editBtn(record)">
-								<span class="pointer" style="color: #2e7dff; margin-right: 8px">编辑</span>
-							</div>
-							<div class="pointer">
+								 <a-button  @click="editBtn(record)" type="link">编辑</a-button>
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<span class="pointer" style="color: #2e7dff; margin-right: 8px">删除</span>
+									 <a-button type="link">删除</a-button>
 								</a-popconfirm>
-							</div>
 						</div>
 					</template>
 				</template>
