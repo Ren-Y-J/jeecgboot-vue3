@@ -42,6 +42,16 @@
       <a-card>
         <div class="btn">
           <div class="left">
+            <span class="select-option">
+              <a-space>
+                <a-select ref="select" v-model:value="changevalue" style="width: 120px" @select="handlChangeFn">
+                  <!--这是静态写法 <a-select-option value="0"> <rest-outlined />删除</a-select-option> -->
+                  <!-- <a-select-option value="1">以后要加别的导出</a-select-option> -->
+                  <a-select-option v-for="option in options" :key="option.label" :value="option.label">{{ option.value
+                  }}</a-select-option>
+                </a-select>
+              </a-space>
+            </span>
             <a-button type="primary" @click="isOpen">添加线路</a-button>
             <a-button type="primary" @click="isOpensort">线路排序</a-button>
           </div>
@@ -273,8 +283,9 @@ import { ref, defineComponent, reactive, watch } from 'vue'
 import { list, gethostsAll, gethostsAlls, delline, getaclIdAll, addaclIdAll, lineInfo, editline, getinfolineName, getinfolineNames, sortlineName, upswitch } from './line'
 import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 import { message } from 'ant-design-vue';
-
-
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Modal } from 'ant-design-vue';
+import { createVNode } from 'vue';
 // 我没引入
 const columns = [{
   title: '顺序',
@@ -371,9 +382,6 @@ const formData = ref({
   groupId: undefined,
   lineName: ''
 
-});
-const state = reactive({
-  selectedRowKeys: [],
 });
 
 const initData = async () => {
@@ -552,11 +560,22 @@ const delFn = async (record) => {
 
 }
 const confirm = (record) => {
-  // console.log(record, 'record2');
+  console.log(record, 'record2');
   delFn(record.lineId)
   initData()
 };
+// 批量删除
+const state = reactive({
+  selectedRowKeys: [],
+});
 
+const changevalue = ref('批量操作')
+const changesearch = ref('请选择')
+const options = ref([
+  { label: '0', value: '删除' },
+
+])
+const selects = ref(0)
 const rowSelection = async (selectedRowKeys, selectedRows) => {
   console.log(selectedRowKeys);
   console.log(selectedRows)
@@ -566,6 +585,47 @@ const rowSelection = async (selectedRowKeys, selectedRows) => {
   console.log(allclusterId.value);
   number.value = allclusterId.value.length
   //这个是勾选的id存放的位置 我点清空我id复空
+}
+
+
+const handlChangeFn = async (val) => {
+  // visibledel.value = true
+  console.log(val, 'val');
+  selects.value = val//select点击删除的的value字段0字符串类型
+  if (number.value == 0) { //number.value个数数字类型  allclusterId.value.length勾选的id是几个字符串类型
+    message.error('请勾选需要删除的集群')
+    changevalue.value = '批量删除'
+  } else {
+    // visibledel.value = true
+    Modal.confirm({
+      title: '删除',
+      icon: createVNode(ExclamationCircleOutlined),
+      content: createVNode('div', {
+        style: 'color:rgba(0, 0, 0, 0.85);font-size: 14px;',
+      }, '是否删除选中数据'),
+      onOk() {
+        console.log('OK');
+        if (selects.value == '0' && !allclusterId.value.length == 0) {
+          delline({ values: allclusterId.value }).then(res => {
+            // console.log(res);
+            initData()
+            message.success('批量删除成功')
+            number.value = 0
+            changevalue.value = '批量删除'
+          })
+          // console.log(res, 'allclusterId');
+
+
+        }
+
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+      class: 'test',
+    });
+  }
+
 }
 // 点击清空
 const fn = () => {

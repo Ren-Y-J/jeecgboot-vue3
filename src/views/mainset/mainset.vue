@@ -61,7 +61,7 @@
     </div>
     <div class="modal">
 
-      <a-modal v-model:visible="visible" :title="opTitle" @ok="addoreditFn" @cancel="onClose">
+      <a-modal v-model:visible="visible" :title="opTitle" @ok="addoreditFn" @cancel="onCloses">
         <a-form :model="rowData" ref='formRefmainset' name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
           <a-form-item :rules="formRules.groupName" label="主机组名称" name="groupName" style='margin-top: 26px'>
@@ -81,7 +81,7 @@ import { router } from '/@/router';
 const columns = [
 
   {
-    title: '分机组',
+    title: '主机组',
     dataIndex: 'groupName',
     align: 'center',
   },
@@ -132,10 +132,15 @@ const isOpen = async (record) => {
   visible.value = true
   // clusterId标题用rowdata里的id是否存在进行判断,页面关闭的时候也清空一下
   if (record.groupId) {
-    rowData.value = record
-    opTitle.value = "分组修改"
+    rowData.value.groupName = record.groupName
+    rowData.value.groupId = record.groupId
+    // rowData.value = record
+    opTitle.value = "编辑主机组"
   } else {
-    opTitle.value = "分组添加"
+    opTitle.value = "添加主机组"
+    // 确保上次没有缓存
+    rowData.value = { groupName: "" }
+    // rowData.value = { groupName: rowData.value.groupName }
   }
 }
 const addoreditFn = async () => {
@@ -145,28 +150,31 @@ const addoreditFn = async () => {
     // console.log(error);
     return console.log(error)
   }
-  // console.log(rowData);
+  console.log(rowData);
+
   if (rowData.value.groupId) {
     await edimainset(rowData.value)
     visible.value = false
     message.success('修改成功')
     initData()
-    onClose()
+    onCloses()
   } else {
     await addmainset(rowData.value)
     visible.value = false
     message.success('添加成功')
     initData()
     onClose()
+
   }
 }
 // 关闭弹框
-const onClose = () => {
+
+const onCloses = () => {
   visible.value = false;
   formRefmainset.value.resetFields()
-  rowData.value.groupName = ""
   opTitle.value = ""
-  rowData.value.groupId = ''
+  // groupName清空 恢复默认数据类型
+  rowData.value = { groupName: "" }
 };
 // 删除
 const delFn = async (groupId) => {
@@ -205,7 +213,7 @@ const AlldelFn = () => {
 const GoDep = (record) => {
   let id = record.groupId;
   window.open('/deploy?' + id);
-  
+
 };
 </script>
 <style scoped lang="less">
