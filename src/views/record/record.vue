@@ -601,9 +601,11 @@ const onShowSizeChange = (current, pageSize) => {//pageSize 变化的回调，�
   message.success('删除成功')
   }
   const confirm = (record) => {
+    console.log(record,record);
   delFn(record.id)
   getcordList()
 };
+
 
 //批量删除
 const handlChangeFn = (val) =>{

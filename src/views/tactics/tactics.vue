@@ -481,16 +481,16 @@ const editGroup = (record)=>{
 
   formState_edit.value.policiesTimeRange = res.policiesTimeRange.replace(/[\[\]"]/g, '').split('-').join(',')
    console.log(formState_edit.value.policiesTimeRange ,'formState_edit.value.policiesTimeRange123 ');
-//   let editpoliciesTime = []
-//   editpoliciesTime.push(formState_edit.value.policiesTimeRange)
-//   let transformedA = editpoliciesTime[0].split(',').reduce((acc, curr, index, array) => {
-//     if (index % 2 === 0) {
-//       acc.push(curr + ',' + array[index + 1]);
-//     }
-//     return acc;
-//   }, []);
-//   let transformed = transformedA.map(element => element.trim());
-//   console.log(transformed,'transformed');
+  let editpoliciesTime = []
+  editpoliciesTime.push(formState_edit.value.policiesTimeRange)
+  let transformedA = editpoliciesTime[0].split(',').reduce((acc, curr, index, array) => {
+    if (index % 2 === 0) {
+      acc.push(curr + ',' + array[index + 1]);
+    }
+    return acc;
+  }, []);
+  let transformed = transformedA.map(element => element.trim());
+  console.log(transformed,'transformed');
  
 // //   console.log(transformed,'transformed');
 //   formDataName_edit.value.forEach((item)=>{
@@ -507,8 +507,8 @@ const editGroup = (record)=>{
 //   })
 // //   formDataName_edit.value.state_value = [...transformed]
 //   console.log(formDataName_edit.value,'22222');
-  formState_edit.value.policiesTimeRange =   JSON.parse(JSON.stringify(formState_edit.value.policiesTimeRange))
-  console.log(formState_edit.value.policiesTimeRange ,'formState_edit.value.policiesTimeRange ');
+//   formState_edit.value.policiesTimeRange =   JSON.parse(JSON.stringify(formState_edit.value.policiesTimeRange))
+//   console.log(formState_edit.value.policiesTimeRange ,'formState_edit.value.policiesTimeRange ');
 //   console.log(formDataName_edit.value.state_value,'1111');
 
 // formState_edit.value.policiesTimeRange =JSON.parse(res.policiesTimeRange);

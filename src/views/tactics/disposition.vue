@@ -18,7 +18,7 @@
 							<span style="display: inline-block; display: flex; flex-wrap: nowrap; margin-top: 0px">
 								<div class="searchbtn">
 									<a-button :style="{ margin: '0px 5px ' }" type="primary"  @click="handleQuery"> <search-outlined />搜索</a-button>
-									<a-button :style="{ margin: '0px 5px ' }"><reload-outlined @click="AlldelFn"/>重置</a-button>
+									<a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
 								</div>
 							</span>
 						</a-col>
@@ -171,7 +171,7 @@ const columns = [{
 {
   title: '操作',
   dataIndex: 'operation',
-  width: 250,
+  width: 400,
   align: 'center'
 },
 ];
@@ -214,6 +214,7 @@ formState
 const getcordList = () => {
     let url = location.search;
 	id.value = url.replace('?', '');
+	console.log(id.value,'id.value');
 	list({
         policiesId: id.value,
 		pageNum: pageNum.value,
@@ -238,31 +239,28 @@ const addTactics =(evt)=>{
 }
 
 //点击页面搜索按钮
-const handleQuery = (evt) => {
-	let target = evt.target;
-	if(target.nodeName == "SPAN"){
-        target = evt.target.parentNode;
-    }
-    target.blur()
-	list({
-        policiesId: id.value,
-		pageNum: pageNum.value,
-		pageSize: pageSize.value,
-		policyName: search.value, //获取响应式记录名称
-	}).then((res) => {
-        // console.log(res);
-		listData.value = res.records; //把数据给到存放表单的数组中
-		pageNum.value = 1;
-		total.value = res.total; //总数
-	});
-};
+// const handleQuery = ()=>{
+// 	console.log('111');
+// 	let url = location.search;
+// 	id.value = url.replace('?', '');
+// 	list({
+//         policiesId: id.value,
+// 		pageNum: pageNum.value,
+// 		pageSize: pageSize.value,
+// 		policyName: search.value, //获取响应式记录名称
+// 	}).then((res) => {
+//         // console.log(res);
+// 		listData.value = res.records; //把数据给到存放表单的数组中
+// 		pageNum.value = 1;
+// 		total.value = res.total; //总数
+// 	});
+// }
 
 //重置按钮，把数据初始化
 const AlldelFn = (evt) => {
-    // console.log(evt,'evt');
 	let target = evt.target;
 	if(target.nodeName == "SPAN"){
-         target = evt.target.parentNode;
+        target = evt.target.parentNode;
     }
     target.blur()
 	search.value = ''
