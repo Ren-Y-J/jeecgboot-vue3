@@ -234,27 +234,31 @@ const addTactics =(evt)=>{
         target = evt.target.parentNode;
     }
     target.blur()
-  	visible_add.value = true
-  	// clearData()//清空表单数据
+  	// router.push(`/tactics/disposition/addpolicy?${id}`)
+	router.push('/tactics/disposition/addpolicy')
+	// const disposition = (record)=>{
+	// let id = record.policiesId;
+	// router.push(`/tactics/disposition?${id}`);
 }
 
+
 //点击页面搜索按钮
-// const handleQuery = ()=>{
-// 	console.log('111');
-// 	let url = location.search;
-// 	id.value = url.replace('?', '');
-// 	list({
-//         policiesId: id.value,
-// 		pageNum: pageNum.value,
-// 		pageSize: pageSize.value,
-// 		policyName: search.value, //获取响应式记录名称
-// 	}).then((res) => {
-//         // console.log(res);
-// 		listData.value = res.records; //把数据给到存放表单的数组中
-// 		pageNum.value = 1;
-// 		total.value = res.total; //总数
-// 	});
-// }
+const handleQuery = ()=>{
+	console.log('111');
+	// let url = location.search;
+	// id.value = url.replace('?', '');
+	// list({
+    //     policiesId: id.value,
+	// 	pageNum: pageNum.value,
+	// 	pageSize: pageSize.value,
+	// 	policyName: search.value, //获取响应式记录名称
+	// }).then((res) => {
+    //     // console.log(res);
+	// 	listData.value = res.records; //把数据给到存放表单的数组中
+	// 	pageNum.value = 1;
+	// 	total.value = res.total; //总数
+	// });
+}
 
 //重置按钮，把数据初始化
 const AlldelFn = (evt) => {
