@@ -4,16 +4,11 @@
 			<a-form autocomplete="off">
 				<a-row :gutter="1">
 					<a-col span="3">
-						<a-form-item style="margin-bottom: 0px" label="状态" name="status" :labelCol="{ span: 7 }" :wrapperCol="{ span: 10 }">
+						<a-form-item style="margin-bottom: 0px" label="状态" name="status" :labelCol="{ span: 7 }"
+							:wrapperCol="{ span: 10 }">
 							<a-space>
-								<a-select
-									placeholder="请选择"
-									ref="select"
-									style="width: 120px"
-									@focus="focus"
-									@change="handleChange"
-									v-model:value="status"
-								>
+								<a-select placeholder="请选择" ref="select" style="width: 120px" @focus="focus"
+									@change="handleChange" v-model:value="status">
 									<a-select-option value="1">正常</a-select-option>
 									<a-select-option value="0">异常</a-select-option>
 								</a-select>
@@ -21,17 +16,13 @@
 						</a-form-item>
 					</a-col>
 					<a-col :md="4">
-						<a-form-item style="margin-bottom: 0px" label="集群名称" name="status" :labelCol="{ span: 8 }" :wrapperCol="{ span: 10 }">
+						<a-form-item style="margin-bottom: 0px" label="集群名称" name="status" :labelCol="{ span: 8 }"
+							:wrapperCol="{ span: 10 }">
 							<a-space>
-								<a-select
-									placeholder="请选择"
-									ref="select"
-									style="width: 150px"
-									@focus="focus"
-									@change="handleChange"
-									v-model:value="clusterName"
-								>
-									<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{
+								<a-select placeholder="请选择" ref="select" style="width: 150px" @focus="focus"
+									@change="handleChange" v-model:value="clusterName">
+									<a-select-option v-for="(item, index) in groupData" key="index"
+										:value="item.clusterId">{{
 										item.clusterName
 									}}</a-select-option>
 								</a-select>
@@ -39,10 +30,12 @@
 						</a-form-item>
 					</a-col>
 					<a-col :md="4">
-						<a-form-item style="margin-bottom: 0px" label="主机组" name="status" :labelCol="{ span: 8 }" :wrapperCol="{ span: 10 }">
+						<a-form-item style="margin-bottom: 0px" label="主机组" name="status" :labelCol="{ span: 8 }"
+							:wrapperCol="{ span: 10 }">
 							<a-space>
 								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
-									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
+									<a-select-option v-for="(item, index) in HostsGroupData" key="index"
+										:value="item.groupId">{{
 										item.groupName
 									}}</a-select-option>
 								</a-select>
@@ -51,7 +44,8 @@
 					</a-col>
 					<a-col :md="4" :sm="5">
 						<div class="searchbtn">
-							<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="seachbtn"> <search-outlined />搜索</a-button>
+							<a-button :style="{ margin: '0px 5px ' }" type="primary" @click="seachbtn">
+								<search-outlined />搜索</a-button>
 							<a-button :style="{ margin: '0px 5px ' }" @click="resetbtn"><reload-outlined />重置</a-button>
 						</div>
 					</a-col>
@@ -62,14 +56,8 @@
 			<div style="display: flex; justify-content: space-between">
 				<div class="icon">
 					<a-space>
-						<a-select
-							ref="select"
-							style="width: 120px; margin-right: 8px"
-							@focus="focus"
-							@change="handleChange"
-							v-model="delselect"
-							placeholder="批量操作"
-						>
+						<a-select ref="select" style="width: 120px; margin-right: 8px" @focus="focus"
+							@change="handleChange" v-model="delselect" placeholder="批量操作">
 							<a-select-option value="1">删除</a-select-option>
 						</a-select>
 					</a-space>
@@ -96,30 +84,16 @@
 				</template>
 			</a-alert>
 			<!-- 表格 -->
-			<a-table
-				:rowKey="(record) => record.hostId"
-				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
-				:pagination="false"
-				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
-				:columns="columns"
-				:data-source="initdata"
-				bordered
-			>
+			<a-table :rowKey="(record) => record.hostId"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
 				<template #bodyCell="{ column, record }">
 					<!-- 状态 -->
 					<template v-if="column.dataIndex === 'statusName'">
-						<img
-							style="width: 16px; height: 16px; margin-left: 30%"
-							v-if="record.status == '0'"
-							src="../../assets/loginmini/icon/error.png"
-							alt=""
-						/>
-						<img
-							v-if="record.status == '1'"
-							src="../../assets/loginmini/icon/status-ok.png"
-							alt=""
-							style="width: 16px; height: 16px; margin-left: 30%"
-						/>
+						<img style="width: 16px; height: 16px; margin-left: 30%" v-if="record.status == '0'"
+							src="../../assets/loginmini/icon/error.png" alt="" />
+						<img v-if="record.status == '1'" src="../../assets/loginmini/icon/status-ok.png" alt=""
+							style="width: 16px; height: 16px; margin-left: 30%" />
 					</template>
 
 					<template v-if="column.dataIndex === 'clusterName'">
@@ -154,23 +128,17 @@
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div>
-							 <a-button @click="openmodal(record)" type="link">编辑</a-button>
-							 	 <a-button @click="Delbtn(record)" type="link">删除</a-button>
+							<a-button @click="openmodal(record)" type="link">编辑</a-button>
+							<a-button @click="Delbtn(record)" type="link">删除</a-button>
 							<!-- <span class="pointer" @click="GoDep(record)" style="color: #2e7dff">配置</span> -->
 						</div>
 					</template>
 				</template>
 			</a-table>
 			<div style="padding: 10px; display: flex; justify-content: flex-end">
-				<a-pagination
-					:show-total="(total) => `共 ${total} 条数据`"
-					v-model:current="pageNum"
-					:total="total"
-					v-model:pageSize="pageSize"
-					show-size-changer
-					@showSizeChange="onShowSizeChange"
-					@change="changeFn"
-				/>
+				<a-pagination :show-total="(total) => `共 ${total} 条数据`" v-model:current="pageNum" :total="total"
+					v-model:pageSize="pageSize" show-size-changer @showSizeChange="onShowSizeChange"
+					@change="changeFn" />
 			</div>
 		</div>
 	</div>
@@ -178,26 +146,22 @@
 	<a-modal v-model:visible="visible" title="添加主机" @ok="btnOK">
 		<!-- 添加 -->
 		<div class="addcomputer">
-			<a-form
-				style="margin-top: 10px"
-				ref="formRef"
-				:model="formState"
-				name="basic"
-				:label-col="{ span: 3 }"
-				:wrapper-col="{ span: 20 }"
-				autocomplete="off"
-				validateTrigger="blur"
-			>
-				<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="name" :rules="formRules.name">
+			<a-form style="margin-top: 10px" ref="formRef" :model="formState" name="basic" :label-col="{ span: 3 }"
+				:wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+				<a-form-item label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="name"
+					:rules="formRules.name">
 					<a-input @blur="changename" v-model:value="formState.name" placeholder="请输入主机名称"></a-input>
 				</a-form-item>
-				<a-form-item label="IP" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="ip" :rules="formRules.ip">
+				<a-form-item label="IP" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="ip"
+					:rules="formRules.ip">
 					<a-input v-model:value="formState.ip" placeholder="请输入IP"></a-input>
 				</a-form-item>
-				<a-form-item label="root密码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rootpwd" :rules="formRules.rootpwd">
+				<a-form-item label="root密码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="rootpwd"
+					:rules="formRules.rootpwd">
 					<a-input @blur="change_rootpwd" v-model:value="formState.rootpwd" placeholder="请输入root密码"></a-input>
 				</a-form-item>
-				<a-form-item label="所属集群" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="clusterId" :rules="formRules.clusterId">
+				<a-form-item label="所属集群" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="clusterId"
+					:rules="formRules.clusterId">
 					<a-select v-model:value="formState.clusterId" placeholder="请选择集群">
 						<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{
 							item.clusterName
@@ -221,23 +185,20 @@
 	<a-modal v-model:visible="visible_del" title="删除主机" @ok="btnOK_del">
 		<!-- 删除 -->
 		<div class="addcomputer">
-			<a-form
-				style="margin-top: 10px"
-				ref="formRef_del"
-				:model="formState_del"
-				name="basic"
-				:label-col="{ span: 3 }"
-				:wrapper-col="{ span: 20 }"
-				autocomplete="off"
-				validateTrigger="blur"
-			>
-				<a-form-item label="确认服务器IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="ip" :rules="formRules.ip">
+			<a-form style="margin-top: 10px" ref="formRef_del" :model="formState_del" name="basic"
+				:label-col="{ span: 3 }" :wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+				<a-form-item label="确认服务器IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="ip"
+					:rules="formRules.ip">
 					<a-input @blur="changeinput" placeholder="请输入服务器IP" v-model:value="formState_del.ip"></a-input>
-					<span v-show="ruleshow" :class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
+					<span v-show="ruleshow"
+						:class="{ success: rulesstatus, error: !rulesstatus }">{{ rulesmessage }}</span>
 				</a-form-item>
-				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd" :rules="formRules.rootpwd">
-					<a-input @blur="change_rootpwd" placeholder="请输入当前用户root密码" v-model:value="formState_del.okpwd"></a-input>
-					<span v-show="ruleshow_rootpwd" :class="{ success: rulesstatus_rootpwd, error: !rulesstatus_rootpwd }">{{
+				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd"
+					:rules="formRules.rootpwd">
+					<a-input @blur="change_rootpwd" placeholder="请输入当前用户root密码"
+						v-model:value="formState_del.okpwd"></a-input>
+					<span v-show="ruleshow_rootpwd"
+						:class="{ success: rulesstatus_rootpwd, error: !rulesstatus_rootpwd }">{{
 						rulesmessage_rootpwd
 					}}</span>
 				</a-form-item>
@@ -247,23 +208,18 @@
 	<!-- 模态框编辑 -->
 	<a-modal v-model:visible="visible_edit" title="编辑服务器" @ok="btnOK_edit">
 		<div class="addcomputer">
-			<a-form
-				style="margin-top: 10px"
-				ref="formRef_edit"
-				:model="formState_edit"
-				name="basic"
-				:label-col="{ span: 3 }"
-				:wrapper-col="{ span: 20 }"
-				autocomplete="off"
-				validateTrigger="blur"
-			>
-				<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="ip" :rules="formRules.ip">
+			<a-form style="margin-top: 10px" ref="formRef_edit" :model="formState_edit" name="basic"
+				:label-col="{ span: 3 }" :wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+				<a-form-item label="IP" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="ip"
+					:rules="formRules.ip">
 					<a-input placeholder="请输入IP" v-model:value="formState_edit.ip"></a-input>
 				</a-form-item>
-				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd" :rules="formRules.rootpwd">
+				<a-form-item label="root密码" :labelCol="{ span: 6 }" :wrapperCol="{ span: 15 }" name="okpwd"
+					:rules="formRules.rootpwd">
 					<a-input v-model:value="formState_edit.okpwd" placeholder="请输入root密码"></a-input>
 				</a-form-item>
-				<a-form-item label="所属集群" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name="clusterId" :rules="formRules.clusterId">
+				<a-form-item label="所属集群" :labelCol="{ span: 6 }" :wrapperCol="{ span: 10 }" name="clusterId"
+					:rules="formRules.clusterId">
 					<a-select placeholder="请选择集群" v-model:value="formState_edit.clusterId">
 						<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{
 							item.clusterName
@@ -286,11 +242,34 @@
 </template>
 
 <script name="Two-hosts" setup>
-	import { message } from 'ant-design-vue';
-	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
-	import { reactive, toRefs, ref, watchEffect, defineComponent, onMounted } from 'vue';
-	import { addlist, getlist, dellist, showlist, editlist, grouplist, HostsGroup } from './hosts.ts';
-	import { router } from '/@/router';
+	import {
+		message
+	} from 'ant-design-vue';
+	import {
+		SearchOutlined,
+		ReloadOutlined,
+		PlusOutlined
+	} from '@ant-design/icons-vue'; //icon引入
+	import {
+		reactive,
+		toRefs,
+		ref,
+		watchEffect,
+		defineComponent,
+		onMounted
+	} from 'vue';
+	import {
+		addlist,
+		getlist,
+		dellist,
+		showlist,
+		editlist,
+		grouplist,
+		HostsGroup
+	} from './hosts.ts';
+	import {
+		router
+	} from '/@/router';
 	const data = reactive({
 		visible: false,
 		visible_del: false,
@@ -371,16 +350,30 @@
 
 	getgrouplist();
 	const formRules = {
-		name: [{ required: true, message: '请输入主机名!' }],
-		ip: [{ required: true, message: '请输入IP!' }],
+		name: [{
+			required: true,
+			message: '请输入主机名!'
+		}],
+		ip: [{
+			required: true,
+			message: '请输入IP!'
+		}],
 		// port: [{ required: true, message: '请输入端口!' }],
-		rootpwd: [{ required: true, message: '请输入密码!' }],
-		clusterId: [{ required: true, message: '请选择集群!' }],
+		rootpwd: [{
+			required: true,
+			message: '请输入密码!'
+		}],
+		clusterId: [{
+			required: true,
+			message: '请选择集群!'
+		}],
 		// role: [{ required: true, message: '请选择主机组!' }],
-		rack: [{ required: true, message: '请输入机架!' }],
+		rack: [{
+			required: true,
+			message: '请输入机架!'
+		}],
 	};
-	const columns = [
-		{
+	const columns = [{
 			title: '状态',
 			dataIndex: 'statusName',
 			width: 70,
@@ -465,10 +458,12 @@
 			var result = [];
 			initdata.value.forEach((item) => {
 				var percentage = (item.physDiskUsed / item.physDiskTotal) * 100;
-				var psy = { psy: percentage.toFixed(2) };
+				var psy = {
+					psy: percentage.toFixed(2)
+				};
 				result.push(psy);
 			});
-			initdata.value.forEach(function (item, index) {
+			initdata.value.forEach(function(item, index) {
 				item.psy = result[index].psy;
 				var physMemTotal = item.physMemTotal / 1000000000;
 				physMemTotal = physMemTotal.toFixed(2);
@@ -514,23 +509,24 @@
 		}
 		// 添加
 		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
-		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
+		const reg =
+			/^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
 		if (!reg1.test(formState.value.ip)) {
 			message.error('IP格式错误');
 		}
-    // else if (!reg.test(formState.value.port)) {
+		// else if (!reg.test(formState.value.port)) {
 		// 	message.error('端口格式错误');
 		// }
-    else {
+		else {
 			addlist({
-				hostName: formState.value.name,
-				ipAddress: formState.value.ip,
-				port: formState.value.port,
-				rootSec: formState.value.rootpwd,
-				clusterId: formState.value.clusterId,
-				groupId: formState.value.groupId,
-				floor: formState.value.rack,
-			})
+					hostName: formState.value.name,
+					ipAddress: formState.value.ip,
+					port: formState.value.port,
+					rootSec: formState.value.rootpwd,
+					clusterId: formState.value.clusterId,
+					groupId: formState.value.groupId,
+					floor: formState.value.rack,
+				})
 				.then((res) => {
 					message.success('添加成功');
 					visible.value = false;
@@ -553,10 +549,10 @@
 		}
 
 		dellist({
-			hostId: recordID.value,
-			ipAddress: formState_del.value.ip,
-			rootSec: formState_del.value.okpwd,
-		})
+				hostId: recordID.value,
+				ipAddress: formState_del.value.ip,
+				rootSec: formState_del.value.okpwd,
+			})
 			.then((res) => {
 				message.success('删除成功');
 				visible_del.value = false;
@@ -570,7 +566,24 @@
 	// 编辑框回显
 	const openmodal = (record) => {
 		hostId.value = record.hostId;
-		GetHostsGroupData();
+
+		HostsGroup().then((res) => {
+
+
+
+			console.log(res, 'HostsGroupData编辑');
+			HostsGroupData.value = res;
+			const newArrayElement = {
+				groupId: "",
+				groupName: "不选择主机组"
+			};
+			HostsGroupData.value.unshift(newArrayElement);
+
+
+		});
+
+
+
 		visible_edit.value = true;
 		showlist(`${record.hostId}`).then((res) => {
 			console.log(res, 9);
@@ -600,23 +613,24 @@
 		}
 
 		const reg1 = /^(\d{1,3}\.){3}\d{1,3}$/;
-		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
+		const reg =
+			/^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
 		if (!reg1.test(formState_edit.value.ip)) {
 			message.error('IP输入错误');
 		}
-    // else if (!reg.test(formState_edit.value.port)) {
+		// else if (!reg.test(formState_edit.value.port)) {
 		// 	message.error('端口输入错误');
 		// }
-    else {
+		else {
 			editlist({
-				ipAddress: formState_edit.value.ip,
-				port: formState_edit.value.port,
-				rootSec: formState_edit.value.okpwd,
-				clusterId: formState_edit.value.clusterId,
-				groupId: formState_edit.value.groupId,
-				floor: formState_edit.value.floor,
-				hostId: hostId.value,
-			})
+					ipAddress: formState_edit.value.ip,
+					port: formState_edit.value.port,
+					rootSec: formState_edit.value.okpwd,
+					clusterId: formState_edit.value.clusterId,
+					groupId: formState_edit.value.groupId,
+					floor: formState_edit.value.floor,
+					hostId: hostId.value,
+				})
 				.then((res) => {
 					message.success('修改成功');
 					visible_edit.value = false;
@@ -631,10 +645,10 @@
 	const Delbtn = (record) => {
 		recordID.value = record.hostId;
 		visible_del.value = true;
-		formState_del.value.ip=''
-		formState_del.value.okpwd=''
-		
-		
+		formState_del.value.ip = ''
+		formState_del.value.okpwd = ''
+
+
 	};
 	// 字段初始化
 	const clearData = () => {
@@ -649,11 +663,11 @@
 		formState_del.value.okpwd = '';
 
 		(formState_edit.value.ip = ''),
-			(formState_edit.value.port = ''),
-			(formState_edit.value.okpwd = ''),
-			(formState_edit.value.clusterId = undefined),
-			(formState_edit.value.role = undefined),
-			(formState_edit.value.floor = '');
+		(formState_edit.value.port = ''),
+		(formState_edit.value.okpwd = ''),
+		(formState_edit.value.clusterId = undefined),
+		(formState_edit.value.role = undefined),
+		(formState_edit.value.floor = '');
 	};
 	const onShowSizeChange = (current, pageSize) => {
 		pageSize = pageSize.value;
@@ -685,10 +699,12 @@
 			var result = [];
 			initdata.value.forEach((item) => {
 				var percentage = (item.physDiskUsed / item.physDiskTotal) * 100;
-				var psy = { psy: percentage.toFixed(2) };
+				var psy = {
+					psy: percentage.toFixed(2)
+				};
 				result.push(psy);
 			});
-			initdata.value.forEach(function (item, index) {
+			initdata.value.forEach(function(item, index) {
 				item.psy = result[index].psy;
 				var physMemTotal = item.physMemTotal / 1000000000;
 				physMemTotal = physMemTotal.toFixed(2);
@@ -752,11 +768,13 @@
 	.allhostes {
 		padding: 8px;
 	}
+
 	.hostes {
 		width: 100%;
 		background-color: #fff;
 		padding: 8px;
 	}
+
 	.addcomputer {
 		padding: 8px;
 	}
@@ -773,6 +791,7 @@
 		display: flex;
 		flex-wrap: nowrap;
 	}
+
 	@media screen and (max-width: 800px) {
 		.searchbtn {
 			margin-top: 8px;
@@ -782,9 +801,11 @@
 	.pointer {
 		cursor: pointer;
 	}
+
 	.success {
 		color: green;
 	}
+
 	.error {
 		color: red;
 	}
