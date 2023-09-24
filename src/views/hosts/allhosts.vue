@@ -373,10 +373,10 @@
 	const formRules = {
 		name: [{ required: true, message: '请输入主机名!' }],
 		ip: [{ required: true, message: '请输入IP!' }],
-		port: [{ required: true, message: '请输入端口!' }],
+		// port: [{ required: true, message: '请输入端口!' }],
 		rootpwd: [{ required: true, message: '请输入密码!' }],
 		clusterId: [{ required: true, message: '请选择集群!' }],
-		role: [{ required: true, message: '请选择主机组!' }],
+		// role: [{ required: true, message: '请选择主机组!' }],
 		rack: [{ required: true, message: '请输入机架!' }],
 	};
 	const columns = [
@@ -517,9 +517,11 @@
 		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
 		if (!reg1.test(formState.value.ip)) {
 			message.error('IP格式错误');
-		} else if (!reg.test(formState.value.port)) {
-			message.error('端口格式错误');
-		} else {
+		}
+    // else if (!reg.test(formState.value.port)) {
+		// 	message.error('端口格式错误');
+		// }
+    else {
 			addlist({
 				hostName: formState.value.name,
 				ipAddress: formState.value.ip,
@@ -576,13 +578,13 @@
 			formState_edit.value.ip = res.ipAddress;
 			formState_edit.value.port = res.port;
 			formState_edit.value.clusterId = res.clusterId;
-			if (res.role == 1) {
-				formState_edit.value.role = '权威';
-			} else if (res.role == 2) {
-				formState_edit.value.role = '递归';
-			} else if (res.role == 3) {
-				formState_edit.value.role = '权威+递归';
-			}
+			// if (res.role == 1) {
+			// 	formState_edit.value.role = '权威';
+			// } else if (res.role == 2) {
+			// 	formState_edit.value.role = '递归';
+			// } else if (res.role == 3) {
+			// 	formState_edit.value.role = '权威+递归';
+			// }
 			formState_edit.value.floor = res.floor;
 		});
 	};
@@ -601,9 +603,11 @@
 		const reg = /^([1-9](\d{0,3}))$|^([1-5]\d{4})$|^(6[0-4]\d{3})$|^(65[0-4]\d{2})$|^(655[0-2]\d)$|^(6553[0-5])$/;
 		if (!reg1.test(formState_edit.value.ip)) {
 			message.error('IP输入错误');
-		} else if (!reg.test(formState_edit.value.port)) {
-			message.error('端口输入错误');
-		} else {
+		}
+    // else if (!reg.test(formState_edit.value.port)) {
+		// 	message.error('端口输入错误');
+		// }
+    else {
 			editlist({
 				ipAddress: formState_edit.value.ip,
 				port: formState_edit.value.port,
