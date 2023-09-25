@@ -463,7 +463,7 @@
 			forwarderList: [],
 			recursionType: '1',
 			rateLimitOn: '0',
-			responsesPerSecond: '1',
+			responsesPerSecond: '20',
 			loggingTypeList: [],
 			nxRedirectOn: false,
 			nxDomainType: '',
