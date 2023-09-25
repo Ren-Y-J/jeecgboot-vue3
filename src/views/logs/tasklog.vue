@@ -2,13 +2,10 @@
   <div class="tasklogBox">
     <div class="nav">
       <a-card>
-
         <a-form class="form" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" name="basic"
           autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
-
           <a-row :gutter="16">
             <a-col :span="6" :md="4" :sm="5">
-
               <a-form-item style="margin-bottom: 0px;" label="任务状态" :labelCol="{ span: 8 }" :wrapperCol="{ span: 16 }">
                 <!-- v-model:value="changesearch" -->
                 <a-select ref="select" style="width: 120px" @focus="focus" @change="handleChange"
@@ -18,22 +15,18 @@
                 </a-select>
               </a-form-item>
             </a-col>
-
             <a-col :span="7">
-
               <a-form-item style="" label="创建时间" :labelCol="{ span: 4 }" :wrapperCol="{ span: 22 }">
                 <a-space>
-                  <!--  -->
                   <a-range-picker style="width: 400px" :disabled-date="disabledDate" :disabled-time="disabledRangeTime"
                     :show-time="{
                       hideDisabledOptions: true,
                       defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
-                    }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" />
+                    }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" v-model="formState.timeRange"
+                    showTime />
                 </a-space>
               </a-form-item>
-
             </a-col>
-
             <a-col :span="5">
               <a-col class="gutter-row">
                 <a-form-item label="所有主机" style='' :labelCol="{ span: 4 }" :wrapperCol="{ span: 5 }">
@@ -41,29 +34,21 @@
                     <a-select placeholder="请选择" ref="select" v-model:value="formState.hostId" style="width: 160px"
                       @focus="focus" @change="handleChangehost">
                       <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                        ">{{ item.hostName }}</a-select-option>
+                        ">{{ item.ipAddress }}</a-select-option>
                     </a-select>
                   </a-space>
                 </a-form-item>
               </a-col>
             </a-col>
-
             <a-col :span="6" :md="4" :sm="5">
-
-
               <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                 <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                   <search-outlined />搜索</a-button>
                 <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
-
-
               </span>
-
             </a-col>
-
           </a-row>
         </a-form>
-
       </a-card>
     </div>
 
@@ -235,30 +220,51 @@ gethost()
 
 // 查询区域存储值
 const formState = ref({
-  hostId: {},//主机
+  hostId: undefined,//主机
   // host: undefined,
   status: "",
-  updateTime: "",
-  createTime: ""
+  timeRange: [],
+  pageNum: 1,
+  pageSize: 10,
 })
 
 function handleChangeSearchDate(_value, dateString) {
-  formState.value.createTime = dateString[0];
-  formState.value.updateTime = dateString[1];
-  console.log(formState.createTime);
-  console.log(formState.updateTime);
+  console.log(dateString);
+  formState.value.timeRange = dateString
+  // formState.value.createTime = dateString[0];
+  // formState.value.updateTime = dateString[1];
+  // console.log(formState.createTime);
+  // console.log(formState.updateTime);
 
 }
 const handleChange = async (value) => {
   formState.value.status = value
 };
 const handleQuery = async () => {
-  console.log(formState.value.createTime);
-  console.log(formState.value.updateTime);
+
   let res = await taskloglist(formState.value)
   console.log(res, '1111');
+  datalist.value = res.records
+  totals.value = res.total
 }
+// 清空
+const AlldelFn = () => {
+  formState.value.hostId = '',
+    formState.value.status = '',
+    // let arr = formState.value.timeRange
+    // formState.value.timeRange = [],
+    // formState.timeRange = undefined
+    formState.value.timeRange = null;
+  // formState.value.timeRange.forEach((element, index) => {
+  //   console.log(formState.value.timeRange[index]);
+  //   element[index] = ''
+  //   console.log(element[index]);
+  // });
 
+  formState.value.pageNum = 1,
+    initData()
+  changesearch.value = '请选择'
+}
 const GoDep = (record) => {
   let taskId = record.taskId
   console.log(record.taskId);
