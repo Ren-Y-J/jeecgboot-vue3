@@ -15,7 +15,7 @@
 					状态：{{ statusName }}
 					<br />
 					集群：{{ ShowDataAllData.clusterName }}
-				</div>
+				</div>	
 				<div
 					>名称：{{ ShowDataAllData.hostName }}
 					<br />
@@ -67,10 +67,6 @@
 						<a-checkbox v-if="formState_bas.recursionOn == 1" class="custom-checkbox"
 							style="margin-left: 30px"
 							v-model:checked="formState_bas.limitRecursionRange">限制范围</a-checkbox>
-
-
-
-
 						<a-select v-model:value="formState_bas.allowRecursionList"
 							v-show="formState_bas.limitRecursionRange === true" mode="multiple"
 							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData_Acl"></a-select>
@@ -361,13 +357,13 @@
 			resolverQueryTimeout: '10',
 			recursiveClients: '10000',
 			prefetch: '',
-			transferFormat: '',
+			transferFormat: 'one-answer',
 			dnssecValidation: '0',
 			dnssecEnable: '0',
 			edns: '0',
 			recursionProtect: '0',
 			allowRecursionList: [],
-			limitRecursionRange: undefined,
+			limitRecursionRange: false,
 			recursionOn: '0',
 			minRes: '0',
 		},
@@ -409,6 +405,12 @@
 		}
 	};
 	const GetData = () => {
+		
+		
+		
+		
+		
+		
 		groupName.value = localStorage.getItem('groupName');
 
 		// 转发列表
@@ -423,7 +425,6 @@
 		});
 		// ACl
 		AclList().then((res) => {
-			console.log(res, 'ACL');
 			let transformedData = res.map((item) => {
 				return {
 					value: item.aclId,
@@ -462,14 +463,22 @@
 			formState_bas.value.recursionProtect = res.confContent.recursionProtect;
 			formState_bas.value.allowRecursionList = res.confContent.allowRecursionList;
 
-			formState_bas.value.limitRecursionRange = res.confContent.limitRecursionRange;
-			console.log(res.confContent, ' res.confContent res.confContent res.confContent')
+			// formState_bas.value.limitRecursionRange = res.confContent.limitRecursionRange;
+if(res.confContent.limitRecursionRange=='0' ){
+	formState_bas.value.limitRecursionRange =false
+}
+if(res.confContent.limitRecursionRange=='1' ){
+	formState_bas.value.limitRecursionRange =true
+}
+
+
+
+
 
 			formState_bas.value.recursionOn = res.confContent.recursionOn;
 			formState_bas.value.minRes = res.confContent.minRes;
 		});
 		ShowDataAll(`${pageID.value}`).then((res) => {
-			console.log(res, 'ShowDataAll');
 			ShowDataAllData.value = res;
 		});
 	};
@@ -482,8 +491,19 @@
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {
+			
+			
 			formState_bas.value.transferFormat = formState_bas.value.transferFormat.toString();
 			formState_bas.value.dnssecEnable = formState_bas.value.dnssecEnable.toString();
+			
+			if(formState_bas.value.limitRecursionRange==false ){
+				formState_bas.value.limitRecursionRange='0'
+			}
+			if(formState_bas.value.limitRecursionRange==true ){
+				formState_bas.value.limitRecursionRange='1'
+			}
+			
+			
 			EditList(formState_bas.value)
 				.then((res) => {
 					message.success('配置成功！');

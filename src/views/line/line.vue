@@ -99,7 +99,6 @@
               <!-- border-bottom: 1px solid #109eff; -->
               <div v-if="record.aclId == null" type="link"> 不限地址段 </div>
               <div v-else>{{ record.aclId }}</div>
-
             </template>
             <template v-if="column.dataIndex === 'groupId'">
               <!-- <a-button type="primary" ghost @click="GoDep(record)"

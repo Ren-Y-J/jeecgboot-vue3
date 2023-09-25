@@ -58,7 +58,8 @@
 					</template>
 				</template>
 			</a-alert>
-			<a-table :rowKey="(record) => record.zoneId"
+			<a-table
+			 :rowKey="(record) => record.zoneId"
 				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
 				:scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
 				<template #bodyCell="{ column, record }">

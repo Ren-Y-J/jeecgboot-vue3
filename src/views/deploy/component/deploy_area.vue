@@ -18,10 +18,35 @@
 			</div>
 		</div>
 		<div class="page" style="margin-top: 8px">
+			
+			
+			
 			<div style="margin-bottom: 8px">
+				<a-space>
+					<a-select ref="select" style="width: 120px; margin-right: 8px" @focus="focus"
+						@select="handleChange_del" v-model:value="delselect" placeholder="批量操作">
+						<a-select-option value="1">删除</a-select-option>
+					</a-select>
+				</a-space>
 				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
 			</div>
-			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
+			<a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
+				<template #message>
+					<template v-if="number > 0">
+						<span>已选定 {{ number }} 条记录(可跨页)</span>
+						<a-divider type="vertical" />
+						<a @click="clearbtn">清空</a>
+						<a-divider type="vertical" />
+					</template>
+					<template v-else>
+						<span>未选中任何数据</span>
+					</template>
+				</template>
+			</a-alert>
+			<a-table
+			 :rowKey="(record) => record.zoneId"
+			 				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+			 :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
 				<template #bodyCell="{ column, record }">
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
@@ -141,12 +166,18 @@
 			>
 				<a-input placeholder="请输入网络地址" v-model:value="formState_.IP" />
 			</a-form-item>
+			<a-form-item label="应用线路"
+			:rules="[{ required: true, message: '请选择线路!' }]"
+			name="lineId"
+			
+			
+			:labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
+			</a-form-item>
 			<a-form-item label="所属域" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="所属域" v-model:value="formState_.childZone" />
 			</a-form-item>
-			<a-form-item label="应用线路" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
-			</a-form-item>
+			
 			<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-textarea v-model:value="formState_.remark" placeholder="备注" :rows="4" />
 			</a-form-item>
@@ -255,6 +286,7 @@
 		},
 	];
 	const data = reactive({
+		delselect: undefined,
 		visible_SOA: false,
 		activeKey: '0',
 		type: 0,
@@ -297,8 +329,11 @@
 		hosts: undefined,
 		zoneId: '',
 		pageID: '',
+		number: 0,
 	});
 	const {
+		delselect,
+		number,
 		formState_SOA,
 		visible_SOA,
 		type,
@@ -321,6 +356,56 @@
 		zoneId,
 		pageID,
 	} = toRefs(data);
+	
+	
+	
+	// 多选
+	const state = reactive({
+		selectedRowKeys: [],
+	});
+	const allclusterId = ref([]);
+	const rowSelection = (selectedRowKeys, selectedRows) => {
+		state.selectedRowKeys = selectedRowKeys;
+		allclusterId.value = selectedRows.map((item) => item.zoneId);
+		
+		
+		console.log( allclusterId.value,'allclusterId.value'  )
+		
+		number.value = allclusterId.value.length;
+	};
+	// 
+	const handleChange_del = () => {
+		if (allclusterId.value == '') {
+			message.error('请选择数据');
+			return;
+		}
+		if (delselect.value == 1) {
+			let values1 = allclusterId.value;
+			DelLine({
+				values: values1,
+			}).then((res) => {
+				message.success('删除成功');
+				getData();
+			});
+		}
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	const changetabs = () => {
 		
 		let url = location.search;

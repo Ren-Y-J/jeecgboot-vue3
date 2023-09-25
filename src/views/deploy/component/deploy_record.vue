@@ -355,7 +355,7 @@
 	};
 	const addBtn = () => {
 		// 获取线路
-		GetLine(`${id.value}`).then((res) => {
+		GetLine(id.value).then((res) => {
 			console.log(res, '9-9---9-9-');
 			let transformedData = res.map((item) => {
 				return {
