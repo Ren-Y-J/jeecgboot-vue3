@@ -574,7 +574,7 @@
 		formState_.value.lineId = [];
 		// 获取线路
 		GetLine({
-			value: formState.value.hosts,
+			value: formState_.value.hosts,
 		}).then((res) => {
 			const transformedData = res.map(({ lineId: value, lineName: label }) => ({
 				value,

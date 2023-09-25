@@ -6,6 +6,7 @@ enum Tactics{
     addlist = '/policies/option/add',//新增策略组
     dellistAll = '/policies/option/batch/delete',//批量删除
     editlist = '/policies/option/edit',//修改
+    
 }
 export const list = (params) => defHttp.post({ url: Tactics.list, params });
 export const dellist = (params) => defHttp.post({ url: Tactics.dellist, params });
@@ -15,3 +16,4 @@ export const dellistAll = (params) => defHttp.post({ url: Tactics.dellistAll, pa
 export const editlist = (params) => defHttp.post({ url: Tactics.editlist, params });
 // 回显
 export const BackLine = (params) => defHttp.get({ url:'/policies/option/policy/'+ params });
+

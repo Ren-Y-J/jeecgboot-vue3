@@ -405,12 +405,11 @@ const addFn = (evt) => {//点击确定按钮
         target.blur()
 
 formDataName.value.forEach((item)=>{
-  console.log(item.lineId,'lineId');
   item.zoneId = formState.value.zoneId
  })
   for(let i=0;i<formDataName.value.length;i++){
     if(formDataName.value[i].zoneId == ""){
-  message.error('请选择域名')
+    message.error('请选择域名')
  }
   if(formDataName.value[i].name == ''){
    message.error('请填写第' + (i + 1) +'表单记录名称')
@@ -432,11 +431,14 @@ formDataName.value.forEach((item)=>{
    message.error('请选择第' + (i + 1) +'表单线路') 
    return; 
  }
-formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);
-// return; 
-  }
+ for (let i = 0; i < formDataName.value.length; i++) {
+    if (typeof formDataName.value[i].lineId !== 'string') {
+      formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);
+    }
+}
+}
 
-console.log(formDataName.value);
+
  addlist(formDataName.value).then((res) => {//调用新增表单的接口，把存放表单的数据传进去
 			message.success('添加成功');
 			visible.value = false;//关闭弹框

@@ -81,17 +81,14 @@
 							v-if="formState_bas.recursionOn == 1"
 							class="custom-checkbox"
 							style="margin-left: 30px"
-							v-model:checked="formState_bas.limitRecursionRange"
-							>限制范围</a-checkbox
-						>
-						<a-select
-							v-model:value="formState_bas.allowRecursionList"
-							v-show="formState_bas.limitRecursionRange === true || formState_bas.limitRecursionRange === '1'"
-							mode="multiple"
-							style="width: 100%; margin-top: 10px"
-							placeholder="请选择"
-							:options="groupData_Acl"
-						></a-select>
+							v-model:checked="formState_bas.limitRecursionRange">限制范围</a-checkbox>
+
+
+
+
+						<a-select v-model:value="formState_bas.allowRecursionList"
+							v-show="formState_bas.limitRecursionRange === true" mode="multiple"
+							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData_Acl"></a-select>
 					</a-form-item>
 
 					<a-form-item v-show="formState_bas.recursionOn == '1'" label="递归解析方式" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
@@ -101,14 +98,9 @@
 							<a-radio value="3">递归失败后转发</a-radio>
 							<a-radio value="4">转发失败后递归</a-radio>
 						</a-radio-group>
-						<a-select
-							v-model:value="formState_bas.forwarderList"
-							v-show="formState_bas.recursionType !== '1'"
-							mode="multiple"
-							style="width: 100%; margin-top: 10px"
-							placeholder="请选择"
-							:options="groupData"
-						></a-select>
+						<a-select v-model:value="formState_bas.forwarderList"
+							v-show="formState_bas.recursionType !== '1'" mode="multiple"
+							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData"></a-select>
 					</a-form-item>
 
 					<a-form-item label="响应速率限制" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
@@ -127,17 +119,10 @@
 							<exclamation-circle-filled />
 						</a-tooltip>
 						<br /><br />
-						<a-input-number
-							:formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')"
-							precision="0"
-							min="0"
-							style="width: 300px"
-							placeholder="请填写对请求响应速率的上限值"
-							v-model:value="formState_bas.responsesPerSecond"
-							v-show="formState_bas.rateLimitOn == true"
-							addon-after="次/秒"
-						></a-input-number>
+						<a-input-number :formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
+							placeholder="请填写对请求响应速率的上限值" v-model:value="formState_bas.responsesPerSecond"
+							v-show="formState_bas.rateLimitOn == true" addon-after="次/秒"></a-input-number>
 					</a-form-item>
 				</a-form>
 
@@ -463,7 +448,7 @@
 			forwarderList: [],
 			recursionType: '1',
 			rateLimitOn: '0',
-			responsesPerSecond: '1',
+			responsesPerSecond: '20',
 			loggingTypeList: [],
 			nxRedirectOn: false,
 			nxDomainType: '',
