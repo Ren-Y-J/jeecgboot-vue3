@@ -226,8 +226,23 @@
 	const { id, pageNum, pageSize, initdata, total, visible, formState, groupData, addRecord, edit_visible, formState_edit, search } = toRefs(data);
 	const columns = [
 		{
-			title: '正向域名',
+			title: '名称',
 			dataIndex: 'name',
+			align: 'center',
+		},
+		{
+			title: '类型',
+			dataIndex: 'type',
+			align: 'center',
+		},
+		{
+			title: '值',
+			dataIndex: 'content',
+			align: 'center',
+		},
+		{
+			title: '应用线路',
+			dataIndex: 'lineName',
 			align: 'center',
 		},
 		{
@@ -235,11 +250,7 @@
 			dataIndex: 'status',
 			align: 'center',
 		},
-		{
-			title: '域类型',
-			dataIndex: 'type',
-			align: 'center',
-		},
+		
 		{
 			title: '操作',
 			dataIndex: 'operation',
