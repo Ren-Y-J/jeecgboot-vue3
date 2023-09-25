@@ -8,9 +8,8 @@
                         <a-col :md="1" :sm="5">
                             <div class="back" @click="goback"><left-outlined /><span>返回</span></div>
                         </a-col>   
-                         <!-- <left-outlined /><span>返回</span> -->
 						<a-col :md="6" :sm="24">
-							<a-form-item style="margin-bottom: 0px" label="策略组名称" name="name" :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
+							<a-form-item style="margin-bottom: 0px" label="策略组名称"  :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
 								<a-input placeholder="请输入策略组名称"  v-model:value="search"/>
 							</a-form-item>
 						</a-col>
@@ -49,8 +48,8 @@
 				</template>
 			</a-alert>
 		</div>
+		<!-- 列表数据 -->
         <div>
-            <!--  -->
             <a-table
 				:columns="columns"
 				:data-source="listData"
