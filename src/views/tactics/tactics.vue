@@ -205,7 +205,7 @@
 					</a-checkbox-group>
 				</a-form-item>
 				<div class="label_text">时段：</div>
-				<a-form-item class="form_time" name="policiesTimeRange" v-for="(item,index) in formDataName" :key="index">
+				<a-form-item class="form_time"  v-for="(item,index) in formDataName" :key="index" >
 					<a-time-range-picker v-model:value="item.state_value" value-format="HH:mm:ss" :placeholder="placeholder" />
 					<div class="addtimeform">
 						<plus-circle-filled style="color: #bfbfbf" @click="addIconTime" v-if="item.id === '1'" />
@@ -469,68 +469,26 @@ const getcordList = () => {
 
 // 修改按钮
 const editGroup = (record)=>{
-  visible_editsyn.value = true
-  formDataName_edit.value = [{id:'1',state_value:[]}]
-  BackLine(record.policiesId).then((res)=>{//回显接口
-  console.log(res,'res');
-  formState_edit.value.policiesId = res.policiesId
-  formState_edit.value.policiesName = res.policiesName
-  formState_edit.value.policiesEnable = res.policiesEnable
-  formState_edit.value.policiesTimeType = JSON.parse(res.policiesTimeType)
-  formState_edit.value.policiesTimeType = formState_edit.value.policiesTimeType.map(String)
-
-  formState_edit.value.policiesTimeRange = res.policiesTimeRange.replace(/[\[\]"]/g, '').split('-').join(',')
-   console.log(formState_edit.value.policiesTimeRange ,'formState_edit.value.policiesTimeRange123 ');
-  let editpoliciesTime = []
-  editpoliciesTime.push(formState_edit.value.policiesTimeRange)
-  let transformedA = editpoliciesTime[0].split(',').reduce((acc, curr, index, array) => {
-    if (index % 2 === 0) {
-      acc.push(curr + ',' + array[index + 1]);
-    }
-    return acc;
-  }, []);
-  let transformed = transformedA.map(element => element.trim());
-  console.log(transformed,'transformed');
- 
-// //   console.log(transformed,'transformed');
-//   formDataName_edit.value.forEach((item)=>{
-// 	console.log(item,'1212122');
-// 	transformed.forEach((subitem)=>{
-// 		console.log(subitem,'subitem');
-		
-// 		item.state_value_edit =subitem
-
-// 		// console.log(item.state_value_edit,'item.state_value');	
-// 	})
-// 	console.log(formDataName_edit.value,'formDataName_edit.value22222');
-// 	// item.state_value =transformed
-//   })
-// //   formDataName_edit.value.state_value = [...transformed]
-//   console.log(formDataName_edit.value,'22222');
-//   formState_edit.value.policiesTimeRange =   JSON.parse(JSON.stringify(formState_edit.value.policiesTimeRange))
-//   console.log(formState_edit.value.policiesTimeRange ,'formState_edit.value.policiesTimeRange ');
-//   console.log(formDataName_edit.value.state_value,'1111');
-
-// formState_edit.value.policiesTimeRange =JSON.parse(res.policiesTimeRange);
-//   formState_edit.value.policiesTimeRange = transformed
-//   formDataName_edit.value= transformed
-//   console.log(formDataName_edit.value.state_value,'111');
-//   console.log(formDataName_edit.value,'formDataName_edit.value');
-//    formDataName_edit.value= transformed;
-  // let transformedA = editpoliciesTime.map(item => item.split(',').slice(0, 2).join(','));
-// 	let obj = {
-// 		id:0,
-// 		state_value	
-// 	}
-// 	 transformed.forEach((item)=>{
-// 		console.log(item,'item5555');
-
-
-// })
-//   console.log(transformed,'zxsj');
-			
-  
-  })
+  	visible_editsyn.value = true
+  	formDataName_edit.value = [{id:'1',state_value:[]}]
+  	BackLine(record.policiesId).then((res)=>{//回显接口
+		formState_edit.value.policiesId = res.policiesId
+		formState_edit.value.policiesName = res.policiesName
+		formState_edit.value.policiesEnable = res.policiesEnable
+		formState_edit.value.policiesTimeType = JSON.parse(res.policiesTimeType)
+		formState_edit.value.policiesTimeType = formState_edit.value.policiesTimeType.map(String)
+		formState_edit.value.policiesTimeRange = res.policiesTimeRange.replace(/[\[\]"]/g, '').split('-').join(',')
+		let result = formState_edit.value.policiesTimeRange.split(',').map(item => item.trim());
+		let transformedA = [];
+		for (let i = 0; i < result.length; i += 2) {
+			transformedA.push([result[i], result[i + 1]]);
+		}
+		formDataName_edit.value.forEach((item, index) => {
+			if (transformedA[index]) {
+				item.state_value_edit = transformedA[index];
+			}
+		});
+  	})
 }
 
 // 停用按钮
@@ -565,17 +523,6 @@ const edit_time = (evt)=>{
     }
     target.blur()
     visible_Time_edit.value = false
-    let dif_time = ''
-    let editpoliciesTime = []
-    // console.log(formDataName_edit.value,'formDataName_edit.value');
-   formDataName_edit.value.forEach(item=>{   
-     	dif_time =item.state_value.toString()
-     	console.log(dif_time,'dif_time');
-    	let comma = dif_time.split(',')
-    	let comma_join = comma.join('-')
-    	editpoliciesTime.push(comma_join)
-    	formState_edit.value.policiesTimeRange = editpoliciesTime
-    })
 }
 
 // 修改弹框确定按钮
@@ -585,6 +532,15 @@ const Policyedit = (evt)=>{
     	target = evt.target.parentNode;
     }
     target.blur()
+	 let dif_time = ''
+    let editpoliciesTime = []
+   formDataName_edit.value.forEach(item=>{   
+     	dif_time =item.state_value_edit.toString()
+    	let comma = dif_time.split(',')
+    	let comma_join = comma.join('-')
+    	editpoliciesTime.push(comma_join)
+    	formState_edit.value.policiesTimeRange = editpoliciesTime
+    })
     editlist(formState_edit.value).then((res)=>{
       	message.success('修改成功')
       	getcordList()
@@ -695,9 +651,6 @@ const clearData = () => {
   	formState.value.policiesEnable = ''
   	formState.value.policiesTimeType = []
   	formState.value.policiesTimeRange = []
-  	// formDataName.value.forEach((item)=>{
-    // 	item.state_value = []
-  	// })
 	formDataName.value = [{id:'1',state_value:[]}]
   	timecycle.value = []
   	placeholder.value = ['开始时间', '结束时间']
@@ -715,14 +668,21 @@ const handleadd =async (evt)=>{
         target = evt.target.parentNode;
     }
     target.blur()
+	formDataName.value.forEach(item=>{
+		if(item.state_value == ''){
+			message.error('请选择时间')
+		}else{
+			visible_Time.value = false
+		}
+	})
+
     try {
     	await formRef.value.validate()
-  //  await formRef_.value.validate()
   	} catch (error) {
-    // console.log(error);
     	return console.log(error)
   	}
-  	visible_Time.value = false
+	
+  	
   	let arrTime =''
   	let policiesTime = []//获取的时间段的数组
 //   console.log(formDataName.value,'formDataName.value***');
@@ -732,7 +692,9 @@ const handleadd =async (evt)=>{
   		let convertedTimeString  = arrToStr.join('-')//按照指定分隔符分割
   		policiesTime.push(convertedTimeString) //push没有返回值，let变量需要在遍历之前；
   		formState.value.policiesTimeRange = policiesTime
+		
   	})
+	
 }
 
 // 启用时段重置按钮v
@@ -768,8 +730,10 @@ const syncGroup = () => {
 
 // 配置策略按钮
 const disposition = (record)=>{
+	console.log(record,'record2222');
 	let id = record.policiesId;
 	router.push(`/tactics/disposition?${id}`);
+	
 }
 
 // 分页v
@@ -795,12 +759,10 @@ const modalStyle = ref({
 const addIconTime = () => {
 	//添加时段
 	formDataName.value.push({
-		// id: new Date().getTime(),
 		state_value:[]
 	}),
 	formDataName_edit.value.push({
 		//修改时段
-		// id: new Date().getTime(),
 		state_value_edit:[]
 	});
 };
