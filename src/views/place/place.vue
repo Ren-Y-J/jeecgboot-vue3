@@ -172,13 +172,17 @@
 				:labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="请输入网络地址" v-model:value="formState_.IP" />
 			</a-form-item>
-			<a-form-item label="所属域" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="所属域" v-model:value="formState_.childZone" />
-			</a-form-item>
-			<a-form-item label="应用线路" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+			:rules="[{ required: true, message: '请选择应用线路!' }]" name="lineId"
+			
+			label="应用线路" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择"
 					:options="groupData"></a-select>
 			</a-form-item>
+			<a-form-item label="所属域" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="所属域" v-model:value="formState_.childZone" />
+			</a-form-item>
+			
 			<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-textarea v-model:value="formState_.remark" placeholder="备注" :rows="4" />
 			</a-form-item>
@@ -581,10 +585,32 @@
 			console.log(error);
 			return;
 		}
+	 const IPV4 =  /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)(\/(\d|[1-2]\d|3[0-2]))?$/;
+let isValid = IPV4.test(formState_.value.IP);
+
+const IPV6 = /^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
+let isValidV6 = IPV6.test(formState_.value.IP);
+
+if(formState_.value.type_1=='3'){
+	if (!isValid) {
+		message.error('网络地址不符合IPV4规则');
+	  return;
+	}
+}else if ( formState_.value.type_1=='4'  ){
+	if (!isValidV6) {
+		message.error('网络地址不符合IPV6规则');
+	  return;
+	}
+}
+
+
+
+
+
 
 		AddReverseList({
 			groupId: formState_.value.hosts,
-			type: formState.value.type_1,
+			type: formState_.value.type_1,
 			reverseIpAddr: formState_.value.IP,
 			lineId: JSON.stringify(formState_.value.lineId),
 			remark: formState_.value.remark,

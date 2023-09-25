@@ -105,10 +105,16 @@
 					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请选择线路!' }]"
+			 name="lineId"
+			 label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
-			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item 
+			:rules="[{ required: true, message: '请输入记录值!' }]"
+			name="content"
+			label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="记录值" v-model:value="formState.content" />
 			</a-form-item>
 		</a-form>

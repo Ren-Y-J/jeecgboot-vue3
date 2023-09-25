@@ -166,18 +166,12 @@
 			>
 				<a-input placeholder="请输入网络地址" v-model:value="formState_.IP" />
 			</a-form-item>
-			<a-form-item label="应用线路"
-			:rules="[{ required: true, message: '请选择线路!' }]"
-			name="lineId"
-			
-			
-			:labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
-			</a-form-item>
 			<a-form-item label="所属域" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="所属域" v-model:value="formState_.childZone" />
 			</a-form-item>
-			
+			<a-form-item label="应用线路" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
+			</a-form-item>
 			<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-textarea v-model:value="formState_.remark" placeholder="备注" :rows="4" />
 			</a-form-item>
@@ -373,7 +367,7 @@
 		
 		number.value = allclusterId.value.length;
 	};
-	// 
+	// 删除
 	const handleChange_del = () => {
 		if (allclusterId.value == '') {
 			message.error('请选择数据');

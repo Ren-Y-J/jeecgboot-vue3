@@ -142,7 +142,7 @@
 							<a-radio value="1">指定后缀 </a-radio>
 						</a-radio-group>
 						<br />
-						<a-input v-show="formState_bas.nxDomainType == 1" placeholder="请填写要启用的NX重定向的域名后缀"
+						<a-input v-show="formState_bas.nxDomainType == 1 && formState_bas.nxRedirectOn == 1 " placeholder="请填写要启用的NX重定向的域名后缀"
 							style="width: 300px; margin-top: 5px" v-model:value="formState_bas.nxSuffixDomain" />
 						<div v-show="formState_bas.nxRedirectOn == true">
 							<a-input style="width: 300px; margin-bottom: 5px; margin-top: 5px"
