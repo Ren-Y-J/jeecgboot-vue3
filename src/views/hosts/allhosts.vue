@@ -163,7 +163,7 @@
 				<a-form-item label="所属集群" :labelCol="{ span: 5 }" :wrapperCol="{ span: 10 }" name="clusterId"
 					:rules="formRules.clusterId">
 					<a-select v-model:value="formState.clusterId" placeholder="请选择集群">
-						<a-select-option v-for="(item, index) in groupData" key="index" :value="item.clusterId">{{
+						<a-select-option v-for="(item, index) in groupData_Add" key="index" :value="item.clusterId">{{
 							item.clusterName
 						}}</a-select-option>
 					</a-select>
@@ -314,9 +314,11 @@
 		hostId: '',
 		number: 0,
 		HostsGroupData: '',
+		groupData_Add:undefined
 	});
 
 	const {
+		groupData_Add,
 		formState_edit,
 		formState_del,
 		visible,
@@ -490,7 +492,12 @@
 		// clusterId.value = undefined;
 		// role.value = undefined;
 		// rack.value = '';
+		console.log(formState.value.clusterId,'clusterId')
 		GetHostsGroupData();
+		grouplist().then((res) => {
+			console.log(res,'添加主机')
+			groupData_Add.value = res;
+		});
 	};
 	const GetHostsGroupData = () => {
 		HostsGroup().then((res) => {
@@ -656,18 +663,28 @@
 		formState.value.ip = '';
 		formState.value.port = '';
 		formState.value.rootpwd = '';
-		formState.value.clusterId = '';
-		formState.value.role = '';
+		formState.value.clusterId = undefined;
+		formState.value.role = undefined;
 		formState.value.rack = '';
+		formState.value.groupId=undefined;
+		
+		
+		
+		
+		
+		
+		
 		formState_del.value.ip = '';
 		formState_del.value.okpwd = '';
 
-		(formState_edit.value.ip = ''),
-		(formState_edit.value.port = ''),
-		(formState_edit.value.okpwd = ''),
-		(formState_edit.value.clusterId = undefined),
-		(formState_edit.value.role = undefined),
-		(formState_edit.value.floor = '');
+
+
+		formState_edit.value.ip = '',
+		formState_edit.value.port = '',
+		formState_edit.value.okpwd = '',
+		formState_edit.value.clusterId = undefined,
+		formState_edit.value.groupId = undefined,
+		formState_edit.value.floor = '';
 	};
 	const onShowSizeChange = (current, pageSize) => {
 		pageSize = pageSize.value;

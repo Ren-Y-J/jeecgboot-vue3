@@ -1,7 +1,7 @@
 <template>
 	<div class="title">
 		<!-- <span>主机组配置{{ ShowDataAllData.ipAddress }}</span> -->
-		<span>主机组配置[{{groupName}}]</span>
+		<span>主机组配置[{{ groupName }}]</span>
 	</div>
 
 	<div class="padding">
@@ -15,7 +15,7 @@
 					状态：{{ statusName }}
 					<br />
 					集群：{{ ShowDataAllData.clusterName }}
-				</div>
+				</div>	
 				<div
 					>名称：{{ ShowDataAllData.hostName }}
 					<br />
@@ -58,22 +58,40 @@
 			</a-tabs>
 			<!-- 基本配置 -->
 			<div v-show="activeKey == 0" style="padding: 10px">
-				<a-form style="margin-top: 10px" ref="formRef_bas" :model="formState_bas" name="basic"
-					:label-col="{ span: 5 }" :wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+				<a-form
+					style="margin-top: 10px"
+					ref="formRef_bas"
+					:model="formState_bas"
+					name="basic"
+					:label-col="{ span: 5 }"
+					:wrapper-col="{ span: 20 }"
+					autocomplete="off"
+					validateTrigger="blur"
+				>
 					基本配置
 					<a-form-item label="递归查询" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-switch checkedValue="1" unCheckedValue="0" checked-children="开启" un-checked-children="关闭"
-							v-model:checked="formState_bas.recursionOn" />
-						<a-checkbox v-if="formState_bas.recursionOn == 1" class="custom-checkbox"
+						<a-switch
+							checkedValue="1"
+							unCheckedValue="0"
+							checked-children="开启"
+							un-checked-children="关闭"
+							v-model:checked="formState_bas.recursionOn"
+						/>
+						<a-checkbox
+							v-if="formState_bas.recursionOn == 1"
+							class="custom-checkbox"
 							style="margin-left: 30px"
 							v-model:checked="formState_bas.limitRecursionRange">限制范围</a-checkbox>
+
+
+
+
 						<a-select v-model:value="formState_bas.allowRecursionList"
 							v-show="formState_bas.limitRecursionRange === true" mode="multiple"
 							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData_Acl"></a-select>
 					</a-form-item>
 
-					<a-form-item v-show="formState_bas.recursionOn == '1'" label="递归解析方式" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
+					<a-form-item v-show="formState_bas.recursionOn == '1'" label="递归解析方式" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-radio-group v-model:value="formState_bas.recursionType">
 							<a-radio value="1">仅递归查询</a-radio>
 							<a-radio value="2">仅转发查询</a-radio>
@@ -82,13 +100,18 @@
 						</a-radio-group>
 						<a-select v-model:value="formState_bas.forwarderList"
 							v-show="formState_bas.recursionType !== '1'" mode="multiple"
-							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData">
-						</a-select>
+							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData"></a-select>
 					</a-form-item>
 
 					<a-form-item label="响应速率限制" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.rateLimitOn" />
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.rateLimitOn"
+						/>
 						<a-tooltip placement="topLeft">
 							<template #title>
 								<span style="font-size: 8px">单IP查询速率上限</span>
@@ -99,13 +122,20 @@
 						<a-input-number :formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
 							placeholder="请填写对请求响应速率的上限值" v-model:value="formState_bas.responsesPerSecond"
-							v-show="formState_bas.rateLimitOn == true" addon-after="次/秒">
-						</a-input-number>
+							v-show="formState_bas.rateLimitOn == true" addon-after="次/秒"></a-input-number>
 					</a-form-item>
 				</a-form>
 
-				<a-form style="margin-top: 10px" ref="formRef_bas" :model="formState_bas" name="basic"
-					:label-col="{ span: 5 }" :wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+				<a-form
+					style="margin-top: 10px"
+					ref="formRef_bas"
+					:model="formState_bas"
+					name="basic"
+					:label-col="{ span: 5 }"
+					:wrapper-col="{ span: 20 }"
+					autocomplete="off"
+					validateTrigger="blur"
+				>
 					<div class="line" />
 					优化配置
 					<a-form-item label="DNS日志设置" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
@@ -126,8 +156,14 @@
 						</a-checkbox-group>
 					</a-form-item>
 					<a-form-item label="NX重定向" :labelCol="{ span: 8 }" :wrapperCol="{ span: 15 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.nxRedirectOn" />
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.nxRedirectOn"
+						/>
 						<a-tooltip>
 							<template #title>
 								<span style="font-size: 8px">1. 开启NX重定向后，当查询结果为NXDOMAIN时，DNS服务器将解析为指定域名或地址。</span>
@@ -138,83 +174,130 @@
 							</template>
 							<exclamation-circle-filled />
 						</a-tooltip>
-						<a-radio-group v-show="formState_bas.nxRedirectOn == 1"
-							v-model:value="formState_bas.nxDomainType" style="width: 500px; margin-left: 10px">
+						<a-radio-group
+							v-show="formState_bas.nxRedirectOn == 1"
+							v-model:value="formState_bas.nxDomainType"
+							style="width: 500px; margin-left: 10px"
+						>
 							<a-radio value="0">全部域名 </a-radio>
 							<a-radio value="1">指定后缀 </a-radio>
 						</a-radio-group>
 						<br />
-						<a-input v-show="formState_bas.nxDomainType == 1" placeholder="请填写要启用的NX重定向的域名后缀"
-							style="width: 300px; margin-top: 5px" v-model:value="formState_bas.nxSuffixDomain" />
+						<a-input
+							v-show="formState_bas.nxDomainType == 1 && formState_bas.nxRedirectOn == 1"
+							placeholder="请填写要启用的NX重定向的域名后缀"
+							style="width: 300px; margin-top: 5px"
+							v-model:value="formState_bas.nxSuffixDomain"
+						/>
 						<div v-show="formState_bas.nxRedirectOn == true">
-							<a-input style="width: 300px; margin-bottom: 5px; margin-top: 5px"
-								placeholder="为空则对IPv4直接返回空解析" v-model:value="formState_bas.nxRedirectIpV4"
-								addon-before="IPv4重定向" />
+							<a-input
+								style="width: 300px; margin-bottom: 5px; margin-top: 5px"
+								placeholder="为空则对IPv4直接返回空解析"
+								v-model:value="formState_bas.nxRedirectIpV4"
+								addon-before="IPv4重定向"
+							/>
 							<br />
-							<a-input style="width: 300px" placeholder="为空则对IPv6直接返回空解析"
-								v-model:value="formState_bas.nxRedirectIpV6" addon-before="IPv6重定向" />
+							<a-input
+								style="width: 300px"
+								placeholder="为空则对IPv6直接返回空解析"
+								v-model:value="formState_bas.nxRedirectIpV6"
+								addon-before="IPv6重定向"
+							/>
 						</div>
 					</a-form-item>
 					<a-form-item label="高级优化配置" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-radio-group v-model:value="formState_bas.advancedOption"
-							style="width: 500px; margin-left: 10px">
+						<a-radio-group v-model:value="formState_bas.advancedOption" style="width: 500px; margin-left: 10px">
 							<a-radio value="0">系统默认 </a-radio>
 							<a-radio value="1">自定义 </a-radio>
 						</a-radio-group>
 					</a-form-item>
 
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="最大递归深度" v-model:value="formState_bas.maxRecursionDepth"
-							addon-after="层"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最大递归深度"
+							v-model:value="formState_bas.maxRecursionDepth"
+							addon-after="层"
+						></a-input-number>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归查询数" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="最大递归查询数" v-model:value="formState_bas.maxRecursionQueries"
-							addon-after="次"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归查询数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最大递归查询数"
+							v-model:value="formState_bas.maxRecursionQueries"
+							addon-after="次"
+						></a-input-number>
 					</a-form-item>
 
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小缓存TTL" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="最小缓存TTL" v-model:value="formState_bas.minCacheTtl"
-							addon-after="秒"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最小缓存TTL"
+							v-model:value="formState_bas.minCacheTtl"
+							addon-after="秒"
+						></a-input-number>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大缓存TTL" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="最大缓存TTL" v-model:value="formState_bas.maxCacheTtl"
-							addon-after="秒"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最大缓存TTL"
+							v-model:value="formState_bas.maxCacheTtl"
+							addon-after="秒"
+						></a-input-number>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归超时时间" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="递归超时时间" v-model:value="formState_bas.resolverQueryTimeout"
-							addon-after="秒"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归超时时间" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="递归超时时间"
+							v-model:value="formState_bas.resolverQueryTimeout"
+							addon-after="秒"
+						></a-input-number>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归最大并发数" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="递归最大并发数" v-model:value="formState_bas.recursiveClients"
-							addon-after="个"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归最大并发数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="递归最大并发数"
+							v-model:value="formState_bas.recursiveClients"
+							addon-after="个"
+						></a-input-number>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小否定缓存TTL" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-input-number :formatter="(value) => Math.floor(value)"
-							:parser="(value) => value.replace(/\D/g, '')" precision="0" min="0" style="width: 300px"
-							placeholder="最小否定缓存TTL" v-model:value="formState_bas.minNcacheTtl"
-							addon-after="秒"></a-input-number>
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小否定缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-input-number
+							:formatter="(value) => Math.floor(value)"
+							:parser="(value) => value.replace(/\D/g, '')"
+							precision="0"
+							min="0"
+							style="width: 300px"
+							placeholder="最小否定缓存TTL"
+							v-model:value="formState_bas.minNcacheTtl"
+							addon-after="秒"
+						></a-input-number>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="性能优化选项" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="性能优化选项" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-checkbox-group v-model:value="formState_bas.transferFormat" style="width: 100%">
 							<a-checkbox value="many-answers">域记录打包传输 </a-checkbox>
 							<a-tooltip>
@@ -225,10 +308,15 @@
 							</a-tooltip>
 						</a-checkbox-group>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.advancedOption == 1" label="缓存预取" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.prefetch" />
+					<a-form-item v-show="formState_bas.advancedOption == 1" label="缓存预取" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.prefetch"
+						/>
 						<a-tooltip>
 							<template #title>
 								<span style="font-size: 8px">开启缓存预取后，本系统将对热点域名和重点域名进行缓存预取。</span>
@@ -237,13 +325,27 @@
 						</a-tooltip>
 					</a-form-item>
 				</a-form>
-				<a-form style="margin-top: 10px" ref="formRef_bas" :model="formState_bas" name="basic"
-					:label-col="{ span: 5 }" :wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+				<a-form
+					style="margin-top: 10px"
+					ref="formRef_bas"
+					:model="formState_bas"
+					name="basic"
+					:label-col="{ span: 5 }"
+					:wrapper-col="{ span: 20 }"
+					autocomplete="off"
+					validateTrigger="blur"
+				>
 					<div class="line" />
 					安全配置
 					<a-form-item label="DNSSEC" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.dnssecValidation" />
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.dnssecValidation"
+						/>
 						<a-tooltip>
 							<template #title>
 								<span style="font-size: 8px">启用DNSSEC可开启系统DNSSEC功能</span>
@@ -251,21 +353,28 @@
 							<exclamation-circle-filled />
 						</a-tooltip>
 					</a-form-item>
-					<a-form-item v-show="formState_bas.dnssecValidation == true" label="DNSSEC" :labelCol="{ span: 8 }"
-						:wrapperCol="{ span: 8 }">
+					<a-form-item v-show="formState_bas.dnssecValidation == true" label="DNSSEC" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-checkbox-group v-model:value="formState_bas.dnssecEnable" style="width: 100%">
 							<a-checkbox value="1">开启DNSSEC验证 </a-checkbox>
 							<a-tooltip>
 								<template #title>
-									<span style="font-size: 8px">DNSSEC验证用于对递归查询的DS结果进行验证，由于运营商网络配置不尽规范，一般不建议开启</span>
+									<span style="font-size: 8px"
+										>DNSSEC验证用于对递归查询的DS结果进行验证，由于运营商网络配置不尽规范，一般不建议开启</span
+									>
 								</template>
 								<exclamation-circle-filled />
 							</a-tooltip>
 						</a-checkbox-group>
 					</a-form-item>
 					<a-form-item label="EDNS" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.edns" />
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.edns"
+						/>
 						<a-tooltip>
 							<template #title>
 								<span style="font-size: 8px">启用EDNS可提供EDNS支持</span>
@@ -275,8 +384,14 @@
 					</a-form-item>
 
 					<a-form-item label="递归攻击防护" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.recursionProtect" />
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.recursionProtect"
+						/>
 						<a-tooltip>
 							<template #title>
 								<span style="font-size: 8px">启用递归攻击防护，可以有效防护针对递归解析的SERFAIL攻击</span>
@@ -287,8 +402,14 @@
 					</a-form-item>
 
 					<a-form-item label="最小化应答" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-switch style="margin-right: 10px" checked-children="开启" un-checked-children="关闭"
-							checkedValue="1" unCheckedValue="0" v-model:checked="formState_bas.minRes" />
+						<a-switch
+							style="margin-right: 10px"
+							checked-children="开启"
+							un-checked-children="关闭"
+							checkedValue="1"
+							unCheckedValue="0"
+							v-model:checked="formState_bas.minRes"
+						/>
 
 						<a-tooltip>
 							<template #title>
@@ -304,34 +425,15 @@
 </template>
 
 <script setup>
-	import {
-		UpOutlined,
-		DownOutlined,
-		ExclamationCircleFilled
-	} from '@ant-design/icons-vue'; //icon引入
-	import {
-		ShowData,
-		EditList,
-		ShowDataAll,
-		transList,
-		AclList,
-		GetDeployList
-	} from './deploy.ts';
-	import {
-		reactive,
-		ref,
-		toRefs,
-		watchEffect,
-		onBeforeMount
-	} from 'vue';
+	import { UpOutlined, DownOutlined, ExclamationCircleFilled } from '@ant-design/icons-vue'; //icon引入
+	import { ShowData, EditList, ShowDataAll, transList, AclList, GetDeployList } from './deploy.ts';
+	import { reactive, ref, toRefs, watchEffect, onBeforeMount } from 'vue';
 	import Area from './component/deploy_area.vue';
 	import Deploy from './component/deploy_record.vue';
 	import Tactics from './component/Tactics.vue';
 	import Line from './component/line_dep.vue';
 	import DeployReverse from './component/reverse_deploy.vue';
-	import {
-		message
-	} from 'ant-design-vue';
+	import { message } from 'ant-design-vue';
 	const data = reactive({
 		deptype: '0',
 		initData: '',
@@ -346,7 +448,7 @@
 			forwarderList: [],
 			recursionType: '1',
 			rateLimitOn: '0',
-			responsesPerSecond: '',
+			responsesPerSecond: '20',
 			loggingTypeList: [],
 			nxRedirectOn: false,
 			nxDomainType: '',
@@ -359,35 +461,27 @@
 			resolverQueryTimeout: '10',
 			recursiveClients: '10000',
 			prefetch: '',
-			transferFormat: '',
+			transferFormat: 'one-answer',
 			dnssecValidation: '0',
 			dnssecEnable: '0',
 			edns: '0',
 			recursionProtect: '0',
 			allowRecursionList: [],
-			limitRecursionRange: undefined,
+			limitRecursionRange: false,
 			recursionOn: '0',
 			minRes: '0',
+			nxSuffixDomain: '',
+			nxRedirectIpV4: '',
+			nxRedirectIpV6: '',
 		},
 		groupData: [],
 		style_switch: '',
 		groupData_Acl: [],
-		groupName: ''
+		groupName: '',
 	});
 
-	const {
-		deptype,
-		initData,
-		pageID,
-		ShowDataAllData,
-		statusName,
-		activeKey,
-		formState_bas,
-		style_switch,
-		groupData,
-		groupData_Acl,
-		groupName
-	} = toRefs(data);
+	const { deptype, initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl, groupName } =
+		toRefs(data);
 	const handleClose = () => {
 		activeKey.value = 3;
 	};
@@ -421,7 +515,6 @@
 		});
 		// ACl
 		AclList().then((res) => {
-			console.log(res, 'ACL');
 			let transformedData = res.map((item) => {
 				return {
 					value: item.aclId,
@@ -459,15 +552,27 @@
 			formState_bas.value.edns = res.confContent.edns;
 			formState_bas.value.recursionProtect = res.confContent.recursionProtect;
 			formState_bas.value.allowRecursionList = res.confContent.allowRecursionList;
+			
+			console.log(formState_bas.value.allowRecursionList,'formState_bas.value.allowRecursionList' )
+			console.log(res.confContent,'res.confContentres.confContent' )
+			
+			formState_bas.value.nxSuffixDomain = res.confContent.nxSuffixDomain;
 
-			formState_bas.value.limitRecursionRange = res.confContent.limitRecursionRange;
-			console.log(res.confContent, ' res.confContent res.confContent res.confContent')
+			formState_bas.value.nxRedirectIpV4 = res.confContent.nxRedirectIpV4;
+
+			formState_bas.value.nxRedirectIpV6 = res.confContent.nxRedirectIpV6;
+
+			if (res.confContent.limitRecursionRange == '0') {
+				formState_bas.value.limitRecursionRange = false;
+			}
+			if (res.confContent.limitRecursionRange == '1') {
+				formState_bas.value.limitRecursionRange = true;
+			}
 
 			formState_bas.value.recursionOn = res.confContent.recursionOn;
 			formState_bas.value.minRes = res.confContent.minRes;
 		});
 		ShowDataAll(`${pageID.value}`).then((res) => {
-			console.log(res, 'ShowDataAll');
 			ShowDataAllData.value = res;
 		});
 	};
@@ -477,11 +582,25 @@
 		localStorage.setItem('pageID', pageID.value);
 	};
 	const BtnOk = async () => {
+		if (formState_bas.value.transferFormat == '') {
+			formState_bas.value.transferFormat = 'one-answer';
+		}
+		if (formState_bas.value.dnssecEnable == '') {
+			formState_bas.value.dnssecEnable = '0';
+		}
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {
 			formState_bas.value.transferFormat = formState_bas.value.transferFormat.toString();
 			formState_bas.value.dnssecEnable = formState_bas.value.dnssecEnable.toString();
+
+			if (formState_bas.value.limitRecursionRange == false) {
+				formState_bas.value.limitRecursionRange = '0';
+			}
+			if (formState_bas.value.limitRecursionRange == true) {
+				formState_bas.value.limitRecursionRange = '1';
+			}
+
 			EditList(formState_bas.value)
 				.then((res) => {
 					message.success('配置成功！');

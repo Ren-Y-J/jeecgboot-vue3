@@ -40,6 +40,11 @@
                 <a-tag color="green">禁用</a-tag>
               </div>
             </template>
+						<template v-if="column.dataIndex === 'aclId'">
+						  <!-- border-bottom: 1px solid #109eff; -->
+						  <div v-if="record.aclId == null" type="link"> 不限地址段 </div>
+						  <div v-else>{{ record.aclId }}</div>
+						</template>
             <template v-if="column.dataIndex === 'operation'">
               <div>
                 <a-button type="link" @click="editisOpen(record)">配置</a-button>

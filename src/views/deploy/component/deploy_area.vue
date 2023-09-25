@@ -19,9 +19,42 @@
 		</div>
 		<div class="page" style="margin-top: 8px">
 			<div style="margin-bottom: 8px">
+				<a-space>
+					<a-select
+						ref="select"
+						style="width: 120px; margin-right: 8px"
+						@focus="focus"
+						@select="handleChange_del"
+						v-model:value="delselect"
+						placeholder="批量操作"
+					>
+						<a-select-option value="1">删除</a-select-option>
+					</a-select>
+				</a-space>
 				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
 			</div>
-			<a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
+			<a-alert show-icon style="margin-top: 8px; margin-bottom: 8px" type="info">
+				<template #message>
+					<template v-if="number > 0">
+						<span>已选定 {{ number }} 条记录(可跨页)</span>
+						<a-divider type="vertical" />
+						<a @click="clearbtn">清空</a>
+						<a-divider type="vertical" />
+					</template>
+					<template v-else>
+						<span>未选中任何数据</span>
+					</template>
+				</template>
+			</a-alert>
+			<a-table
+				:rowKey="(record) => record.zoneId"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+				:pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
+				:columns="columns"
+				:data-source="initdata"
+				bordered
+			>
 				<template #bodyCell="{ column, record }">
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
@@ -230,8 +263,7 @@
 	import { reactive, ref, toRefs, watchEffect, defineProps, defineEmits } from 'vue';
 	import { message } from 'ant-design-vue';
 	import { router } from '/@/router';
-	
-	
+
 	const columns = [
 		{
 			title: '名称',
@@ -255,6 +287,7 @@
 		},
 	];
 	const data = reactive({
+		delselect: undefined,
 		visible_SOA: false,
 		activeKey: '0',
 		type: 0,
@@ -297,8 +330,11 @@
 		hosts: undefined,
 		zoneId: '',
 		pageID: '',
+		number: 0,
 	});
 	const {
+		delselect,
+		number,
 		formState_SOA,
 		visible_SOA,
 		type,
@@ -321,14 +357,44 @@
 		zoneId,
 		pageID,
 	} = toRefs(data);
+
+	// 多选
+	const state = reactive({
+		selectedRowKeys: [],
+	});
+	const allclusterId = ref([]);
+	const rowSelection = (selectedRowKeys, selectedRows) => {
+		state.selectedRowKeys = selectedRowKeys;
+		allclusterId.value = selectedRows.map((item) => item.zoneId);
+
+		console.log(allclusterId.value, 'allclusterId.value');
+
+		number.value = allclusterId.value.length;
+	};
+	// 删除
+	const handleChange_del = () => {
+		if (allclusterId.value == '') {
+			message.error('请选择数据');
+			return;
+		}
+		if (delselect.value == 1) {
+			let values1 = allclusterId.value;
+			DelLine({
+				values: values1,
+			}).then((res) => {
+				message.success('删除成功');
+				getData();
+			});
+		}
+	};
+
 	const changetabs = () => {
-		
 		let url = location.search;
-	let groupId = url.replace('?', '');
+		let groupId = url.replace('?', '');
 		placetype.value = activeKey.value;
 		if (placetype.value == '0') {
 			GetList({
-				groupId:groupId,
+				groupId: groupId,
 				type: 0,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -339,7 +405,7 @@
 		}
 		if (placetype.value == '1') {
 			GetReverseList({
-					groupId:groupId,
+				groupId: groupId,
 				type: 1,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -394,7 +460,7 @@
 		let groupId = url.replace('?', '');
 		if (placetype.value == '0') {
 			GetList({
-				groupId:groupId,
+				groupId: groupId,
 				type: 0,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -405,7 +471,7 @@
 		}
 		if (placetype.value == '1') {
 			GetReverseList({
-					groupId:groupId,
+				groupId: groupId,
 				type: 1,
 				pageNum: pageNum.value,
 				pageSize: pageSize.value,
@@ -432,7 +498,6 @@
 		getData();
 	};
 	const addBtn = () => {
-		
 		GetLine({
 			value: pageID.value,
 		}).then((res) => {
@@ -477,9 +542,8 @@
 			console.log(error);
 			return;
 		}
-		
+
 		AddLine({
-			
 			groupId: pageID.value,
 			type: 0,
 			zoneName: formState.value.name,
@@ -496,8 +560,8 @@
 	// 反向域
 	const formRef_ = ref(null);
 	const handleOk_ = async () => {
-		console.log(formState_.value.type_1,'formState.value.type_1' )
-		console.log( '反')
+		console.log(formState_.value.type_1, 'formState.value.type_1');
+		console.log('反');
 		try {
 			await formRef_.value.validate();
 		} catch (error) {
@@ -505,29 +569,24 @@
 			console.log(error);
 			return;
 		}
-		 const IPV4 =  /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)(\/(\d|[1-2]\d|3[0-2]))?$/;
-let isValid = IPV4.test(formState_.value.IP);
+		const IPV4 = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)(\/(\d|[1-2]\d|3[0-2]))?$/;
+		let isValid = IPV4.test(formState_.value.IP);
 
-const IPV6 = /^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
-let isValidV6 = IPV6.test(formState_.value.IP);
+		const IPV6 =
+			/^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
+		let isValidV6 = IPV6.test(formState_.value.IP);
 
-if(formState_.value.type_1=='3'){
-	if (!isValid) {
-		message.error('网络地址不符合IPV4规则');
-	  return;
-	}
-}else if ( formState_.value.type_1=='4'  ){
-	if (!isValidV6) {
-		message.error('网络地址不符合IPV6规则');
-	  return;
-	}
-}
-
-
-
-
-
-
+		if (formState_.value.type_1 == '3') {
+			if (!isValid) {
+				message.error('网络地址不符合IPV4规则');
+				return;
+			}
+		} else if (formState_.value.type_1 == '4') {
+			if (!isValidV6) {
+				message.error('网络地址不符合IPV6规则');
+				return;
+			}
+		}
 
 		AddReverseList({
 			groupId: pageID.value,
@@ -543,22 +602,15 @@ if(formState_.value.type_1=='3'){
 			getData();
 		});
 	};
-	
-	
-	
-	
-	
-	
-	
-	
+
 	const clearData = () => {
 		formState.value.name = '';
 		formState.value.lineId = [];
 		formState.value.childZone = '';
 		formState.value.remark = '';
 		formState.value.type_1 = undefined;
-		
-			formState_.value.type_1 = undefined;
+
+		formState_.value.type_1 = undefined;
 		formState_.value.lineId = [];
 		formState_.value.IP = '';
 		formState_.value.remark = '';
@@ -589,9 +641,6 @@ if(formState_.value.type_1=='3'){
 		if (visible_1.value == false) {
 			clearData();
 		}
-		
-		
-		
 	});
 	const emit = defineEmits(['toggleComponent']);
 	const Godeploy = (record) => {

@@ -45,7 +45,12 @@ export const deployRoute: AppRouteRecordRaw = {
   component: () => import('/@/views/deploy/deploy.vue'),
 };
 
-
+// 配置路由
+export const installRoute: AppRouteRecordRaw = {
+  path: '/install',
+  name: 'install',
+  component: () => import('/@/views/install/install.vue'),
+};
 //update-begin---author:wangshuai ---date:20220629  for：auth2登录页面路由------------
 export const Oauth2LoginRoute: AppRouteRecordRaw = {
   path: '/oauth2-app/login',
@@ -73,4 +78,4 @@ export const TokenLoginRoute: AppRouteRecordRaw = {
 };
 
 // Basic routing without permission
-export const basicRoutes = [deployRoute,LoginRoute, RootRoute, ...mainOutRoutes, REDIRECT_ROUTE, PAGE_NOT_FOUND_ROUTE, TokenLoginRoute, Oauth2LoginRoute];
+export const basicRoutes = [installRoute,deployRoute,LoginRoute, RootRoute, ...mainOutRoutes, REDIRECT_ROUTE, PAGE_NOT_FOUND_ROUTE, TokenLoginRoute, Oauth2LoginRoute];
