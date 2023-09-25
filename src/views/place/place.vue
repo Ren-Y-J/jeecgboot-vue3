@@ -8,22 +8,19 @@
 			<div class="search">
 				<a-form>
 					<div style="display: flex">
-						<a-form-item style="margin-right: 10px" label="名称" :labelCol="{ span: 5 }"
-							:wrapperCol="{ span: 23 }">
+						<a-form-item style="margin-right: 10px" label="名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 23 }">
 							<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
 						</a-form-item>
 						<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 23 }">
 							<a-space>
 								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
-									<a-select-option v-for="(item, index) in HostsGroupData" key="index"
-										:value="item.groupId">{{
+									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
 										item.groupName
 									}}</a-select-option>
 								</a-select>
 							</a-space>
 						</a-form-item>
-						<a-button @click="searchBtn" type="primary"
-							style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
+						<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
 						<a-button @click="resetbtn">
 							<reload-outlined />
 							重置
@@ -36,8 +33,14 @@
 		<div class="page" style="margin-top: 8px">
 			<div style="display: flex; margin-bottom: 8px">
 				<a-space>
-					<a-select ref="select" style="width: 120px; margin-right: 8px" @focus="focus"
-						@select="handleChange_del" v-model:value="delselect" placeholder="批量操作">
+					<a-select
+						ref="select"
+						style="width: 120px; margin-right: 8px"
+						@focus="focus"
+						@select="handleChange_del"
+						v-model:value="delselect"
+						placeholder="批量操作"
+					>
 						<a-select-option value="1">删除</a-select-option>
 					</a-select>
 				</a-space>
@@ -59,37 +62,35 @@
 				</template>
 			</a-alert>
 			<a-table
-			 :rowKey="(record) => record.zoneId"
-				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }" :pagination="false"
-				:scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns" :data-source="initdata" bordered>
+				:rowKey="(record) => record.zoneId"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: rowSelection }"
+				:pagination="false"
+				:scroll="{ x: 'calc(700px + 50%)', y: 555 }"
+				:columns="columns"
+				:data-source="initdata"
+				bordered
+			>
 				<template #bodyCell="{ column, record }">
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
 						<div style="display: flex; justify-content: center; align-items: center">
-							<div v-for="(item, index) in record.lineName" key="index" class="iplist_data"
-								style="margin-right: 10px">
+							<div v-for="(item, index) in record.lineName" key="index" class="iplist_data" style="margin-right: 10px">
 								<span> {{ item }} </span>
 							</div>
 						</div>
 					</template>
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'ipAddress'">
-						<div style="display: flex; justify-content: center; align-items: center" class="pointer"
-							@click="GoDep(record)">
-							<span
-								style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }}
-							</span>
+						<div style="display: flex; justify-content: center; align-items: center" class="pointer" @click="GoDep(record)">
+							<span style="text-decoration: underline; text-decoration-color: blue; color: blue">{{ record.ipAddress }} </span>
 						</div>
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
-						<div style="display: flex;">
+						<div style="display: flex">
 							<div class="pointer">
-								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del"
-									@confirm="delBtn(record)">
+								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
 									<a-button type="link">删除</a-button>
-
-
 								</a-popconfirm>
 							</div>
 							<div class="pointer" @click="Godeploy(record)">
@@ -109,35 +110,50 @@
 				</template>
 			</a-table>
 			<div style="padding: 10px; display: flex; justify-content: flex-end">
-				<a-pagination :show-total="(total) => `共 ${total} 条数据`" v-model:current="pageNum" :total="total"
-					v-model:pageSize="pageSize" show-size-changer @showSizeChange="onShowSizeChange"
-					@change="changeFn" />
+				<a-pagination
+					:show-total="(total) => `共 ${total} 条数据`"
+					v-model:current="pageNum"
+					:total="total"
+					v-model:pageSize="pageSize"
+					show-size-changer
+					@showSizeChange="onShowSizeChange"
+					@change="changeFn"
+				/>
 			</div>
 		</div>
 	</div>
 	<!-- 正向域 -->
 	<a-modal v-model:visible="visible" title="添加域" @ok="handleOk">
-		<a-form style="margin-top: 10px" ref="formRef" :model="formState" name="basic" :label-col="{ span: 3 }"
-			:wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
-			<a-form-item label="域名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }"
-				:rules="[{ required: true, message: '请输入域名!' }]" name="name">
+		<a-form
+			style="margin-top: 10px"
+			ref="formRef"
+			:model="formState"
+			name="basic"
+			:label-col="{ span: 3 }"
+			:wrapper-col="{ span: 20 }"
+			autocomplete="off"
+			validateTrigger="blur"
+		>
+			<a-form-item
+				label="域名"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+				:rules="[{ required: true, message: '请输入域名!' }]"
+				name="name"
+			>
 				<a-input placeholder="不要包含主机名，如www" v-model:value="formState.name" />
 			</a-form-item>
 			<!-- 主机 -->
-			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组"
-				:labelCol="{ span: 5 }">
-				<a-select @change="changehosts" ref="select" v-model:value="formState.hosts" style="width: 150px"
-					placeholder="请选择主机">
+			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组" :labelCol="{ span: 5 }">
+				<a-select @change="changehosts" ref="select" v-model:value="formState.hosts" style="width: 150px" placeholder="请选择主机">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.groupId" value="3">{{
 						item.groupName
 					}}</a-select-option>
 				</a-select>
 			</a-form-item>
 			<!-- 线路 -->
-			<a-form-item :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" label="线路选择"
-				:labelCol="{ span: 5 }">
-				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 150px" placeholder="请选择"
-					:options="groupData"></a-select>
+			<a-form-item :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" label="线路选择" :labelCol="{ span: 5 }">
+				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
 			<a-form-item label="子域名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="请输入子域名" v-model:value="formState.childZone" />
@@ -149,40 +165,64 @@
 	</a-modal>
 	<!-- 反向域 -->
 	<a-modal v-model:visible="visible_1" title="添加域" @ok="handleOk_">
-		<a-form style="margin-top: 10px" ref="formRef_" :model="formState_" name="basic" :label-col="{ span: 3 }"
-			:wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }" name="type_1"
-				:rules="[{ required: true, message: '请选择类型!' }]">
-				<a-select ref="select" v-model:value="formState_.type_1" style="width: 150px" placeholder="请选择类型"
-					@focus="focus" @change="handleChange">
+		<a-form
+			style="margin-top: 10px"
+			ref="formRef_"
+			:model="formState_"
+			name="basic"
+			:label-col="{ span: 3 }"
+			:wrapper-col="{ span: 20 }"
+			autocomplete="off"
+			validateTrigger="blur"
+		>
+			<a-form-item
+				label="类型"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+				name="type_1"
+				:rules="[{ required: true, message: '请选择类型!' }]"
+			>
+				<a-select
+					ref="select"
+					v-model:value="formState_.type_1"
+					style="width: 150px"
+					placeholder="请选择类型"
+					@focus="focus"
+					@change="handleChange"
+				>
 					<a-select-option value="3">v4反向解析</a-select-option>
 					<a-select-option value="4">v6反向解析</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组"
-				:labelCol="{ span: 5 }">
-				<a-select @change="changehosts_" ref="select" v-model:value="formState_.hosts" style="width: 150px"
-					placeholder="请选择主机组">
+			<a-form-item :rules="[{ required: true, message: '请选择主机组!' }]" name="hosts" label="主机组" :labelCol="{ span: 5 }">
+				<a-select @change="changehosts_" ref="select" v-model:value="formState_.hosts" style="width: 150px" placeholder="请选择主机组">
 					<a-select-option v-for="(item, index) in HostsData" key="index" :value="item.groupId" value="3">{{
 						item.groupName
 					}}</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item :rules="[{ required: true, message: '请输入网络地址!' }]" name="IP" label="网络地址"
-				:labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+				:rules="[{ required: true, message: '请输入网络地址!' }]"
+				name="IP"
+				label="网络地址"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
 				<a-input placeholder="请输入网络地址" v-model:value="formState_.IP" />
 			</a-form-item>
 			<a-form-item
-			:rules="[{ required: true, message: '请选择应用线路!' }]" name="lineId"
-			
-			label="应用线路" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择"
-					:options="groupData"></a-select>
+				:rules="[{ required: true, message: '请选择应用线路!' }]"
+				name="lineId"
+				label="应用线路"
+				:labelCol="{ span: 5 }"
+				:wrapperCol="{ span: 15 }"
+			>
+				<a-select v-model:value="formState_.lineId" mode="multiple" style="width: 150px" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
 			<a-form-item label="所属域" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="所属域" v-model:value="formState_.childZone" />
 			</a-form-item>
-			
+
 			<a-form-item label="备注" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-textarea v-model:value="formState_.remark" placeholder="备注" :rows="4" />
 			</a-form-item>
@@ -190,34 +230,72 @@
 	</a-modal>
 	<!-- SOA配置 -->
 	<a-modal v-model:visible="visible_SOA" title="SOA配置" @ok="handleOk_SOA">
-		<a-form style="margin-top: 10px" ref="formRef_SOA" :model="formState_SOA" name="basic" :label-col="{ span: 3 }"
-			:wrapper-col="{ span: 20 }" autocomplete="off" validateTrigger="blur">
+		<a-form
+			style="margin-top: 10px"
+			ref="formRef_SOA"
+			:model="formState_SOA"
+			name="basic"
+			:label-col="{ span: 3 }"
+			:wrapper-col="{ span: 20 }"
+			autocomplete="off"
+			validateTrigger="blur"
+		>
 			<a-form-item label="主名称服务器" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="主名称服务器" v-model:value="formState_SOA.serverName" />
 			</a-form-item>
 			<a-form-item label="TTL" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }" name="ttl">
-				<a-input-number :formatter="(value) => Math.floor(value)" :parser="(value) => value.replace(/\D/g, '')"
-					precision="0" min="0" placeholder="TTL" v-model:value="formState_SOA.ttl" />
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="TTL"
+					v-model:value="formState_SOA.ttl"
+				/>
 			</a-form-item>
 			<a-form-item label="管理员邮箱" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
 				<a-input placeholder="管理员邮箱" v-model:value="formState_SOA.mail" />
 			</a-form-item>
 
 			<a-form-item label="刷新时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-				<a-input-number :formatter="(value) => Math.floor(value)" :parser="(value) => value.replace(/\D/g, '')"
-					precision="0" min="0" placeholder="刷新时间(秒)" v-model:value="formState_SOA.refreshTime" />
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="刷新时间(秒)"
+					v-model:value="formState_SOA.refreshTime"
+				/>
 			</a-form-item>
 			<a-form-item label="重试时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-				<a-input-number :formatter="(value) => Math.floor(value)" :parser="(value) => value.replace(/\D/g, '')"
-					precision="0" min="0" placeholder="重试时间(秒)" v-model:value="formState_SOA.retryTime" />
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="重试时间(秒)"
+					v-model:value="formState_SOA.retryTime"
+				/>
 			</a-form-item>
 			<a-form-item label="过期时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-				<a-input-number :formatter="(value) => Math.floor(value)" :parser="(value) => value.replace(/\D/g, '')"
-					precision="0" min="0" placeholder="过期时间(秒)" v-model:value="formState_SOA.expireTime" />
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="过期时间(秒)"
+					v-model:value="formState_SOA.expireTime"
+				/>
 			</a-form-item>
 			<a-form-item label="否定缓存时间(秒)" :labelCol="{ span: 7 }" :wrapperCol="{ span: 15 }">
-				<a-input-number :formatter="(value) => Math.floor(value)" :parser="(value) => value.replace(/\D/g, '')"
-					precision="0" min="0" placeholder="否定缓存时间(秒)" v-model:value="formState_SOA.minimumTime" />
+				<a-input-number
+					:formatter="(value) => Math.floor(value)"
+					:parser="(value) => value.replace(/\D/g, '')"
+					precision="0"
+					min="0"
+					placeholder="否定缓存时间(秒)"
+					v-model:value="formState_SOA.minimumTime"
+				/>
 			</a-form-item>
 		</a-form>
 	</a-modal>
@@ -236,24 +314,12 @@
 		EditSOA,
 		HostGroup,
 	} from './place.ts';
-	import {
-		SearchOutlined,
-		ReloadOutlined,
-		PlusOutlined
-	} from '@ant-design/icons-vue'; //icon引入
-	import {
-		reactive,
-		ref,
-		toRefs,
-		watchEffect
-	} from 'vue';
-	import {
-		message
-	} from 'ant-design-vue';
-	import {
-		router
-	} from '/@/router';
-	const columns = [{
+	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue'; //icon引入
+	import { reactive, ref, toRefs, watchEffect } from 'vue';
+	import { message } from 'ant-design-vue';
+	import { router } from '/@/router';
+	const columns = [
+		{
 			title: '名称',
 			dataIndex: 'zoneName',
 			align: 'center',
@@ -497,12 +563,9 @@
 		GetLine({
 			value: formState.value.hosts,
 		}).then((res) => {
-			const transformedData = res.map(({
-				lineId: value,
-				lineName: label
-			}) => ({
+			const transformedData = res.map(({ lineId: value, lineName: label }) => ({
 				value,
-				label
+				label,
 			}));
 			groupData.value = transformedData;
 		});
@@ -513,12 +576,9 @@
 		GetLine({
 			value: formState.value.hosts,
 		}).then((res) => {
-			const transformedData = res.map(({
-				lineId: value,
-				lineName: label
-			}) => ({
+			const transformedData = res.map(({ lineId: value, lineName: label }) => ({
 				value,
-				label
+				label,
 			}));
 			groupData.value = transformedData;
 		});
@@ -585,28 +645,24 @@
 			console.log(error);
 			return;
 		}
-	 const IPV4 =  /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)(\/(\d|[1-2]\d|3[0-2]))?$/;
-let isValid = IPV4.test(formState_.value.IP);
+		const IPV4 = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)(\/(\d|[1-2]\d|3[0-2]))?$/;
+		let isValid = IPV4.test(formState_.value.IP);
 
-const IPV6 = /^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
-let isValidV6 = IPV6.test(formState_.value.IP);
+		const IPV6 =
+			/^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
+		let isValidV6 = IPV6.test(formState_.value.IP);
 
-if(formState_.value.type_1=='3'){
-	if (!isValid) {
-		message.error('网络地址不符合IPV4规则');
-	  return;
-	}
-}else if ( formState_.value.type_1=='4'  ){
-	if (!isValidV6) {
-		message.error('网络地址不符合IPV6规则');
-	  return;
-	}
-}
-
-
-
-
-
+		if (formState_.value.type_1 == '3') {
+			if (!isValid) {
+				message.error('网络地址不符合IPV4规则');
+				return;
+			}
+		} else if (formState_.value.type_1 == '4') {
+			if (!isValidV6) {
+				message.error('网络地址不符合IPV6规则');
+				return;
+			}
+		}
 
 		AddReverseList({
 			groupId: formState_.value.hosts,

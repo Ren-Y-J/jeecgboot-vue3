@@ -68,7 +68,7 @@
 							style="margin-left: 30px"
 							v-model:checked="formState_bas.limitRecursionRange">限制范围</a-checkbox>
 						<a-select v-model:value="formState_bas.allowRecursionList"
-							v-show="formState_bas.limitRecursionRange === true" mode="multiple"
+							v-show="formState_bas.limitRecursionRange === true || formState_bas.limitRecursionRange === '1' " mode="multiple"
 							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData_Acl"></a-select>
 					</a-form-item>
 
@@ -254,7 +254,7 @@
 						<a-checkbox-group v-model:value="formState_bas.dnssecEnable" style="width: 100%">
 							<a-checkbox value="1">开启DNSSEC验证 </a-checkbox>
 							<a-tooltip>
-								<template #title>
+								<template #title> 
 									<span style="font-size: 8px">DNSSEC验证用于对递归查询的DS结果进行验证，由于运营商网络配置不尽规范，一般不建议开启</span>
 								</template>
 								<exclamation-circle-filled />
@@ -344,7 +344,7 @@
 			forwarderList: [],
 			recursionType: '1',
 			rateLimitOn: '0',
-			responsesPerSecond: '',
+			responsesPerSecond: '1',
 			loggingTypeList: [],
 			nxRedirectOn: false,
 			nxDomainType: '',
@@ -488,6 +488,12 @@ if(res.confContent.limitRecursionRange=='1' ){
 		localStorage.setItem('pageID', pageID.value);
 	};
 	const BtnOk = async () => {
+		if(formState_bas.value.transferFormat==''){
+			formState_bas.value.transferFormat='one-answer'
+		}
+		if(formState_bas.value.dnssecEnable==''){
+			formState_bas.value.dnssecEnable='0'
+		}
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {
