@@ -184,6 +184,7 @@ number: 0,
 id:'',
 pageNum: 1,
 pageSize: 10,
+policiesId:'',
 search: '',
 policyId:'',
 visible_add:false,
@@ -193,6 +194,7 @@ visible_add:false,
     policiesTimeType:[],
     policiesTimeRange:[]
   },
+  Main_set:[]
 })
 const {
 listData,
@@ -206,7 +208,9 @@ formName,
 search,
 policyId,
 visible_add,
-formState
+formState,
+Main_set,
+policiesId
 } = toRefs(data)
 
 
@@ -214,50 +218,41 @@ formState
 const getcordList = () => {
     let url = location.search;
 	id.value = url.replace('?', '');
-	console.log(id.value,'id.value');
 	list({
         policiesId: id.value,
 		pageNum: pageNum.value,
 		pageSize: pageSize.value,
     }).then((res) => {
-        // console.log(res,'res');
 		listData.value = res.records;
 		total.value = res.total;
 	});
 };
 	getcordList();
 
-// 添加策略组按钮v
+// 添加策略按钮v
 const addTactics =(evt)=>{
 	let target = evt.target;
 	if(target.nodeName == "SPAN"){
         target = evt.target.parentNode;
     }
     target.blur()
-  	// router.push(`/tactics/disposition/addpolicy?${id}`)
 	router.push('/tactics/disposition/addpolicy')
-	// const disposition = (record)=>{
-	// let id = record.policiesId;
-	// router.push(`/tactics/disposition?${id}`);
 }
 
 
 //点击页面搜索按钮
 const handleQuery = ()=>{
-	console.log('111');
-	// let url = location.search;
-	// id.value = url.replace('?', '');
-	// list({
-    //     policiesId: id.value,
-	// 	pageNum: pageNum.value,
-	// 	pageSize: pageSize.value,
-	// 	policyName: search.value, //获取响应式记录名称
-	// }).then((res) => {
-    //     // console.log(res);
-	// 	listData.value = res.records; //把数据给到存放表单的数组中
-	// 	pageNum.value = 1;
-	// 	total.value = res.total; //总数
-	// });
+	list({
+        policiesId: id.value,
+		pageNum: pageNum.value,
+		pageSize: pageSize.value,
+		policyName: search.value//获取响应式记录名称
+	}).then((res) => {
+        // console.log(res);
+		listData.value = res.records; //把数据给到存放表单的数组中
+		pageNum.value = 1;
+		total.value = res.total; //总数
+	});
 }
 
 //重置按钮，把数据初始化
