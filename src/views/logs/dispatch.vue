@@ -78,13 +78,12 @@
             <!-- 动作 -->
             <template v-if="column.dataIndex === 'action'">
               <div v-if="record.action == '001'" type="link"> 发送安装包</div>
-              <div v-if="record.action == '002'"> -安装bind </div>
-              <div v-if="record.action == '003'"> 曾换文件， </div>
+              <div v-if="record.action == '002'"> 安装bind </div>
+              <div v-if="record.action == '003'"> 曾换文件 </div>
               <div v-if="record.action == '004'"> 删除文件 </div>
               <div v-if="record.action == '005'"> 添加文件 </div>
               <div v-if="record.action == '006'"> 更新文件</div>
-              <div v-if="record.action == '007'"> 启动ONS </div>
-              <div v-if="record.action == '008'"> -量就配置 </div>
+
             </template>
             <template v-if="column.dataIndex === 'status'">
               <div v-if="record.status == '0'" type="link"> 待执行</div>
