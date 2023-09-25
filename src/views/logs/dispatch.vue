@@ -1,5 +1,5 @@
 <template>
-  <div class="tasklogBox">
+  <div class="dispatchBox">
     <div class="nav">
       <a-card>
 
@@ -73,53 +73,25 @@
           :data-source="datalist" bordered>
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'hostIp'">
-              <p class="hostinfo" style="margin: 0" @click="selHostFn(record)">
-                <span v-if="record.mystatus == 1"> <down-outlined /></span>
-                <span v-else> <left-outlined /></span>{{ record.hostIp.length }}台主机
-              </p>
-              <ul v-if="record.mystatus == 1 && record.hostIp.length != 0">
-                <li v-for="(   item, index   ) in    record.hostIp   " :key="index"
-                  style="display: flex;align-items: center;justify-content: center; ">
-                  <a v-if="record.status == 1" style="display: flex;align-items: center;">
-                    <!-- <img src="../../assets/loginmini/icon/status-ok.png" alt="" style="width:16px;height: 16px;"> -->
-                    <a> {{ item }}</a>
-                  </a>
-                  <a v-else style=" display: flex; align-items: center;justify-content: center;">
-                    <!-- <img src="../../assets/loginmini/icon/error.png" alt="" -->
-                    <!-- style="width:16px;height: 16px; margin-top: 2px;"> -->
-                    {{ item }}
-                  </a>
-                </li>
-                <!-- 1状态绿色 0红色 -->
-                <!-- <li v-for=" array in AllhostIpNum   " :key="index"
-                  style="display: flex;align-items: center;flex-wrap: wrap;padding-left: 65px; ">
-                  <a v-if="array.status == 1" v-for=" (   ipAddress, index   ) in  array "
-                    style="display: flex;align-items: center;">
-                    <img src="../../assets/loginmini/icon/status-ok.png" alt=""
-                      style="width:16px;height: 16px;display: flex;align-items: center;flex-wrap: wrap;">
-                    <a> {{ ipAddress }}</a>
-                  </a>
-                  <a v-else v-for=" (   ipAddress, index   ) in  array " style=" display: flex;  padding-left: 0px;">
-                    <img src="../../assets/loginmini/icon/error.png" alt=""
-                      style="width:16px;height: 16px; margin-top: 2px;">
-                    {{ ipAddress }}
-                  </a>
-                </li> -->
-              </ul>
+
             </template>
             <!-- 操作 -->
-            <template v-if="column.dataIndex === 'status'">
-              <div v-if="record.status == '0'" type="link"> 待执行 </div>
-              <div v-if="record.status == '1'"> 执行中 </div>
-              <div v-if="record.status == '2'"> 成功 </div>
-              <div v-if="record.status == '3'"> 失败 </div>
+            <template v-if="column.dataIndex === 'action'">
+              <div v-if="record.status == '001'" type="link"> 发送安装包</div>
+              <div v-if="record.status == '002'"> -安装bind </div>
+              <div v-if="record.status == '003'"> 曾换文件， </div>
+              <div v-if="record.status == '004'"> 删除文件 </div>
+              <div v-if="record.status == '005'"> 添加文件 </div>
+              <div v-if="record.status == '006'"> 更新文件</div>
+              <div v-if="record.status == '007'"> 启动ONS </div>
+              <div v-if="record.status == '008'"> -量就配置 </div>
             </template>
             <template v-if="column.dataIndex === 'operation'">
-              <div style="display: flex; justify-content: center; align-items: center">
+              <!-- <div style="display: flex; justify-content: center; align-items: center">
                 <div class="pointer" style="margin-right: 10px">
                   <a-button type="link" @click="GoDep(record)">调度日志</a-button>
                 </div>
-              </div>
+              </div> -->
             </template>
           </template>
         </a-table>
@@ -132,37 +104,44 @@
     </div>
   </div>
 </template>
-<script name='tasklog' setup>
+<script name='dispatch' setup>
 import dayjs from 'dayjs';
-import { ref, defineComponent, reactive, toRefs } from 'vue'
-import { taskloglist, gethostsAll } from "./tasklog.ts";
-import { SmileOutlined, DownOutlined, LeftOutlined } from '@ant-design/icons-vue';
-import { router } from '/@/router';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons-vue'
+import { ref, defineComponent, reactive, toRefs } from 'vue';
+import { dispatchlist, gethostsAll } from "./dispatch.ts"
 const columns = [
 
   {
-    title: '任务ID',
+    title: '动作',
     dataIndex: 'taskId',
     align: 'center',
   },
   {
-    title: '任务状态',
+    title: '文件名',
     dataIndex: 'status',
     align: 'center',
   },
   {
-    title: '创建时间',
+    title: '主机IP',
     dataIndex: 'createTime',
     align: 'center',
   },
   {
-    title: '主机IP',
+    title: '创肆时间',
     dataIndex: 'hostIp',
     align: 'center',
   },
   {
-    title: '操作',
+    title: '任务状态',
+    dataIndex: 'hostIp',
+    align: 'center',
+  },
+  {
+    title: '执行结果',
+    dataIndex: 'hostIp',
+    align: 'center',
+  },
+  {
+    title: '任务顺序',
     dataIndex: 'operation',
     align: 'center',
   },
@@ -181,45 +160,29 @@ const data = reactive({
 })
 const { changesearch, opTitle, datalist, totals, visible, formReflibrary } = toRefs(data);
 const formData = ref({
+  taskId: 0,
+  status: "",
   pageNum: 1,
   pageSize: 10,
-})
-const AllhostIpNum = ref()
-const valuetime = ref([]);
-// 表格初始化
+
+});
+
 const initData = async () => {
-  let res = await taskloglist(formData.value)
-  console.log(res, '1111');
-  let data = res.records
-  datalist.value = data.map(item => {
-    item.mystatus = 0
-    return item
+  var url = location.search; //获取url中"?"符后的字串
+  console.log(url);
+  if (url.indexOf("?") != -1) {
+    let taskId = url.split('?')[1]
+    formData.value.taskId = taskId
+    console.log(formData.value.taskId, 'formData.value.hostId');
+    console.log(taskId);
+    let res = await dispatchlist(formData.value)
+    console.log(res, 'res');
+    data.value = res.records
+    console.log(data.value);
+    totals.value = res.total
   }
-  )
-  // [{}, {}][{ mystutas: 0, mystutas2: 0 }, {}]
-  totals.value = res.total
 }
 initData()
-const selhostIp = ref('')
-const selHostFn = async (val) => {
-  // val.mystatus = 1 1  2
-  datalist.value.forEach(item => {
-    if (item.taskId == val.taskId) {
-      item.mystatus === 1 ? item.mystatus = 0 : item.mystatus = 1
-    }
-  })
-
-}
-//分页功能
-const changeFn = (P, Ps) => {
-  formData.value.pageNum = P
-  initData()
-}
-const onShowSizeChange = (current, pageSize) => {
-  // console.log(pageSize, 'pageSize');
-  formData.value.pageSize = pageSize
-  initData()
-};
 // 获取主机
 const allhostId = ref([])
 const gethost = async () => {
@@ -232,7 +195,6 @@ const gethost = async () => {
 
 }
 gethost()
-
 // 查询区域存储值
 const formState = ref({
   hostId: {},//主机
@@ -242,6 +204,9 @@ const formState = ref({
   createTime: ""
 })
 
+const handleChange = async (value) => {
+  formState.value.status = value
+};
 function handleChangeSearchDate(_value, dateString) {
   formState.value.createTime = dateString[0];
   formState.value.updateTime = dateString[1];
@@ -249,28 +214,12 @@ function handleChangeSearchDate(_value, dateString) {
   console.log(formState.updateTime);
 
 }
-const handleChange = async (value) => {
-  formState.value.status = value
-};
-const handleQuery = async () => {
-  console.log(formState.value.createTime);
-  console.log(formState.value.updateTime);
-  let res = await taskloglist(formState.value)
-  console.log(res, '1111');
-}
-
-const GoDep = (record) => {
-  let taskId = record.taskId
-  console.log(record.taskId);
-  router.push(`/logs/dispatch?${taskId}`)
-};
 </script>
 <style scoped lang="less">
-.tasklogBox {
+.dispatchBox {
   padding: 10px;
 
   .form {
-    // max-width: 600px;
     height: 31px;
     margin: 0 auto;
   }
@@ -292,47 +241,6 @@ const GoDep = (record) => {
     }
   }
 
-
-  // .nav {
-
-  //   // flex-wrap: nowrap;
-  //   .form {
-  //     max-width: 600px;
-  //     margin: 0 auto;
-  //   }
-
-  //   .title {
-
-
-
-  //     .status {
-  //       width: 20%
-  //     }
-
-  //     .time {
-  //       width: 30%
-  //     }
-
-  //     .hostId {
-  //       width: 30%
-  //     }
-
-  //     .btn {
-  //       width: 20%;
-
-  //       .searchbtn {
-  //         display: flex;
-  //         flex-wrap: nowrap;
-  //       }
-
-  //       @media screen and (max-width: 800px) {
-  //         .searchbtn {
-  //           margin-top: 10px;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 
   .contaion {
     // padding: 10px;
