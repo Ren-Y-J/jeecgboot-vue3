@@ -106,10 +106,16 @@
 					<a-radio value="6">SRV</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请选择线路!' }]"
+			 name="lineId"
+			 label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
-			<a-form-item label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+			<a-form-item
+			 :rules="[{ required: true, message: '请输入TTL!' }]"
+			 name="ttl"
+			 label="TTL" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-input type='number' placeholder="TTL" v-model:value="formState.ttl" />
 			</a-form-item>
 			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
@@ -355,7 +361,7 @@
 	};
 	const addBtn = () => {
 		// 获取线路
-		GetLine(`${id.value}`).then((res) => {
+		GetLine(id.value).then((res) => {
 			console.log(res, '9-9---9-9-');
 			let transformedData = res.map((item) => {
 				return {
