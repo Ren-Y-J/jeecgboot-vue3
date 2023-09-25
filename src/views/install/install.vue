@@ -12,7 +12,7 @@
 		<span class="title_2">注意：如果系统检测到目标主机已经安装DNS，将自动跳过</span>
 	</div>
 	<div class="container">
-		<button v-if="GoInstallStatus == 0" @click="GoInstall" class="btnNow">
+		<button v-if="GoInstallStatus == 0" @click="handleClick" class="btnNow">
 			<span> 现在安装 </span>
 			<vertical-align-bottom-outlined style="fontsize: 20px" />
 		</button>
@@ -73,43 +73,44 @@
 	getData();
 
 	let stopTrigger = true;
-	const GoInstall = () => {
-			stopTrigger = false;
+	const GoInstall = async () => {
+		stopTrigger = false;
 		GoInstallStatus.value = 1;
 		if (stopTrigger == true) {
 			return; // 如果为true，则停止触发接口
 		}
-		GetStatus({
+		let res = await GetStatus({
 			value: DNSID.value,
-		}).then((res) => {
-			res.forEach((item) => {
-				if (item.status == '-1') {
-					item.status = '待安装...';
-				}
-				if (item.status == '0') {
-					item.status = '待执行...';
-				}
-				if (item.status == '1') {
-					item.status = '执行中...';
-				}
-				if (item.status == '2') {
-					item.status = '成功';
-				}
-				if (item.status == '3') {
-					item.status = '失败';
-				}
-				initData.value.unshift(item);
-				console.log(initData.value, 'initData.value');
-				let allStatusMatched = res.every((item) => item.status === '2' || item.status === '3');
-				if (allStatusMatched) {
-					stopTrigger = true;
-					clearInterval(timerId); // 清除定时器
-					GoInstallStatus.value = 0;
-				}
-			});
 		});
+		res.forEach((item) => {
+			if (item.status == '-1') {
+				item.status = '待安装...';
+			}
+			if (item.status == '0') {
+				item.status = '待执行...';
+			}
+			if (item.status == '1') {
+				item.status = '执行中...';
+			}
+			if (item.status == '2') {
+				item.status = '成功';
+			}
+			if (item.status == '3') {
+				item.status = '失败';
+			}
+			initData.value.unshift(item);
+			let allStatusMatched = res.every((item) => item.status === '2' || item.status === '3');
+			if (allStatusMatched) {
+				stopTrigger = true;
+				GoInstallStatus.value = 0;
+			}
+		});
+		DelF5 ()
 	};
-	const timerId = setInterval(GoInstall, 3000);
+	const handleClick = () => {
+	  GoInstall(); // 执行 GoInstall
+	  setInterval(GoInstall, 2000); // 设置定时器
+	};
 	const DelF5 = () => {
 		document.oncontextmenu = function () {
 			return false;

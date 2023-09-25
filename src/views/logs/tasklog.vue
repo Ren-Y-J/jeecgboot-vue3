@@ -22,8 +22,8 @@
                     :show-time="{
                       hideDisabledOptions: true,
                       defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
-                    }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" v-model="formState.timeRange"
-                    showTime />
+                    }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" @ok="onOk"
+                    v-model="formStates.timeRanges" showTime />
                 </a-space>
               </a-form-item>
             </a-col>
@@ -219,18 +219,21 @@ const gethost = async () => {
 gethost()
 
 // 查询区域存储值
-const formState = ref({
+const formState = reactive({
   hostId: undefined,//主机
   // host: undefined,
-  status: "",
+  status: 0,
   timeRange: [],
   pageNum: 1,
   pageSize: 10,
 })
+const formStates = ref({
+  timeRanges: []
+})
 
 function handleChangeSearchDate(_value, dateString) {
   console.log(dateString);
-  formState.value.timeRange = dateString
+  formState.timeRange = dateString
   // formState.value.createTime = dateString[0];
   // formState.value.updateTime = dateString[1];
   // console.log(formState.createTime);
@@ -238,31 +241,40 @@ function handleChangeSearchDate(_value, dateString) {
 
 }
 const handleChange = async (value) => {
-  formState.value.status = value
+  formState.status = value
 };
 const handleQuery = async () => {
 
-  let res = await taskloglist(formState.value)
+  let res = await taskloglist(formState)
   console.log(res, '1111');
   datalist.value = res.records
   totals.value = res.total
 }
+// const onOk = (value) => {
+//   console.log('onOk: ', value);
+// }
+
 // 清空
 const AlldelFn = () => {
-  formState.value.hostId = '',
-    formState.value.status = '',
-    // let arr = formState.value.timeRange
-    // formState.value.timeRange = [],
-    // formState.timeRange = undefined
-    formState.value.timeRange = null;
-  // formState.value.timeRange.forEach((element, index) => {
-  //   console.log(formState.value.timeRange[index]);
-  //   element[index] = ''
-  //   console.log(element[index]);
-  // });
+  formState.hostId = undefined;
 
-  formState.value.pageNum = 1,
-    initData()
+  //   formState.status = '',
+  // let arr = formState.value.timeRange
+  // formState.value.timeRange = [],
+  // formState.timeRange = undefined
+  // formState.timeRange = undefined;
+  formState.pageNum = 1
+  console.log(formState.timeRange);
+  console.log(formState.status);
+  console.log(formState.hostId);
+  // let arr = formState.timeRange
+  // arr.forEach((item, index) => {
+
+  //   arr[index] = ''
+  //   console.log(arr[index]);
+  // });
+  formStates.value.timeRanges = ''
+  initData()
   changesearch.value = '请选择'
 }
 const GoDep = (record) => {

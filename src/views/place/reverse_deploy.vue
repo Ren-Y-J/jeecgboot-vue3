@@ -91,13 +91,13 @@
 			<div class="pointer" v-if="item.id !== '1'" @click="XiconBtn(index)">
 				<close-circle-filled class="Xicon" />
 			</div>
-			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录名称" v-model:value="item.name" />
+			<a-form-item :label="item.label_name" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="记录" v-model:value="item.name" />
 			</a-form-item>
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-radio-group v-model:value="item.type" style="width: 100%">
-					<a-radio value="9">反向域的NS</a-radio>
+				<a-radio-group @change='radioChange' v-model:value="item.type" style="width: 100%">
+					<a-radio value="3">反向域的NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
 					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
@@ -131,7 +131,7 @@
 			</a-form-item>
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-radio-group v-model:value="formState_edit.type" style="width: 100%">
+				<a-radio-group  v-model:value="formState_edit.type" style="width: 100%">
 					<a-radio value="9">反向域的NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
 					<a-radio value="10">子网</a-radio>
@@ -159,6 +159,7 @@
 	import { SearchOutlined, ReloadOutlined, PlusOutlined, CloseCircleFilled } from '@ant-design/icons-vue'; //icon引入
 	import { message } from 'ant-design-vue';
 	const data = reactive({
+		
 		id: '',
 		pageNum: 1,
 		pageSize: 10,
@@ -168,6 +169,7 @@
 		addRecord: false,
 		formState: [
 			{
+				label_name:'名称',
 				id: '1',
 				name: '',
 				type: '',
@@ -190,21 +192,31 @@
 		groupData: [],
 		edit_visible: false,
 	});
-	const { id, pageNum, pageSize, initdata, total, visible, formState, groupData, addRecord, edit_visible, formState_edit, search } = toRefs(data);
+	const {id, pageNum, pageSize, initdata, total, visible, formState, groupData, addRecord, edit_visible, formState_edit, search } = toRefs(data);
 	const columns = [
 		{
-			title: '反向域名',
+			title: '名称',
 			dataIndex: 'name',
+			align: 'center',
+		},
+		{
+			title: '类型',
+			dataIndex: 'type',
+			align: 'center',
+		},
+		{
+			title: '值',
+			dataIndex: 'content',
+			align: 'center',
+		},
+		{
+			title: '应用线路',
+			dataIndex: 'lineName',
 			align: 'center',
 		},
 		{
 			title: '状态',
 			dataIndex: 'status',
-			align: 'center',
-		},
-		{
-			title: '域类型',
-			dataIndex: 'type',
 			align: 'center',
 		},
 		{
@@ -258,7 +270,7 @@
 	};
 	const addBtn = () => {
 		// 获取线路
-		GetLine(`${id.value}`).then((res) => {
+		GetLine(id.value).then((res) => {
 			let transformedData = res.map((item) => {
 				return {
 					value: item.lineId,
@@ -310,7 +322,21 @@
 			getData();
 		});
 	};
-
+const radioChange = () =>{
+	console.log(formState.value,'formState')
+    formState.value.forEach(item=>{
+		if(item.type==3 ) {
+			item.label_name='名称'
+		}
+		if(item.type==8 ) {
+			item.label_name='地址'
+		}
+		if(item.type==10 ) {
+			item.label_name='子网'
+		}
+	})
+	
+}
 	const editEploy = (record) => {
 		console.log(record, 'record');
 		// 获取线路
