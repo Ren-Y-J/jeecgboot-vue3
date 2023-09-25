@@ -38,10 +38,10 @@
               <a-col class="gutter-row">
                 <a-form-item label="所有主机" style='' :labelCol="{ span: 4 }" :wrapperCol="{ span: 5 }">
                   <a-space>
-                    <a-select placeholder="请选择" ref="select" v-model:value="formState.hostId" style="width: 160px"
+                    <a-select placeholder="请选择" ref="select" v-model:value="formData.hostId" style="width: 160px"
                       @focus="focus" @change="handleChangehost">
                       <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                        ">{{ item.hostName }}</a-select-option>
+                        ">{{ item.ipAddress }}</a-select-option>
                     </a-select>
                   </a-space>
                 </a-form-item>
@@ -112,37 +112,37 @@ const columns = [
 
   {
     title: '动作',
-    dataIndex: 'taskId',
+    dataIndex: 'action',
     align: 'center',
   },
   {
     title: '文件名',
-    dataIndex: 'status',
+    dataIndex: 'fileName',
     align: 'center',
   },
   {
     title: '主机IP',
-    dataIndex: 'createTime',
+    dataIndex: 'hostIp',
     align: 'center',
   },
   {
-    title: '创肆时间',
-    dataIndex: 'hostIp',
+    title: '创建时间',
+    dataIndex: 'timeRange',
     align: 'center',
   },
   {
     title: '任务状态',
-    dataIndex: 'hostIp',
+    dataIndex: 'status',
     align: 'center',
   },
   {
     title: '执行结果',
-    dataIndex: 'hostIp',
+    dataIndex: 'msg',
     align: 'center',
   },
   {
     title: '任务顺序',
-    dataIndex: 'operation',
+    dataIndex: 'sort',
     align: 'center',
   },
 
@@ -160,10 +160,12 @@ const data = reactive({
 })
 const { changesearch, opTitle, datalist, totals, visible, formReflibrary } = toRefs(data);
 const formData = ref({
-  taskId: 0,
+  taskId: '',
+  hostId: '',
   status: "",
   pageNum: 1,
   pageSize: 10,
+  timeRange: []
 
 });
 
@@ -177,7 +179,7 @@ const initData = async () => {
     console.log(taskId);
     let res = await dispatchlist(formData.value)
     console.log(res, 'res');
-    data.value = res.records
+    datalist.value = res.records
     console.log(data.value);
     totals.value = res.total
   }
@@ -195,9 +197,19 @@ const gethost = async () => {
 
 }
 gethost()
+//分页功能
+const changeFn = (P, Ps) => {
+  formData.value.pageNum = P
+  initData()
+}
+const onShowSizeChange = (current, pageSize) => {
+  // console.log(pageSize, 'pageSize');
+  formData.value.pageSize = pageSize
+  initData()
+};
 // 查询区域存储值
 const formState = ref({
-  hostId: {},//主机
+  hostId: '',//主机
   // host: undefined,
   status: "",
   updateTime: "",
@@ -205,15 +217,33 @@ const formState = ref({
 })
 
 const handleChange = async (value) => {
-  formState.value.status = value
+  formData.value.status = value
 };
+// 获取时间
 function handleChangeSearchDate(_value, dateString) {
-  formState.value.createTime = dateString[0];
-  formState.value.updateTime = dateString[1];
-  console.log(formState.createTime);
-  console.log(formState.updateTime);
+  console.log(dateString);
+  formData.value.timeRange = dateString
+  console.log(formData.value.timeRange);
 
 }
+const handleQuery = async () => {
+  // formData.value.pageNum = 1
+  // initData(formData.value)
+  let res = await initData(formData.value)
+  console.log(res, '1111');
+  datalist.value = res.records
+  totals.value = res.total
+}
+const AlldelFn = () => {
+  formData.value.taskId = '',
+    formData.value.hostId = '',
+    formData.value.status = "",
+    formData.value.pageNum = 1,
+
+    formData.value.timeRange = []
+  initData()
+}
+
 </script>
 <style scoped lang="less">
 .dispatchBox {
