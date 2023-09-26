@@ -46,6 +46,7 @@
 		<!-- 列表数据 -->
 		<div>
 			<a-table
+			:scroll="{ x: 'calc(700px + 50%)', y: 510 }"
 				:columns="columns"
 				:data-source="listData"
 				:pagination="false"
@@ -334,7 +335,7 @@ import { router } from '/@/router';
 import { message,Modal } from 'ant-design-vue';
 import { list,dellist,synclist,addlist,dellistAll,editlist,BackLine } from './tactics'
 import {  SearchOutlined, ReloadOutlined,PlusCircleFilled,CloseCircleFilled,PlusOutlined,DeleteOutlined } from '@ant-design/icons-vue'
-import { computed, defineComponent, reactive, toRefs, ref,createVNode,watch  } from 'vue';
+import { computed, defineComponent,reactive, toRefs,ref,createVNode,watch  } from 'vue';
 
 const columns = [{
   title: '策略组名称',
@@ -385,7 +386,9 @@ const data = reactive({
   visible_editsyn:false,
   visible_Time_edit:false,
   formDataName:[{id:'1',state_value:[]}],
-  formDataName_edit:[{id:'1',state_value_edit:[]}],
+  formDataName_edit:[
+	{id:'1',state_value_edit:[]},
+	],
   formName:{
      policiesName:'',
   },
@@ -399,10 +402,7 @@ const data = reactive({
     policiesName:'',
     policiesEnable:'',
     policiesTimeType:[],
-    policiesTimeRange:[
-
-
-    ]
+    policiesTimeRange:[]
   },
   formData:{
     policiesName:'',
@@ -450,7 +450,6 @@ const {
 } = toRefs(data)
 
 const formRef = ref(null); //添加按钮弹框需要的ref
-
 const Cordquery = ref({
 	pageNum: 1,
 	pageSize: 10,
@@ -470,7 +469,6 @@ const getcordList = () => {
 // 修改按钮
 const editGroup = (record)=>{
   	visible_editsyn.value = true
-  	formDataName_edit.value = [{id:'1',state_value:[]}]
   	BackLine(record.policiesId).then((res)=>{//回显接口
 		formState_edit.value.policiesId = res.policiesId
 		formState_edit.value.policiesName = res.policiesName
@@ -483,8 +481,8 @@ const editGroup = (record)=>{
 		for (let i = 0; i < result.length; i += 2) {
 			transformedA.push([result[i], result[i + 1]]);
 		}
-		formDataName_edit.value.forEach((item, index) => {
-			if (transformedA[index]) {
+		formDataName_edit.value.forEach((item, index) => {  
+			if (transformedA[index]){
 				item.state_value_edit = transformedA[index];
 			}
 		});
@@ -730,7 +728,7 @@ const syncGroup = () => {
 
 // 配置策略按钮
 const disposition = (record)=>{
-	console.log(record,'record2222');
+	let my_name = record.policiesName
 	let id = record.policiesId;
 	router.push(`/tactics/disposition?${id}`);
 	
@@ -769,14 +767,8 @@ const addIconTime = () => {
 
 // 配置启用时段删除时间图标v
 const XiconBtn = (index) => {
-	// formDataName.value = formDataName.value.filter((item) => {
-	// 	return item.id != id;
-	// });
 	formDataName.value.splice(index,1)
 	formDataName_edit.value.splice(index,1)
-	// formDataName_edit.value = formDataName_edit.value.filter((item) => {
-	// 	return item.id != id;
-	// });
 };
 
 // 删除按钮v
@@ -906,7 +898,7 @@ const deleteGroup = (evt) => {
 	}
 	.form_time {
 		width: 400px;
-		margin-left: 100px;
+		margin-left: 130px;
 		/deep/ .ant-form-item-control-input {
 			width: 450px;
 			margin-left: 30px;

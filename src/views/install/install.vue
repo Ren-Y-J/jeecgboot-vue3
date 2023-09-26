@@ -55,8 +55,8 @@
 		initData: [],
 		GoInstallStatus: 0,
 		HostsGroupID: '',
-		installName:''
-		
+		installName:'',
+		timerId:''
 	});
 
 	const { timerId, installName, initData, DNSID, GoInstallStatus } = toRefs(data);
@@ -73,11 +73,7 @@
 		});
 	};
 	const GoInstall = async () => {
-		stopTrigger = false;
 		GoInstallStatus.value = 1;
-		if (stopTrigger == true) {
-			return; // 如果为true，则停止触发接口
-		}
 		let res = await GetStatus({
 			value: taskId,
 		});

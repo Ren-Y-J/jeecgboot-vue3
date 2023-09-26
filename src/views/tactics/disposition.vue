@@ -9,8 +9,8 @@
                             <div class="back" @click="goback"><left-outlined /><span>返回</span></div>
                         </a-col>   
 						<a-col :md="6" :sm="24">
-							<a-form-item style="margin-bottom: 0px" label="策略组名称"  :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
-								<a-input placeholder="请输入策略组名称"  v-model:value="search"/>
+							<a-form-item style="margin-bottom: 0px" label="策略名称"  :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
+								<a-input placeholder="请输入策略名称"  v-model:value="search"/>
 							</a-form-item>
 						</a-col>
 						<a-col :md="3" :sm="5">
@@ -30,7 +30,6 @@
     <div class="controls">
         <div class="iconBtn">
 			<a-button :style="{ margin: '0px 8px 0px 0px ' }" type="primary" @click="addTactics"><plus-outlined />添加策略</a-button>
-			<a-button :style="{ margin: '0px 8px ' }" type="primary" @click="editGroup"><edit-outlined />修改策略</a-button>
 			<a-button :style="{ margin: '0px 8px ' }" type="primary" @click="deleteGroup"><delete-outlined />删除策略</a-button>
 		</div>
         <div class="select">
@@ -51,6 +50,7 @@
 		<!-- 列表数据 -->
         <div>
             <a-table
+				:scroll="{ x: 'calc(700px + 50%)', y: 510 }"
 				:columns="columns"
 				:data-source="listData"
 				:pagination="false"
@@ -76,7 +76,7 @@
 					<!--  操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div>
-							<button class="pointer" style="color: #2e7dff; margin-right: 8px" @click="disposition">配置策略</button>
+							<button class="pointer" style="color: #2e7dff; margin-right: 8px" @click="goeditpolicy(record)">配置策略</button>
 							<button
 								class="pointer"
 								style="color: #2e7dff; margin-right: 8px"
@@ -116,7 +116,7 @@
 <script setup>
 import { router } from '/@/router';
 import { message,Modal } from 'ant-design-vue';
-import {list,dellistAll,dellist} from './disposition'
+import {list,dellistAll,dellist,editlist} from './disposition'
 import {  SearchOutlined, ReloadOutlined,PlusCircleFilled,CloseCircleFilled,LeftOutlined,PlusOutlined,DeleteOutlined,EditOutlined  } from '@ant-design/icons-vue'
 import { computed, defineComponent, reactive, toRefs, ref,createVNode,watch, toRef  } from 'vue';
 
@@ -193,7 +193,15 @@ visible_add:false,
     policiesTimeType:[],
     policiesTimeRange:[]
   },
-  Main_set:[]
+  Main_set:[],
+  enable_edit:{
+    policyId:'',
+    policyStatus:'',
+  },
+    enable_start:{
+    policyId:'',
+    policyStatus:'',
+  },
 })
 const {
 listData,
@@ -209,7 +217,9 @@ policyId,
 visible_add,
 formState,
 Main_set,
-policiesId
+policiesId,
+enable_edit,
+enable_start
 } = toRefs(data)
 
 
@@ -237,6 +247,12 @@ const addTactics =(evt)=>{
     target.blur()
 	router.push('/tactics/disposition/addpolicy')
 }
+// 配置策略按钮
+const goeditpolicy = (record)=>{
+	let pid = record.policyId;
+	router.push(`/tactics/disposition/editpolicy?${pid}`);
+
+}
 
 
 //点击页面搜索按钮
@@ -252,6 +268,30 @@ const handleQuery = ()=>{
 		pageNum.value = 1;
 		total.value = res.total; //总数
 	});
+}
+
+// 停用按钮
+const stopService = (record)=>{
+  record.policyStatus = false
+  enable_edit.value.policyId = record.policyId
+  enable_edit.value.policyStatus = record.policyStatus
+editlist(enable_edit.value).then((res)=>{
+    message.success("停用成功")
+    getcordList()
+})
+
+}
+
+// 启用按钮
+const enable = (record)=>{
+  record.policyStatus = true
+  enable_start.value.policyId = record.policyId
+  enable_start.value.policyStatus = record.policyStatus
+editlist(enable_start.value).then((res)=>{
+    message.success("启用成功")
+    getcordList()
+})
+
 }
 
 //重置按钮，把数据初始化
@@ -351,6 +391,7 @@ const deleteGroup = (evt) => {
 				margin-top: 10px;
 			}
 		}
+		
 
 	}
 .back{
@@ -368,4 +409,7 @@ const deleteGroup = (evt) => {
     .select {
 		margin: 8px 0px 10px 0px;
 	}
+ /deep/ .ant-card-body {
+    padding: 13px;
+}
 </style>

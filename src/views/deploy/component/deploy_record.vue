@@ -1,9 +1,9 @@
 <template>
-	<div style="padding: 10px">
+	<div >
 		<div class="page">
 			<a-form>
 				<div style="display: flex">
-					<a-form-item label="名称" :labelCol="{ span: 6 }" :wrapperCol="{ span: 23 }">
+					<a-form-item label="名称" :labelCol="{ span: 4 }" :wrapperCol="{ span: 23 }">
 						<a-input v-model:value="search" placeholder="按名称搜索"></a-input>
 					</a-form-item>
 					<a-button @click="searchBtn" type="primary" style="margin-right: 10px; margin-left: 10px"><search-outlined />搜索</a-button>
@@ -483,7 +483,6 @@
 	}
 	.page {
 		background-color: #fff;
-		padding: 8px;
 	}
 	.search {
 		display: flex;
