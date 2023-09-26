@@ -629,7 +629,11 @@
 		if(formState_bas.value.recursionType=='1'){
 			formState_bas.value.forwarderList=undefined
 		}
-		
+		if(formState_bas.value.nxRedirectOn=='0'){
+			formState_bas.value.nxSuffixDomain=''
+			formState_bas.value.nxRedirectIpV4=''
+			formState_bas.value.nxRedirectIpV6=''
+		}
 	});
 	
 	

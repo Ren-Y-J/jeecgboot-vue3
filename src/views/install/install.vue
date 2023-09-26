@@ -73,8 +73,7 @@
 			console.log(res, '安装DNS');
 		});
 	};
-	
-	getData();
+
 
 	let stopTrigger = true;
 	const GoInstall = async () => {
@@ -112,6 +111,7 @@
 		DelF5 ()
 	};
 	const handleClick = () => {
+		getData();
 	  GoInstall(); // 执行 GoInstall
 	  setInterval(GoInstall, 4000); // 设置定时器
 	};
