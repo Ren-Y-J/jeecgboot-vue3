@@ -1,5 +1,4 @@
 <template>
-	<div style="padding: 8px">
 		<div class="page">
 			<a-tabs @change="changetabs" v-model:activeKey="activeKey">
 				<a-tab-pane key="0" tab="正向域"> </a-tab-pane>
@@ -100,7 +99,6 @@
 				/>
 			</div>
 		</div>
-	</div>
 	<!-- 正向域 -->
 	<a-modal v-model:visible="visible" title="添加域" @ok="handleOk">
 		<a-form
@@ -687,7 +685,6 @@
 		padding: 7.5px 16px;
 	}
 	.page {
-		padding: 8px;
 		background-color: #fff;
 	}
 	.button {
