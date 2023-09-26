@@ -26,7 +26,7 @@
                   hideDisabledOptions: true,
                   defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
                 }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" /> -->
-              <a-range-picker style="width: 400px" v-model:value="formState.timeRange" show-time />
+              <a-range-picker style="width: 400px" v-model:value="formData.timeRange" show-time />
             </a-space>
           </a-form-item>
 
@@ -160,8 +160,8 @@ const data = reactive({
 const { changesearch, opTitle, datalist, totals, visible, formReflibrary } = toRefs(data);
 const formData = ref({
   taskId: '',
-  hostId: undefined,
-  status: "",
+  hostId: null,
+  status: null,
   pageNum: 1,
   pageSize: 10,
   timeRange: []
@@ -174,12 +174,10 @@ const initData = async () => {
   if (url.indexOf("?") != -1) {
     let taskId = url.split('?')[1]
     formData.value.taskId = taskId
-    console.log(formData.value.taskId, 'formData.value.hostId');
-    console.log(taskId);
+    // console.log(formData.value.taskId, 'formData.value.hostId');
+    // console.log(taskId);
     let res = await dispatchlist(formData.value)
-    console.log(res, 'res');
     datalist.value = res.records
-    console.log(data.value);
     totals.value = res.total
   }
 }
@@ -191,9 +189,7 @@ const gethost = async () => {
   let res = await gethostsAll()
   // console.log(res, 'res主机');
   allhostId.value = res
-  console.log(allhostId.value);
-
-
+  // console.log(allhostId.value);
 }
 gethost()
 //分页功能
@@ -202,59 +198,40 @@ const changeFn = (P, Ps) => {
   initData()
 }
 const onShowSizeChange = (current, pageSize) => {
-  // console.log(pageSize, 'pageSize');
   formData.value.pageSize = pageSize
   initData()
 };
-// 查询区域存储值
-const formState = ref({
-  hostId: '',//主机
-  // host: undefined,字段自己改就行了
-
-  status: "",
-  timeRange: [],
-  dateTime: []
-})
 
 const handleChange = async (value) => {
   formData.value.status = value
 };
 // 获取时间
 function handleChangeSearchDate(_value, dateString) {
-  console.log(dateString);
-  formData.value.timeRange = dateString
-  console.log(formData.value.timeRange);
+  // console.log(dateString);
+  // formData.value.timeRange = dateString
+  // console.log(formData.value.timeRange);
 
 }
 const handleQuery = async () => {
-  const startTime = dayjs(formState.value.timeRange[0]).format(dateFormatList)
-  const endtTime = dayjs(formState.value.timeRange[1]).format(dateFormatList)
-  console.log(startTime, endtTime);
-  formData.value.timeRange = [startTime, endtTime]
-  formData.value.pageNum = 1
-  // initData(formData.value)
-  let res = await initData(formData.value)
-  // console.log(res.records, '1111');
+  const params = JSON.parse(JSON.stringify(formData.value))
+  if (params.timeRange && params.timeRange.length) {
+    const startTime = dayjs(formData.value.timeRange[0]).format(dateFormatList)
+    const endtTime = dayjs(formData.value.timeRange[1]).format(dateFormatList)
+    console.log(startTime, endtTime);
+    params.timeRange = [startTime, endtTime]
+  }
+  let res = await dispatchlist(params)
+  // console.log(res, 'res');
   datalist.value = res.records
   totals.value = res.total
-  formState.value.timeRange = []
-  startTime = ''
-  endtTime = ''
-  console.log(startTime);
-  console.log(startTime.value);
-
 }
 
 const AlldelFn = () => {
   formData.value.taskId = '',
-    formData.value.hostId = undefined,
-    formData.value.status = "",
+    formData.value.hostId = null,
+    formData.value.status = null,
     formData.value.pageNum = 1,
-    // formState.value.dateTime = []
-    formState.value.timeRange = []
-  formState.value.forEach(item => {
-    item.timeRange = []
-  })
+    formData.value.timeRange = []
   initData()
   changesearch.value = '请选择'
 }

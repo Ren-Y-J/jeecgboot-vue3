@@ -1,9 +1,10 @@
 <template>
   <div class="tasklogBox">
     <div class="nav">
-      <a-form class="form" :model="formState">
+      <a-form class="form">
         <div style="display: flex;">
           <a-form-item style="" label="任务状态" :labelCol="{ span: 18 }" :wrapperCol="{ span: 15 }">
+
             <a-select ref="select" style="width: 120px" @focus="focus" @change="handleChange"
               v-model:value="changesearch">
               <a-select-option value="0">待执行</a-select-option>
@@ -13,15 +14,14 @@
             </a-select>
           </a-form-item>
           <a-form-item style="" label="创建时间" :labelCol="{ span: 10 }" :wrapperCol="{ span: 50 }">
-            <!-- <a-space>
+            <a-space>
               <a-range-picker style="width: 400px" :disabled-date="disabledDate" :disabled-time="disabledRangeTime"
                 :show-time="{
                   hideDisabledOptions: true,
                   defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
                 }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" @ok="onOk"
                 v-model="formStates.timeRanges" showTime />
-            </a-space> -->
-            <a-range-picker style="width: 400px" v-model:value="formState.timeRange" show-time />
+            </a-space>
           </a-form-item>
           <a-form-item label="所有主机" :labelCol="{ span: 30 }" :wrapperCol="{ span: 30 }">
             <a-space>
@@ -159,7 +159,6 @@ const formData = ref({
 })
 const AllhostIpNum = ref()
 const valuetime = ref([]);
-const dateFormatList = 'YYYY-MM-DD HH:mm:ss'
 // 表格初始化
 const initData = async () => {
   let res = await taskloglist(formData.value)
@@ -170,7 +169,7 @@ const initData = async () => {
     return item
   }
   )
-  // console.log(datalist.value);
+  console.log(datalist.value);
   // [{}, {}][{ mystutas: 0, mystutas2: 0 }, {}]
   totals.value = res.total
 }
@@ -193,6 +192,7 @@ const changeFn = (P, Ps) => {
   initData()
 }
 const onShowSizeChange = (current, pageSize) => {
+  // console.log(pageSize, 'pageSize');
   formData.value.pageSize = pageSize
   initData()
 };
@@ -203,65 +203,71 @@ const gethost = async () => {
   let res = await gethostsAll()
   // console.log(res, 'res主机');
   allhostId.value = res
-  // console.log(allhostId.value);
+  console.log(allhostId.value);
 
 
 }
 gethost()
 
-// 查询区域的参数
-const formState = ref({
-  hostId: null,//主机
+// 查询区域存储值
+const formState = reactive({
+  hostId: undefined,//主机
   // host: undefined,
-  status: null,
+  status: 0,
   timeRange: [],
   pageNum: 1,
   pageSize: 10,
 })
-
+const formStates = ref({
+  timeRanges: []
+})
 
 function handleChangeSearchDate(_value, dateString) {
-  // console.log(dateString);
-  // formState.timeRange = dateString
+  console.log(dateString);
+  formState.timeRange = dateString
   // formState.value.createTime = dateString[0];
   // formState.value.updateTime = dateString[1];
   // console.log(formState.createTime);
-  // console.log(formState.timeRange);
-
+  console.log(formState.timeRange);
+  // 我是点击重置按钮清空页面
 }
 const handleChange = async (value) => {
   formState.status = value
 
 };
 const handleQuery = async () => {
-  // （深拷贝不破坏原数据类型，时间选择器能正常打开）
-  const params = JSON.parse(JSON.stringify(formState.value))
-  //params.timeRange必要有值   params数组 params.timeRange.length
-  if (params.timeRange && params.timeRange.length) {
-    const startTime = dayjs(params.timeRange[0]).format(dateFormatList)
-    const endtTime = dayjs(params.timeRange[1]).format(dateFormatList)
-    params.timeRange = [startTime, endtTime]
-  }
-  let res = await taskloglist(params)
+
+
+  let res = await taskloglist(formState)
   console.log(res, '1111');
   datalist.value = res.records
   totals.value = res.total
-
 }
 // const onOk = (value) => {
 //   console.log('onOk: ', value);
 // }
 
 // 清空
-const AlldelFn = async () => {
-  formState.value.hostId = null;
-  formState.value.status = null
-  formState.value.timeRange = []
-  formState.value.pageNum = 1
-  let res = await taskloglist(formState.value)
-  // console.log(res, '1111');
-  datalist.value = res.records
-  totals.value = res.total
+const AlldelFn = () => {
+  formState.hostId = undefined;
+
+  //   formState.status = '',
+  // let arr = formState.value.timeRange
+  // formState.value.timeRange = [],
+  // formState.timeRange = undefined
+  // formState.timeRange = undefined;
+  formState.pageNum = 1
+  console.log(formState.timeRange);
+  console.log(formState.status);
+  console.log(formState.hostId);
+  // let arr = formState.timeRange
+  // arr.forEach((item, index) => {
+
+  //   arr[index] = ''
+  //   console.log(arr[index]);
+  // });
+  formStates.value.timeRanges = ''
+  initData()
   changesearch.value = '请选择'
 }
 const GoDep = (record) => {
