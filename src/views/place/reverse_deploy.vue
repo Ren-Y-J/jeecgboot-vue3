@@ -13,7 +13,6 @@
 					</a-button>
 				</div>
 			</a-form>
-
 			<div style="margin-bottom: 8px">
 				<a-button @click="addBtn" type="primary"><plus-outlined />添加</a-button>
 			</div>
@@ -37,8 +36,8 @@
 						<span v-show="record.type == 6">SRV </span>
 						<span v-show="record.type == 7">TXT </span>
 						<span v-show="record.type == 8">PTR</span>
-						<span v-show="record.type == 9">反向域的NS</span>
-						<span v-show="record.type == 10">子网</span>
+						<span v-show="record.type == 9">子网</span>
+						<span v-show="record.type == 10">GENERATE</span>
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
@@ -97,7 +96,7 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group @change='radioChange' v-model:value="item.type" style="width: 100%">
-					<a-radio value="3">反向域的NS</a-radio>
+					<a-radio value="3">NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
 					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
@@ -132,7 +131,7 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group  v-model:value="formState_edit.type" style="width: 100%">
-					<a-radio value="9">反向域的NS</a-radio>
+					<a-radio value="3">NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
 					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
@@ -253,6 +252,7 @@
 			content: '',
 			zoneId: '',
 			status: '1',
+			label_name:'名称',
 		});
 		addRecord.value = true;
 	};

@@ -98,18 +98,18 @@
 			if (item.status == '3') {
 				item.status = '失败';
 			}
-			initData.value.unshift(item);
 			let allStatusMatched = res.every((item) => item.status === '2' || item.status === '3');
 			if (allStatusMatched) {
 				stopTrigger = true;
 				GoInstallStatus.value = 0;
 			}
 		});
+		initData.value=res
 		DelF5 ()
 	};
 	const handleClick = () => {
 	  GoInstall(); // 执行 GoInstall
-	  setInterval(GoInstall, 2000); // 设置定时器
+	  setInterval(GoInstall, 4000); // 设置定时器
 	};
 	const DelF5 = () => {
 		document.oncontextmenu = function () {

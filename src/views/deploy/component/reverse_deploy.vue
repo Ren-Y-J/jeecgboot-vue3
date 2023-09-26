@@ -33,8 +33,8 @@
 						<span v-show="record.type == 6">SRV </span>
 						<span v-show="record.type == 7">TXT </span>
 						<span v-show="record.type == 8">PTR</span>
-						<span v-show="record.type == 9">反向域的NS</span>
-						<span v-show="record.type == 10">子网</span>
+						<span v-show="record.type == 9">子网NS</span>
+						<span v-show="record.type == 10">GENERATE</span>
 					</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
@@ -73,6 +73,7 @@
 	<!-- 添加 -->
 	<a-modal v-model:visible="visible" title="添加" @ok="handleOk">
 		<a-form
+			v-for="(item, index) in formState"
 			style="margin-top: 10px"
 			ref="formRef_"
 			:model="formState"
@@ -82,79 +83,42 @@
 			autocomplete="off"
 			validateTrigger="blur"
 		>
+		<div class="pointer" v-if="item.id !== '1'" @click="XiconBtn(index)">
+			<close-circle-filled class="Xicon" />
+		</div>
 			<a-form-item
-				:rules="[{ required: true, message: '请输入记录名称!' }]"
-				name="name"
-				label="记录名称"
+				:label="item.label_name"
 				:labelCol="{ span: 5 }"
 				:wrapperCol="{ span: 15 }"
 			>
-				<a-input placeholder="记录名称" v-model:value="formState.name" />
+				<a-input placeholder="记录" v-model:value="item.name" />
 			</a-form-item>
 
 			<a-form-item
-				:rules="[{ required: true, message: '请选择类型!' }]"
-				name="type"
 				label="类型"
 				:labelCol="{ span: 5 }"
 				:wrapperCol="{ span: 15 }"
 			>
-				<a-radio-group v-model:value="formState.type" style="width: 100%">
-					<a-radio value="9">反向域的NS</a-radio>
+				<a-radio-group @change='radioChange' v-model:value="item.type" style="width: 100%">
+					<a-radio value="3">NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
 					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item
-			 :rules="[{ required: true, message: '请选择线路!' }]"
-			 name="lineId"
 			 label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select v-model:value="formState.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
+				<a-select v-model:value="item.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
 			</a-form-item>
 			<a-form-item 
-			:rules="[{ required: true, message: '请输入记录值!' }]"
-			name="content"
 			label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录值" v-model:value="formState.content" />
+				<a-input placeholder="记录值" v-model:value="item.content" />
 			</a-form-item>
 		</a-form>
 
 		<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px">
 			<a-button type="dashed" style="width: 80%" @click="addRecordBtn">增加记录</a-button>
 		</div>
-		<a-form
-			v-show="addRecord == true"
-			style="margin-top: 10px"
-			ref="formRef"
-			:model="formState_1"
-			name="basic"
-			:label-col="{ span: 3 }"
-			:wrapper-col="{ span: 20 }"
-			autocomplete="off"
-			validateTrigger="blur"
-		>
-			<div @click="XiconBtn" style="padding: 15px">
-				<close-circle-filled class="Xicon" />
-			</div>
-
-			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录名称" v-model:value="formState_1.name" />
-			</a-form-item>
-
-			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-radio-group v-model:value="formState_1.type" style="width: 100%">
-					<a-radio value="9">反向域的NS</a-radio>
-					<a-radio value="8">PTR</a-radio>
-					<a-radio value="10">子网</a-radio>
-				</a-radio-group>
-			</a-form-item>
-			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-select v-model:value="formState_1.lineId" mode="multiple" style="width: 100%" placeholder="请选择" :options="groupData"></a-select>
-			</a-form-item>
-			<a-form-item label="记录值 " :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
-				<a-input placeholder="记录值" v-model:value="formState_1.content" />
-			</a-form-item>
-		</a-form>
+		
 	</a-modal>
 	<!-- 编辑 -->
 	<a-modal v-model:visible="edit_visible" title="编辑" @ok="handleOk_edit">
@@ -174,7 +138,7 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group v-model:value="formState_edit.type" style="width: 100%">
-					<a-radio value="9">反向域的NS</a-radio>
+					<a-radio value="3">NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
 					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
@@ -220,14 +184,18 @@
 		total: 0,
 		visible: false,
 		addRecord: false,
-		formState: {
-			name: '',
-			type: '',
-			lineId: undefined,
-			content: '',
-			zoneId: '',
-			status: '1',
-		},
+		formState: [
+			{
+				label_name:'名称',
+				id: '1',
+				name: '',
+				type: '',
+				lineId: undefined,
+				content: '',
+				zoneId: '',
+				status: '1',
+			}
+		],
 		formState_1: {
 			name: '',
 			type: '',
@@ -310,10 +278,39 @@
 	};
 	getData();
 	const addRecordBtn = () => {
+		formState.value.push({
+			name: '',
+			type: '',
+			lineId: undefined,
+			ttl: '',
+			content: '',
+			zoneId: '',
+			status: '1',
+			label_name:'名称',
+		});
+		
+		
+		
+		
 		addRecord.value = true;
 	};
-	const XiconBtn = () => {
-		addRecord.value = false;
+	const radioChange = () =>{
+		console.log(formState.value,'formState')
+	    formState.value.forEach(item=>{
+			if(item.type==3 ) {
+				item.label_name='名称'
+			}
+			if(item.type==8 ) {
+				item.label_name='地址'
+			}
+			if(item.type==10 ) {
+				item.label_name='子网'
+			}
+		})
+		
+	}
+	const XiconBtn = (index) => {
+			formState.value.splice(index, 1);
 	};
 	const delBtn = (record) => {
 		let values1 = [record.id];
@@ -339,29 +336,29 @@
 	};
 	const formRef_ = ref(null);
 	const handleOk = async () => {
-		// 校验表单
-		try {
-			await formRef_.value.validate();
-		} catch (error) {
-			console.log(error);
-			return;
+	for (let i = 0; i < formState.value.length; i++) {
+			console.log(formState.value[i].name,'formState.value[i].name'  )
+			if (formState.value[i].name == '') {
+				message.error('请输入第' + (i + 1) + '条记录名称');
+				return;
+			}
+			if (formState.value[i].type == '') {
+				message.error('请选择第' + (i + 1) + '条类型');
+				return;
+			}
+			if (formState.value[i].lineId == undefined) {
+				message.error('请选择第' + (i + 1) + '条线路发布');
+				return;
+			}
+			if (formState.value[i].content == '') {
+				message.error('请输入第' + (i + 1) + '条记录值');
+				return;
+			}
+			formState.value[i].lineId = JSON.stringify(formState.value[i].lineId);
+			formState.value[i].zoneId = id.value;
 		}
 
-		let formData = [];
-		if (addRecord.value == true) {
-			formData.push(formState.value, formState_1.value);
-		}
-		if (addRecord.value == false) {
-			formData.push(formState.value);
-		}
-
-		formData.forEach((item) => {
-			item.lineId = JSON.stringify(item.lineId);
-			// 添加 zoneId 字段，值为 id.value
-			item.zoneId = id.value;
-		});
-
-		AddList(formData).then((res) => {
+		AddList(formState.value).then((res) => {
 			message.success('添加成功');
 			visible.value = false;
 			clearData();
