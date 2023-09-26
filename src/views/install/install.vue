@@ -122,6 +122,8 @@
 		timerId.value = setInterval(GoInstall, 4000);
 	};
 
+
+
 	const DelF5 = () => {
 		document.oncontextmenu = function () {
 			return false;

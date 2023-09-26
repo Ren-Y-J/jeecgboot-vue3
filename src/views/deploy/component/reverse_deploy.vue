@@ -171,7 +171,6 @@
 	watch(
 		() => props.workOrder,
 		(newValue, oldValue) => {
-			console.log(info.value, '反向域名');
 		},
 		{ immediate: true, deep: true }
 	);
@@ -271,7 +270,6 @@
 		}).then((res) => {
 			initdata.value = res.records;
 			total.value = res.total;
-			console.log(res, '---');
 		});
 	};
 	getData();
@@ -290,7 +288,6 @@
 		addRecord.value = true;
 	};
 	const radioChange = () => {
-		console.log(formState.value, 'formState');
 		formState.value.forEach((item) => {
 			if (item.type == 3) {
 				item.label_name = '名称';
@@ -331,7 +328,6 @@
 	const formRef_ = ref(null);
 	const handleOk = async () => {
 		for (let i = 0; i < formState.value.length; i++) {
-			console.log(formState.value[i].name, 'formState.value[i].name');
 			if (formState.value[i].name == '') {
 				message.error('请输入第' + (i + 1) + '条记录名称');
 				return;
@@ -348,7 +344,10 @@
 				message.error('请输入第' + (i + 1) + '条记录值');
 				return;
 			}
-			formState.value[i].lineId = JSON.stringify(formState.value[i].lineId);
+
+			if (typeof formState.value[i].lineId !== 'string') {
+				formState.value[i].lineId = JSON.stringify(formState.value[i].lineId);
+			}
 			formState.value[i].zoneId = id.value;
 		}
 
@@ -361,7 +360,6 @@
 	};
 
 	const editEploy = (record) => {
-		console.log(record, 'record');
 		// 获取线路
 		GetLine(`${id.value}`).then((res) => {
 			let transformedData = res.map((item) => {
@@ -447,7 +445,7 @@
 	};
 </script>
 
-<style  scoped lang="less">
+<style scoped lang="less">
 	// 标题
 	/deep/.ant-table-thead > tr > th,
 	.ant-table-tbody > tr > td,

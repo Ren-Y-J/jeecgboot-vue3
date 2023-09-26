@@ -307,7 +307,9 @@
 				message.error('请输入第' + (i + 1) + '条记录值');
 				return;
 			}
+		if (typeof formState.value[i].lineId !== 'string') {
 			formState.value[i].lineId = JSON.stringify(formState.value[i].lineId);
+		}
 			formState.value[i].zoneId = id.value;
 		}
 

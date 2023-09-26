@@ -42,9 +42,6 @@
 			<a-tabs @change="changet_bas" v-model:activeKey="activeKey">
 				<a-tab-pane key="0" tab="基本配置">
 					
-					
-					
-					
 				</a-tab-pane>
 				<a-tab-pane key="1" tab="线路配置">
 					<Line />
@@ -52,14 +49,14 @@
 				<a-tab-pane key="2" tab="域配置">
 					<Area @toggleComponent="toggleComponent" />
 				</a-tab-pane>
-				<a-tab-pane key="3" tab="记录配置">
-					<Deploy :info="parentMsg" v-if="deptype == '0'" />
-					<DeployReverse :info="parentMsg" v-if="deptype == '1'" />
-				</a-tab-pane>
-
+			<!-- 	<a-tab-pane key="3" tab="记录配置">
+				</a-tab-pane> -->
+	
 				<a-tab-pane key="4" tab="策略配置">
 					<Tactics />
 				</a-tab-pane>
+				<Deploy :info="parentMsg" v-if="deptype == '0'" />
+				<DeployReverse :info="parentMsg" v-if="deptype == '1'" />
 			</a-tabs>
 			<!-- 基本配置 -->
 			<div v-show="activeKey == 0" style="padding: 10px">
