@@ -75,23 +75,26 @@
             <template v-if="column.dataIndex === 'hostIp'">
 
             </template>
-            <!-- 操作 -->
+            <!-- 动作 -->
             <template v-if="column.dataIndex === 'action'">
-              <div v-if="record.status == '001'" type="link"> 发送安装包</div>
-              <div v-if="record.status == '002'"> -安装bind </div>
-              <div v-if="record.status == '003'"> 曾换文件， </div>
-              <div v-if="record.status == '004'"> 删除文件 </div>
-              <div v-if="record.status == '005'"> 添加文件 </div>
-              <div v-if="record.status == '006'"> 更新文件</div>
-              <div v-if="record.status == '007'"> 启动ONS </div>
-              <div v-if="record.status == '008'"> -量就配置 </div>
+              <div v-if="record.action == '001'" type="link"> 发送安装包</div>
+              <div v-if="record.action == '002'"> 安装bind </div>
+              <div v-if="record.action == '003'"> 曾换文件 </div>
+              <div v-if="record.action == '004'"> 删除文件 </div>
+              <div v-if="record.action == '005'"> 添加文件 </div>
+              <div v-if="record.action == '006'"> 更新文件</div>
+
             </template>
-            <template v-if="column.dataIndex === 'operation'">
-              <!-- <div style="display: flex; justify-content: center; align-items: center">
-                <div class="pointer" style="margin-right: 10px">
-                  <a-button type="link" @click="GoDep(record)">调度日志</a-button>
-                </div>
-              </div> -->
+            <template v-if="column.dataIndex === 'status'">
+              <div v-if="record.status == '0'" type="link"> 待执行</div>
+              <div v-if="record.status == '1'"> 执行中 </div>
+              <div v-if="record.status == '2'"> 成功 </div>
+              <div v-if="record.status == '3'"> 失败 </div>
+
+            </template>
+            <template v-if="column.dataIndex === 'msg'">
+              <div v-if="record.msg == null" type="link"> 空</div>
+              <div v-else type="link">{{ record.msg }}</div>
             </template>
           </template>
         </a-table>
@@ -127,7 +130,7 @@ const columns = [
   },
   {
     title: '创建时间',
-    dataIndex: 'timeRange',
+    dataIndex: 'createTime',
     align: 'center',
   },
   {
@@ -161,7 +164,7 @@ const data = reactive({
 const { changesearch, opTitle, datalist, totals, visible, formReflibrary } = toRefs(data);
 const formData = ref({
   taskId: '',
-  hostId: '',
+  hostId: undefined,
   status: "",
   pageNum: 1,
   pageSize: 10,
@@ -236,12 +239,13 @@ const handleQuery = async () => {
 }
 const AlldelFn = () => {
   formData.value.taskId = '',
-    formData.value.hostId = '',
+    formData.value.hostId = undefined,
     formData.value.status = "",
     formData.value.pageNum = 1,
 
     formData.value.timeRange = []
   initData()
+  changesearch.value = '请选择'
 }
 
 </script>

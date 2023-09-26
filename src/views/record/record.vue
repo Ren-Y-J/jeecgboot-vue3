@@ -10,34 +10,28 @@
                   <a-input  placeholder="请输入记录名称" v-model:value="queryParams.name"/>
                 </a-form-item>
               </a-col>
-              
               <a-col :md="3" :sm="24" >
-                
                 <a-form-item style="margin-bottom: 0px;" label="类型" name="type" :labelCol="{ span: 7 }" 
                   :wrapperCol="{ span: 10 }" v-model:value="queryParams.type" >
                   <a-space>
                     <a-select ref="select"  style="width: 120px" @focus="focus" placeholder="请选择" 
                       @change="handleChange"  v-model:value="queryParams.type">
                       <a-select-option value="0">A</a-select-option>
-                    <a-select-option value="1">AAAA</a-select-option>
-                    <a-select-option value="2">CNAME</a-select-option>
-                    <a-select-option value="3">NS </a-select-option>
-                    <a-select-option value="4">MX </a-select-option>
-                    <a-select-option value="5">CAA </a-select-option>
-                    <a-select-option value="6">SRV </a-select-option>
-                    <a-select-option value="7">TXT </a-select-option>
-                    <a-select-option value="8">PTR </a-select-option>
-                    <a-select-option value="9">反向域的NS</a-select-option>
-                    <a-select-option value="10">子网</a-select-option>
-                    <a-select-option value="11">其他</a-select-option>
-                    
+                      <a-select-option value="1">AAAA</a-select-option>
+                      <a-select-option value="2">CNAME</a-select-option>
+                      <a-select-option value="3">NS </a-select-option>
+                      <a-select-option value="4">MX </a-select-option>
+                      <a-select-option value="5">CAA </a-select-option>
+                      <a-select-option value="6">SRV </a-select-option>
+                      <a-select-option value="7">TXT </a-select-option>
+                      <a-select-option value="8">PTR </a-select-option>
+                      <a-select-option value="9">反向域的NS</a-select-option>
+                      <a-select-option value="10">子网</a-select-option>
+                      <a-select-option value="11">其他</a-select-option>
                     </a-select>
-                    
                   </a-space>
                 </a-form-item>
-                
               </a-col>
-              
               <a-col :md="4" :sm="5">
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <div class="searchbtn">
@@ -45,26 +39,17 @@
                       <search-outlined />搜索</a-button>
                     <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
                   </div>
-
                 </span>
               </a-col>
             </a-row>
           </a-form>
         </div>
       </a-card>
-        <!-- @change="handleChange" -->
     </div>
     <div class="controls">
         <div class="batch">
           <a-space>
-						<a-select
-							ref="select"
-							style="width: 120px; margin-right: 8px"
-							@focus="focus"
-							@select="handlChangeFn"
-							v-model="delselect"
-							placeholder="批量操作"
-						>
+						<a-select ref="select" style="width: 120px; margin-right: 8px" @focus="focus" @select="handlChangeFn" v-model="delselect" placeholder="批量操作">
 							<a-select-option value="0">删除</a-select-option>
 						</a-select>
 					</a-space>
@@ -86,7 +71,6 @@
 					</template>
 				</template>
 			</a-alert>
-            <!-- <a-alert message="未选中任何数据" type="info" show-icon /> -->
         </div>
         <!-- table表格 -->
         <div class="table">
@@ -96,8 +80,7 @@
                 :rowKey="(record) => record.id"
                 :columns="columns"
                 :data-source="listData" >
-                
-               <!-- 操作 @click="Delbtn(record)" @click="GoDep(record)"-->
+               <!-- 操作 -->
                <template #bodyCell="{ column,record }">
                   <template v-if="column.dataIndex === 'status'">
                     <div v-if="record.status == 1 || record.status == null"
@@ -112,7 +95,6 @@
                   <template v-if="column.dataIndex === 'operation'">
                     <div>
                       <span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">修改</span>
-                      <!-- confirm点击确认的回调 -->
                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
                         @cancel="cancel">
                       <span class="pointer"  style="color: #2e7dff; margin-right: 8px">删除</span>
@@ -158,7 +140,7 @@
 				/>
 			</div> 
     </div>
-    <!-- !!!!!添加记录弹窗 v-model:visible="visible" style='margin-top: 26px' @cancel="onClose"点击取消的回调-->
+    <!-- 添加记录弹窗 -->
    <div class="addlist" >
       <a-modal class="mydialog"  :scroll="{ x: 'calc(700px + 50%)', y: '510' }" style="top: 100px" :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
         <a-form ref='formRef' :model="formState"  :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
