@@ -33,7 +33,7 @@
                         <a-radio value="1">ACL选择</a-radio>
                     </a-radio-group>
                     <a-select placeholder="请选择" ref="select"  style="width: 70%; margin-top: 10px"  mode="tags" v-if="formState_bas.radiovalue == '1'"
-                            :size="size" :options="allaclId" :field-names="{ label: 'aclId', value: 'aclId' }" v-model:value="formState_bas.rule_ACL" >
+                            :size="size" :options="allaclId" :field-names="{ label: 'aclName', value: 'aclId' }" v-model:value="formState_bas.rule_ACL" >
                     </a-select>
                 </a-form-item>
                 <!-- ACL选择下拉框 -->
@@ -48,7 +48,7 @@
                         <a-radio value="1">ACL选择</a-radio>
                     </a-radio-group>
                     <a-select placeholder="请选择"  style="width: 70%; margin-top: 10px"  mode="tags" v-if="formState_bas.radiovalue_acl == '1'"
-                        :size="size" :options="allaclId" :field-names="{ label: 'aclId', value: 'aclId' }" v-model:value="formState_bas.address_ACL">
+                        :size="size" :options="allaclId" :field-names="{ label: 'aclName', value: 'aclId' }" v-model:value="formState_bas.address_ACL">
                     </a-select>
                 </a-form-item>
                 <!-- ACL选择下拉框 -->
@@ -79,7 +79,7 @@
                     <div v-if="formState_bas.radiovalue_domain == '1'">
                         <div style="margin-top: 10px">* 按域名库匹配解析请求，包括系统内置域名库和用户自定义域名库</div>
                         <a-select placeholder="请选择" mode="tags" style="width: 50%; margin-top: 10px"
-                            :size="size" :options="Domain" :field-names="{ label: 'dnId', value: 'dnId' }" v-model:value="formState_bas.Domain_library">
+                            :size="size" :options="Domain" :field-names="{ label: 'name', value: 'dnId' }" v-model:value="formState_bas.Domain_library">
                         </a-select>
                         <a-button :style="{ margin: '10px 8px 9px 10px '}"  type="primary" @click="go_Domain">自定义域名库管理</a-button>
                     </div>
@@ -123,7 +123,7 @@
                 <div v-if="formState_bas.radiovalue_load == '2'">
                     <div>
                     <a-form-item label="负载均衡列表" name="aclType" style="margin-bottom: 0px">
-                        <a-table :columns="columns" :pagination="false" bordered :scroll="{ x: 'calc(700px + 50%)', y: 510 }">
+                        <a-table :columns="columns" :pagination="false" bordered >
                         </a-table>
                         <a-button :style="{ margin: '10px 8px 0px 0px ' }" type="primary" @click="add_load">添加负载均衡点</a-button>
                     </a-form-item>
@@ -195,7 +195,7 @@
                 
                 <a-form name="basic" :model="formState_bas" :label-col="{ span: 3 }" :wrapper-col="{ span: 12 }" autocomplete="off" style="padding-top: 40px"
 				@finish="onFinish" @finishFailed="onFinishFailed" validateTrigger="blur" >故障检测
-                <a-form-item label=" " name="aclType" style="margin-bottom: 10px">
+                <a-form-item label="NX重定向" name="aclType" style="margin-bottom: 10px">
                     <a-switch v-model:checked="formState_bas.checked" />
                 </a-form-item>
                 <a-form-item  name="aclType" style="margin-bottom: 100px">
@@ -588,7 +588,7 @@ const gethostAll = ()=>{
         let transformedServe = res.map((item) => {
 			return {
 				value: item.id,
-				label: item.id,
+				label: item.name,
 			};
 		});
 		server.value = transformedServe;

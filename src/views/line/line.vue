@@ -16,7 +16,7 @@
               <a-form-item label="主机组" name="" style='display: flex;' :label-col="{ span: 7 }"
                 :wrapper-col="{ span: 10 }">
                 <a-space>
-                  <a-select placeholder="请选择" ref="select" v-model:value="formData.groupId" style="width: 160px"
+                  <a-select placeholder="请选择" ref="select" v-model:value="formData.groupId" style="width: 140px"
                     @focus="focus" @change="handleChangeFn">
                     <a-select-option :value="item.groupId" v-for="item in allhostIds" :key="item.groupId
                       ">{{ item.groupName }}</a-select-option>

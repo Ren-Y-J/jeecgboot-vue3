@@ -557,4 +557,7 @@ function onGoToaclInfo(record) {
 
   }
 }
+/deep/ .ant-row{
+  margin-bottom: 6px;
+}
 </style>
