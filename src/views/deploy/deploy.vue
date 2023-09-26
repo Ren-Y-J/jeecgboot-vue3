@@ -40,21 +40,23 @@
 			<br />
 			<div class="line" />
 			<a-tabs @change="changet_bas" v-model:activeKey="activeKey">
-				<a-tab-pane key="0" tab="基本配置"></a-tab-pane>
+				<a-tab-pane key="0" tab="基本配置">
+					
+				</a-tab-pane>
 				<a-tab-pane key="1" tab="线路配置">
 					<Line />
 				</a-tab-pane>
 				<a-tab-pane key="2" tab="域配置">
 					<Area @toggleComponent="toggleComponent" />
 				</a-tab-pane>
-				<a-tab-pane key="3" tab="记录配置">
-					<Deploy :info="parentMsg" v-if="deptype == '0'" />
-					<DeployReverse :info="parentMsg" v-if="deptype == '1'" />
-				</a-tab-pane>
-
+			<!-- 	<a-tab-pane key="3" tab="记录配置">
+				</a-tab-pane> -->
+	
 				<a-tab-pane key="4" tab="策略配置">
 					<Tactics />
 				</a-tab-pane>
+				<Deploy :info="parentMsg" v-if="deptype == '0'" />
+				<DeployReverse :info="parentMsg" v-if="deptype == '1'" />
 			</a-tabs>
 			<!-- 基本配置 -->
 			<div v-show="activeKey == 0" style="padding: 10px">
@@ -71,6 +73,7 @@
 					基本配置
 					<a-form-item label="递归查询" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-switch
+						@click='switchchange'
 							checkedValue="1"
 							unCheckedValue="0"
 							checked-children="开启"
@@ -81,18 +84,16 @@
 							v-if="formState_bas.recursionOn == 1"
 							class="custom-checkbox"
 							style="margin-left: 30px"
-							v-model:checked="formState_bas.limitRecursionRange">限制范围</a-checkbox>
-
-
-
+							  value= '0'
+							v-model:checked="limitRecursionRange">限制范围</a-checkbox>
 
 						<a-select v-model:value="formState_bas.allowRecursionList"
-							v-show="formState_bas.limitRecursionRange === true" mode="multiple"
+							v-show="limitRecursionRange === true && formState_bas.recursionOn == 1" mode="multiple"
 							style="width: 100%; margin-top: 10px" placeholder="请选择" :options="groupData_Acl"></a-select>
 					</a-form-item>
 
 					<a-form-item v-show="formState_bas.recursionOn == '1'" label="递归解析方式" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
-						<a-radio-group v-model:value="formState_bas.recursionType">
+						<a-radio-group @change='changeRadioGroup' v-model:value="formState_bas.recursionType">
 							<a-radio value="1">仅递归查询</a-radio>
 							<a-radio value="2">仅转发查询</a-radio>
 							<a-radio value="3">递归失败后转发</a-radio>
@@ -214,7 +215,6 @@
 
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -226,7 +226,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归查询数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -239,7 +238,6 @@
 
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -251,7 +249,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -263,7 +260,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归超时时间" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -275,7 +271,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归最大并发数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -287,7 +282,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小否定缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -445,11 +439,11 @@
 			groupId: '',
 			checked: '',
 			checkedBox: false,
-			forwarderList: [],
-			recursionType: '1',
+			forwarderList:null,
+			recursionType: '',
 			rateLimitOn: '0',
 			responsesPerSecond: '20',
-			loggingTypeList: [],
+			loggingTypeList: null,
 			nxRedirectOn: false,
 			nxDomainType: '',
 			advancedOption: '0',
@@ -460,31 +454,34 @@
 			minNcacheTtl: '90',
 			resolverQueryTimeout: '10',
 			recursiveClients: '10000',
-			prefetch: '',
+			prefetch: '0',
 			transferFormat: 'one-answer',
 			dnssecValidation: '0',
 			dnssecEnable: '0',
 			edns: '0',
 			recursionProtect: '0',
-			allowRecursionList: [],
-			limitRecursionRange: false,
+			allowRecursionList: undefined,
+		limitRecursionRange:'0',
 			recursionOn: '0',
 			minRes: '0',
 			nxSuffixDomain: '',
 			nxRedirectIpV4: '',
 			nxRedirectIpV6: '',
 		},
+			limitRecursionRange: false,
 		groupData: [],
 		style_switch: '',
 		groupData_Acl: [],
 		groupName: '',
 	});
 
-	const { deptype, initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl, groupName } =
+	const {limitRecursionRange, deptype, initData, pageID, ShowDataAllData, statusName, activeKey, formState_bas, style_switch, groupData, groupData_Acl, groupName } =
 		toRefs(data);
 	const handleClose = () => {
 		activeKey.value = 3;
 	};
+
+
 
 	const parentMsg = ref('');
 	const toggleComponent = (componentName) => {
@@ -563,10 +560,10 @@
 			formState_bas.value.nxRedirectIpV6 = res.confContent.nxRedirectIpV6;
 
 			if (res.confContent.limitRecursionRange == '0') {
-				formState_bas.value.limitRecursionRange = false;
+				limitRecursionRange.value = false;
 			}
 			if (res.confContent.limitRecursionRange == '1') {
-				formState_bas.value.limitRecursionRange = true;
+				limitRecursionRange.value = true;
 			}
 
 			formState_bas.value.recursionOn = res.confContent.recursionOn;
@@ -582,8 +579,12 @@
 		localStorage.setItem('pageID', pageID.value);
 	};
 	const BtnOk = async () => {
-		if (formState_bas.value.transferFormat == '') {
+		
+		if (formState_bas.value.transferFormat == null || formState_bas.value.transferFormat == '') {
 			formState_bas.value.transferFormat = 'one-answer';
+		}
+		if (formState_bas.value.prefetch == null || formState_bas.value.prefetch == '') {
+			formState_bas.value.prefetch = '0';
 		}
 		if (formState_bas.value.dnssecEnable == '') {
 			formState_bas.value.dnssecEnable = '0';
@@ -591,13 +592,14 @@
 		if (formState_bas.value.loggingTypeList == '') {
 			message.error('请选择DNS日志设置');
 		} else {
-			formState_bas.value.transferFormat = formState_bas.value.transferFormat.toString();
+			
+			// formState_bas.value.transferFormat = formState_bas.value.transferFormat.toString();
 			formState_bas.value.dnssecEnable = formState_bas.value.dnssecEnable.toString();
 
-			if (formState_bas.value.limitRecursionRange == false) {
+			if (limitRecursionRange.value == false) {
 				formState_bas.value.limitRecursionRange = '0';
 			}
-			if (formState_bas.value.limitRecursionRange == true) {
+			if (limitRecursionRange.value == true) {
 				formState_bas.value.limitRecursionRange = '1';
 			}
 
@@ -611,6 +613,48 @@
 				});
 		}
 	};
+	
+	
+	
+	watchEffect(() => {
+		if(formState_bas.value.recursionOn=='0'){
+			formState_bas.value.allowRecursionList=undefined
+			limitRecursionRange.value=false
+		}
+		if(formState_bas.value.recursionType=='1'){
+			formState_bas.value.forwarderList=undefined
+		}
+		if(formState_bas.value.nxRedirectOn=='0'){
+			formState_bas.value.nxSuffixDomain=''
+			formState_bas.value.nxRedirectIpV4=''
+			formState_bas.value.nxRedirectIpV6=''
+		}
+		if(formState_bas.value.dnssecValidation=='0'){
+			formState_bas.value.dnssecEnable='0'
+		}
+		
+		if(formState_bas.value.advancedOption=='0'){
+		formState_bas.value.maxRecursionDepth=''
+		
+			formState_bas.value.maxRecursionQueries=''
+			
+				formState_bas.value.minCacheTtl=''
+				formState_bas.value.maxCacheTtl=''
+				formState_bas.value.resolverQueryTimeout=''
+				formState_bas.value.recursiveClients=''
+				formState_bas.value.minNcacheTtl=''
+				formState_bas.value.transferFormat='one-answer'
+						formState_bas.value.prefetch='0'
+				
+				
+				
+		}
+		
+		
+		
+	});
+	
+	
 </script>
 
 <style>
