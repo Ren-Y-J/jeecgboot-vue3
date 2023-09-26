@@ -14,7 +14,7 @@
 	<div class="container">
 		<button v-if="GoInstallStatus == 0" @click="handleClick" class="btnNow">
 			<span> 现在安装 </span>
-			<vertical-align-bottom-outlined style="fontsize: 20px" />
+			<tool-outlined style="fontsize: 20px" />
 		</button>
 		<button v-if="GoInstallStatus == 1" class="btnNow_">
 			<span> 正在安装... </span>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-	import { VerticalAlignBottomOutlined, CheckCircleOutlined } from '@ant-design/icons-vue'; //icon引入
+	import { VerticalAlignBottomOutlined, CheckCircleOutlined,ToolOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { GetList, GetStatus } from './install.ts';
 	const data = reactive({
@@ -56,20 +56,24 @@
 		pageID: '',
 		DNSID: '',
 		GoInstallStatus: 0,
+		HostsGroupID:''
 	});
 
-	const { initData, pageID, DNSID, GoInstallStatus } = toRefs(data);
+	const { initData, pageID, DNSID, GoInstallStatus,HostsGroupID } = toRefs(data);
 
 	const getData = () => {
+		HostsGroupID.value = localStorage.getItem('HostsGroupID');
 		let url = location.search;
 		pageID.value = url.replace('?', '');
 		GetList({
-			value: pageID.value,
+			taskId:HostsGroupID.value,
+			groupId: pageID.value,
 		}).then((res) => {
 			DNSID.value = res;
 			console.log(res, '安装DNS');
 		});
 	};
+	
 	getData();
 
 	let stopTrigger = true;

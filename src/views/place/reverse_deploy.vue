@@ -36,9 +36,17 @@
 						<span v-show="record.type == 6">SRV </span>
 						<span v-show="record.type == 7">TXT </span>
 						<span v-show="record.type == 8">PTR</span>
-						<span v-show="record.type == 9">子网</span>
+						<span v-show="record.type == 9">反向域的NS </span>
 						<span v-show="record.type == 10">GENERATE</span>
 					</template>
+					<!-- 应用线路 -->
+						<template v-if="column.dataIndex === 'lineName'">
+							<div style="display: flex; justify-content: center; align-items: center">
+								<div v-for="(item, index) in record.lineName" key="index" class="iplist_data" style="margin-right: 10px">
+									<span> {{ item }} </span>
+								</div>
+							</div>
+						</template>
 					<!-- 操作 -->
 					<template v-if="column.dataIndex === 'operation'">
 						<div style="display: flex; justify-content: center; align-items: center">
@@ -74,7 +82,7 @@
 		</div>
 	</div>
 	<!-- 添加 -->
-	<a-modal v-model:visible="visible" title="添加" @ok="handleOk">
+	<a-modal v-model:visible="visible" title="添加记录" @ok="handleOk">
 		<div style="max-height: 700px; overflow: auto;">
 		<a-form
 			v-for="(item, index) in formState"
@@ -96,9 +104,8 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group @change='radioChange' v-model:value="item.type" style="width: 100%">
-					<a-radio value="3">NS</a-radio>
+					<a-radio value="9">反向域的NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
-					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
@@ -131,9 +138,8 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group  v-model:value="formState_edit.type" style="width: 100%">
-					<a-radio value="3">NS</a-radio>
+					<a-radio value="9">反向域的NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
-					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
@@ -332,7 +338,7 @@ const radioChange = () =>{
 			item.label_name='地址'
 		}
 		if(item.type==10 ) {
-			item.label_name='子网'
+			item.label_name='名称'
 		}
 	})
 	

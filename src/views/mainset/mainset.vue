@@ -92,7 +92,7 @@
 </template>
 <script name="mainset" setup>
 	import { defineComponent, reactive, ref, toRefs } from 'vue';
-	import { mainsetlist, addmainset, edimainset, delmainset } from './mainset.ts';
+	import { mainsetlist, addmainset, edimainset, delmainset,GetHostsGroup } from './mainset.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue';
 	import { message } from 'ant-design-vue';
 	import { router } from '/@/router';
@@ -239,8 +239,21 @@
 	
 	
 	const GoInstall = (record) => {
+		
+		
+		GetHostsGroup().then((res)=>{
+			console.log(res)
+			localStorage.setItem('HostsGroupID', res);
+		})
 		let id = record.groupId;
 		window.open('/install?' + id);
+		
+		
+		
+		
+		
+		
+	
 	};
 	
 	

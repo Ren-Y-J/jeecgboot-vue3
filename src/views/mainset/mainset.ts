@@ -11,6 +11,7 @@ enum RoleApi {
   // operator = '/acl/details/get/operator',
   // district = '/acl/details/get/areas',
   // updateremark = '/acl/details/update',
+  hostsgroup='/host/group/taskId'
 }
 /**
  *分组列表
@@ -21,3 +22,5 @@ export const edimainset = (params) => defHttp.post({ url: RoleApi.edit, params }
 export const delmainset = (params) => defHttp.post({ url: RoleApi.del, params });
 // 回显
 export const libraryInfo = (params) => defHttp.get({ url: '/domain/lib/' + params });
+// 主机组任务ID获取
+export const GetHostsGroup = (params) => defHttp.post({ url: RoleApi.hostsgroup, params });
