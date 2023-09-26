@@ -92,7 +92,7 @@
 </template>
 <script name="mainset" setup>
 	import { defineComponent, reactive, ref, toRefs } from 'vue';
-	import { mainsetlist, addmainset, edimainset, delmainset } from './mainset.ts';
+	import { mainsetlist, addmainset, edimainset, delmainset, GetHostsGroup } from './mainset.ts';
 	import { SearchOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons-vue';
 	import { message } from 'ant-design-vue';
 	import { router } from '/@/router';
@@ -236,16 +236,18 @@
 		console.log(record, 'record');
 		localStorage.setItem('groupName', record.groupName);
 	};
-	
-	
+
 	const GoInstall = (record) => {
-		let id = record.groupId;
-		window.open('/install?' + id);
+		console.log(record,'0')
+		GetHostsGroup().then((res) => {
+			// console.log(res)
+			// localStorage.setItem('HostsGroupID', res);
+			let id = record.groupId;
+			window.open('/install?groupId=' + id + '&taskId=' + res+'&installName='+record.groupName);
+			
+			
+		});
 	};
-	
-	
-	
-	
 </script>
 <style scoped lang="less">
 	.mainset {

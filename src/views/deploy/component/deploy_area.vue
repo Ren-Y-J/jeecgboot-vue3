@@ -678,7 +678,14 @@
 	};
 </script>
 
-<style>
+<style  scoped lang="less">
+	// 标题
+	/deep/.ant-table-thead > tr > th,
+	.ant-table-tbody > tr > td,
+	.ant-table tfoot > tr > th,
+	.ant-table tfoot > tr > td {
+		padding: 7.5px 16px;
+	}
 	.page {
 		padding: 8px;
 		background-color: #fff;

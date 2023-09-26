@@ -36,24 +36,32 @@
 						<span v-show="record.type == 6">SRV </span>
 						<span v-show="record.type == 7">TXT </span>
 						<span v-show="record.type == 8">PTR</span>
-						<span v-show="record.type == 9">子网</span>
+						<span v-show="record.type == 9">反向域的NS </span>
 						<span v-show="record.type == 10">GENERATE</span>
 					</template>
+					<!-- 应用线路 -->
+						<template v-if="column.dataIndex === 'lineName'">
+							<div style="display: flex; justify-content: center; align-items: center">
+								<div v-for="(item, index) in record.lineName" key="index" class="iplist_data" style="margin-right: 10px">
+									<span> {{ item }} </span>
+								</div>
+							</div>
+						</template>
 					<!-- 操作 -->
-					<template v-if="column.dataIndex === 'operation'">
+					<template v-if="column.dataIndex === 'operation' && record.type!=='10' ">
 						<div style="display: flex; justify-content: center; align-items: center">
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<span style="color: #1890ff">删除</span>
+										<a-button  type="link">删除</a-button>
 								</a-popconfirm>
 							</div>
 							<div class="pointer" style="margin-right: 10px" @click="editEploy(record)">
-								<span style="color: #1890ff">编辑</span>
+								<a-button  type="link">编辑</a-button>
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
+									<a-button  v-show="record.status == 1"  type="link">禁用</a-button>
+									<a-button  v-show="record.status == 0"  type="link">启用</a-button>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -74,7 +82,7 @@
 		</div>
 	</div>
 	<!-- 添加 -->
-	<a-modal v-model:visible="visible" title="添加" @ok="handleOk">
+	<a-modal v-model:visible="visible" title="添加记录" @ok="handleOk">
 		<div style="max-height: 700px; overflow: auto;">
 		<a-form
 			v-for="(item, index) in formState"
@@ -96,9 +104,8 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group @change='radioChange' v-model:value="item.type" style="width: 100%">
-					<a-radio value="3">NS</a-radio>
+					<a-radio value="9">反向域的NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
-					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
@@ -131,9 +138,8 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group  v-model:value="formState_edit.type" style="width: 100%">
-					<a-radio value="3">NS</a-radio>
+					<a-radio value="9">反向域的NS</a-radio>
 					<a-radio value="8">PTR</a-radio>
-					<a-radio value="10">子网</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
@@ -301,7 +307,9 @@
 				message.error('请输入第' + (i + 1) + '条记录值');
 				return;
 			}
+		if (typeof formState.value[i].lineId !== 'string') {
 			formState.value[i].lineId = JSON.stringify(formState.value[i].lineId);
+		}
 			formState.value[i].zoneId = id.value;
 		}
 
@@ -332,7 +340,7 @@ const radioChange = () =>{
 			item.label_name='地址'
 		}
 		if(item.type==10 ) {
-			item.label_name='子网'
+			item.label_name='名称'
 		}
 	})
 	
@@ -360,10 +368,16 @@ const radioChange = () =>{
 		edit_visible.value = true;
 	};
 	const clearData = () => {
-		formState.value.name = '';
-		formState.value.type = '';
-		formState.value.lineId = undefined;
-		formState.value.content = '';
+		formState.value.forEach((item) => {
+			item.name = '';
+			item.type = '';
+			item.lineId = undefined;
+			item.ttl = '';
+			item.content = '';
+			item.zoneId = '';
+			item.status = '1';
+		});
+		formState.value.length = 1;
 	};
 	const handleOk_edit = () => {
 		formState_edit.value.lineId = JSON.stringify(formState_edit.value.lineId);
@@ -438,5 +452,16 @@ const radioChange = () =>{
 		align-items: flex-start;
 		font-size: 15px;
 		margin-right: 30px;
+	}
+	.iplist_data {
+		cursor: pointer;
+		padding: 3px;
+		border: 1px solid #249ff3;
+		display: flex;
+		float: left;
+	
+		span {
+			color: #249ff3;
+		}
 	}
 </style>

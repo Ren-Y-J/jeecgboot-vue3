@@ -7,7 +7,7 @@ enum RoleApi {
   del = '/line/manage/delete',
   aclIdAll = '/acl/manage/listAll',
   hostsAll = '/hosts/get/hostsAll',
-  infolineName = '/line/manage/getLineByHostId',
+  infolineName = '/line/manage/getLineByGroupId',
   sortlineName = '/line/manage/sort',
   switch = '/line/manage/switch',
 }
