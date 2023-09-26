@@ -14,7 +14,7 @@
                 <a-form-item style="margin-bottom: 0px;" label="类型" name="type" :labelCol="{ span: 7 }" 
                   :wrapperCol="{ span: 10 }" v-model:value="queryParams.type" >
                   <a-space>
-                    <a-select ref="select"  style="width: 120px" @focus="focus" placeholder="请选择" 
+                    <a-select ref="select"  style="width: 130px" @focus="focus" placeholder="请选择" 
                       @change="handleChange"  v-model:value="queryParams.type">
                       <a-select-option value="0">A</a-select-option>
                       <a-select-option value="1">AAAA</a-select-option>
@@ -26,8 +26,8 @@
                       <a-select-option value="7">TXT </a-select-option>
                       <a-select-option value="8">PTR </a-select-option>
                       <a-select-option value="9">反向域的NS</a-select-option>
-                      <a-select-option value="10">子网</a-select-option>
-                      <a-select-option value="11">其他</a-select-option>
+                      <a-select-option value="10">GENERATE</a-select-option>
+                      
                     </a-select>
                   </a-space>
                 </a-form-item>
@@ -35,7 +35,7 @@
               <a-col :md="4" :sm="5">
                 <span style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
                   <div class="searchbtn">
-                    <a-button :style="{ margin: '0px 20px ' }" type="primary" @click="handleQuery">
+                    <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
                       <search-outlined />搜索</a-button>
                     <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
                   </div>
@@ -93,7 +93,7 @@
                     </div>
                   </template>
                   <template v-if="column.dataIndex === 'operation'">
-                    <div>
+                    <div v-if="record.type != 10 ">
                       <span @click="openmodal(record)" class="pointer" style="color: #2e7dff; margin-right: 8px">修改</span>
                       <a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="confirm(record)"
                         @cancel="cancel">
@@ -112,8 +112,7 @@
                     <span v-show='record.type == 7'>TXT </span>
                     <span v-show='record.type == 8'>PTR </span>
                     <span v-show='record.type == 9'>反向域的NS</span>
-                    <span v-show='record.type == 10'>子网</span>
-                    <span v-show='record.type == 11'>其他</span>
+                    <span v-show='record.type == 10'>GENERATE</span>
               </template>
               <!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
@@ -141,7 +140,7 @@
 			</div> 
     </div>
     <!-- 添加记录弹窗 -->
-   <div class="addlist" >
+   <div class="addlist">
       <a-modal class="mydialog"  :scroll="{ x: 'calc(700px + 50%)', y: '510' }" style="top: 100px" :body-style="modalStyle" v-model:visible="visible" title="添加记录" width="900px" @ok="addFn" @cancel="onClose">
         <a-form ref='formRef' :model="formState"  :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
@@ -175,14 +174,14 @@
                 <a-input v-model:value="item.content" placeholder="请输入记录值" style='width:50%' />
               </a-form-item>
               <a-form-item label="TTL" :rules="[{ required: true}]" style='margin-top: 18px'>
-                <a-input-number :formatter="(value) => Math.floor(value)" :parser="(value) => value.replace(/\D/g, '')" precision="0"
+                <a-input-number  :parser="(value) => value.replace(/\D/g, '')" precision="0"
 							    min="1" style="width:50%" placeholder="请输入大于0的TTL" v-model:value="item.ttl" >
                 </a-input-number>
               </a-form-item>
               <a-form-item label="线路" :rules="[{ required: true }]"  style='margin-top: 18px'>
                 <a-space>
-              <a-select placeholder="请选择线路" ref="select" v-model:value="item.lineId" style="width: 150px" 
-                @focus="focus" @change="handleChangsortadd" :options="groupData" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
+              <a-select placeholder="请选择线路"  v-model:value="item.lineId" style="width: 150px" mode="multiple"
+                @focus="focus" @change="handleChangsortadd" :options="groupData"  :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
               </a-space>
               </a-form-item>
@@ -197,7 +196,7 @@
       </a-modal>
    </div>
    <!-- 修改弹框 -->
-   <div class="dellist">
+   <div class="dellist" >
       <a-modal  v-model:visible="visible_edit" title="记录修改" width="900px"  @ok="editOK" >
         <a-form ref='formRef' :model="formState_edit"  :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }" autocomplete="off"
           @finish="onFinish" @finishFailed="onFinishFailed" validateTrigger='blur'>
@@ -235,7 +234,7 @@
               <a-form-item label="线路" :rules="[{ required: true, message: '请选择线路!' }]" name="lineId" style='margin-top: 18px'>
                 <a-space>
               <a-select placeholder="请选择线路" ref="select" v-model:value="formState_edit.lineId" style="width: 225px"
-                @focus="focus"  :options="groupData_edit" mode="tags" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
+                @focus="focus"  :options="groupData_edit" mode="multiple" :size="size" :field-names="{ label: 'lineName', value: 'lineId' }">
               </a-select>
             </a-space>
               </a-form-item>
@@ -243,7 +242,44 @@
               </a-form>
       </a-modal>
    </div>
+   <!-- 修改弹框 -->
+   <a-modal v-model:visible="edit_visible" title="编辑" @ok="handleOk_edit">
+		<a-form
+			style="margin-top: 10px"
+			ref="formRef"
+			:model="formState_edit_type"
+			name="basic"
+			:label-col="{ span: 3 }"
+			:wrapper-col="{ span: 20 }"
+			autocomplete="off"
+			validateTrigger="blur"
+		>
+			<a-form-item label="记录名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="记录名称" v-model:value="formState_edit_type.name" />
+			</a-form-item>
+
+			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-radio-group v-model:value="formState_edit_type.type" style="width: 100%">
+					<a-radio value="9">反向域的NS</a-radio>
+					<a-radio value="8">PTR</a-radio>
+				</a-radio-group>
+			</a-form-item>
+			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-select
+					v-model:value="formState_edit_type.lineId"
+					mode="multiple"
+					style="width: 100%"
+					placeholder="请选择"
+					:options="groupData_edit" :field-names="{ label: 'lineName', value: 'lineId' }"
+				></a-select>
+			</a-form-item>
+			<a-form-item label="记录值" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
+				<a-input placeholder="记录值" v-model:value="formState_edit_type.content" />
+			</a-form-item>
+		</a-form>
+	</a-modal>
 </template>
+
 
 
 <script setup>
@@ -320,6 +356,7 @@ const data = reactive({
 	pageSize: 10,
   commonEnty:{values:[]},
   visible_edit: false,
+  edit_visible: false,
   number: 0,
   groupData: [],
   groupData_edit:[],
@@ -347,6 +384,13 @@ const data = reactive({
       id:'',
       zoneName:''
 		},
+    formState_edit_type:{
+      name: '',
+			type: '',
+			lineId: undefined,
+			content: '',
+      
+    }
 });
 const {
   name,
@@ -364,6 +408,7 @@ const {
 	pageSize,
   commonEnty,
   visible_edit,
+  edit_visible,
   number,
   groupData,
   groupData_edit,
@@ -375,6 +420,7 @@ const {
   formDataName,
   delicon,
   formStateData,
+  formState_edit_type
 } = toRefs(data)
 
 const formRef = ref(null);//添加按钮弹框需要的ref
@@ -414,7 +460,7 @@ formDataName.value.forEach((item)=>{
    return; 
  }
  for (let i = 0; i < formDataName.value.length; i++) {
-    if (typeof formDataName.value[i].lineId !== 'string') {
+    if (typeof formDataName.value[i].lineId !== 'string'){
       formDataName.value[i].lineId = JSON.stringify(formDataName.value[i].lineId);
     }
 }
@@ -622,11 +668,16 @@ const handlChangeFn = (val) =>{
 
 //修改按钮
 const openmodal = (record)=>{
-  visible_edit.value = true;
+  // console.log(record,'record');
+  if(record.type == '8' || record.type == '9'){
+    edit_visible.value = true
+  }else{
+    visible_edit.value = true;
+  }
+  
   GetLine(record.zoneId).then((res=>{
-    console.log(res,'1232');
     groupData_edit.value = res;
-    console.log(groupData_edit.value.lineId,'res');
+
   }))
     // 获取线路
      listAll().then(res=>{
@@ -640,14 +691,17 @@ const openmodal = (record)=>{
   })
    formState_edit.value.id = record.id;
     	BackLine(formState_edit.value.id).then((res) => {//点击修改回显数据
-        formState_edit.value.zoneId = res.zoneId
+      formState_edit.value.zoneId = res.zoneId
 			formState_edit.value.name = res.name;
 			formState_edit.value.type = res.type;
 			formState_edit.value.ttl = res.ttl;
 			formState_edit.value.content = res.content;
 			formState_edit.value.lineId = JSON.parse(res.lineId);
+      formState_edit_type.value.name = res.name;
+      formState_edit_type.value.type = res.type;
+      formState_edit_type.value.content = res.content;
+			formState_edit_type.value.lineId = JSON.parse(res.lineId);
 		});
-
 }
 //修改确定按钮
 const editOK = ()=>{
@@ -682,13 +736,13 @@ const state = reactive({
 
 <style scoped lang="less">
 .allclustersBox{
-    padding: 10px;
+    padding: 8px;
     padding-bottom: 0px;
 }
 
 .controls{
     background: #fff;
-    margin: 10px;
+    margin: 8px ;
     padding: 24px;
 }
 .btn{

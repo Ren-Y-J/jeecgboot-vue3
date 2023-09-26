@@ -1,57 +1,45 @@
 <template>
   <div class="tasklogBox">
     <div class="nav">
-      <a-card>
-        <a-form class="form" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" name="basic"
-          autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
-          <a-row :gutter="16">
-            <a-col :span="6" :md="4" :sm="5">
-              <a-form-item style="margin-bottom: 0px;" label="任务状态" :labelCol="{ span: 8 }" :wrapperCol="{ span: 16 }">
-                <!-- v-model:value="changesearch" -->
-                <a-select ref="select" style="width: 120px" @focus="focus" @change="handleChange"
-                  v-model:value="changesearch">
-                  <a-select-option value="1">正常</a-select-option>
-                  <a-select-option value="0">异常</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :span="7">
-              <a-form-item style="" label="创建时间" :labelCol="{ span: 4 }" :wrapperCol="{ span: 22 }">
-                <a-space>
-                  <a-range-picker style="width: 400px" :disabled-date="disabledDate" :disabled-time="disabledRangeTime"
-                    :show-time="{
-                      hideDisabledOptions: true,
-                      defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
-                    }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" @ok="onOk"
-                    v-model="formStates.timeRanges" showTime />
-                </a-space>
-              </a-form-item>
-            </a-col>
-            <a-col :span="5">
-              <a-col class="gutter-row">
-                <a-form-item label="所有主机" style='' :labelCol="{ span: 4 }" :wrapperCol="{ span: 5 }">
-                  <a-space>
-                    <a-select placeholder="请选择" ref="select" v-model:value="formState.hostId" style="width: 160px"
-                      @focus="focus" @change="handleChangehost">
-                      <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
-                        ">{{ item.ipAddress }}</a-select-option>
-                    </a-select>
-                  </a-space>
-                </a-form-item>
-              </a-col>
-            </a-col>
-            <a-col :span="6" :md="4" :sm="5">
-              <span class="searchbtn" style="display: inline-block; display: flex;flex-wrap: nowrap; margin-top: 0px">
-                <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
-                  <search-outlined />搜索</a-button>
-                <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </a-card>
-    </div>
+      <a-form class="form">
+        <div style="display: flex;">
+          <a-form-item style="" label="任务状态" :labelCol="{ span: 18 }" :wrapperCol="{ span: 15 }">
 
+            <a-select ref="select" style="width: 120px" @focus="focus" @change="handleChange"
+              v-model:value="changesearch">
+              <a-select-option value="0">待执行</a-select-option>
+              <a-select-option value="1">执行中</a-select-option>
+              <a-select-option value="2">成功</a-select-option>
+              <a-select-option value="3">失败</a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item style="" label="创建时间" :labelCol="{ span: 10 }" :wrapperCol="{ span: 50 }">
+            <a-space>
+              <a-range-picker style="width: 400px" :disabled-date="disabledDate" :disabled-time="disabledRangeTime"
+                :show-time="{
+                  hideDisabledOptions: true,
+                  defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
+                }" format="YYYY-MM-DD HH:mm:ss" @change="handleChangeSearchDate" @ok="onOk"
+                v-model="formStates.timeRanges" showTime />
+            </a-space>
+          </a-form-item>
+          <a-form-item label="所有主机" :labelCol="{ span: 30 }" :wrapperCol="{ span: 30 }">
+            <a-space>
+              <a-select placeholder="请选择" ref="select" v-model:value="formState.hostId" style="width: 160px"
+                @focus="focus" @change="handleChangehost">
+                <a-select-option :value="item.hostId" v-for="item in allhostId" :key="item.hostId
+                  ">{{ item.ipAddress }}</a-select-option>
+              </a-select>
+            </a-space>
+          </a-form-item>
+          <div class="searchbtn" style="display: flex;flex-wrap: nowrap;margin-left: 192px;">
+            <a-button :style="{ margin: '0px 5px ' }" type="primary" @click="handleQuery">
+              <search-outlined />搜索</a-button>
+            <a-button :style="{ margin: '0px 5px ' }" @click="AlldelFn"><reload-outlined />重置</a-button>
+          </div>
+        </div>
+      </a-form>
+    </div>
     <div class="contaion">
       <a-card>
         <a-table :pagination="false" :scroll="{ x: 'calc(700px + 50%)', y: 555 }" :columns="columns"
@@ -60,7 +48,7 @@
             <template v-if="column.dataIndex === 'hostIp'">
               <p class="hostinfo" style="margin: 0" @click="selHostFn(record)">
                 <span v-if="record.mystatus == 1"> <down-outlined /></span>
-                <span v-else> <left-outlined /></span>{{ record.hostIp.length }}台主机
+                <span v-else> <left-outlined /></span>{{ record.hostIp ? record.hostIp.length : 0 }}台主机
               </p>
               <ul v-if="record.mystatus == 1 && record.hostIp.length != 0">
                 <li v-for="(   item, index   ) in    record.hostIp   " :key="index"
@@ -181,6 +169,7 @@ const initData = async () => {
     return item
   }
   )
+  console.log(datalist.value);
   // [{}, {}][{ mystutas: 0, mystutas2: 0 }, {}]
   totals.value = res.total
 }
@@ -195,6 +184,8 @@ const selHostFn = async (val) => {
   })
 
 }
+
+
 //分页功能
 const changeFn = (P, Ps) => {
   formData.value.pageNum = P
@@ -237,13 +228,15 @@ function handleChangeSearchDate(_value, dateString) {
   // formState.value.createTime = dateString[0];
   // formState.value.updateTime = dateString[1];
   // console.log(formState.createTime);
-  // console.log(formState.updateTime);
-
+  console.log(formState.timeRange);
+  // 我是点击重置按钮清空页面
 }
 const handleChange = async (value) => {
   formState.status = value
+
 };
 const handleQuery = async () => {
+
 
   let res = await taskloglist(formState)
   console.log(res, '1111');
@@ -290,10 +283,15 @@ const GoDep = (record) => {
   .form {
     // max-width: 600px;
     height: 31px;
-    margin: 0 auto;
+    // margin: 0 auto;
   }
 
   .nav {
+    margin-bottom: 6px;
+    padding: 8px;
+    background-color: #fff;
+    width: 100%;
+
     ::v-deep(.ant-card-body) {
       padding: 12px 10px 13px 10px !important;
     }

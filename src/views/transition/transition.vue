@@ -18,7 +18,7 @@
 			</a-form>
 		</div>
 		<!-- 表格 -->
-		<div class="page" style="margin-top: 10px">
+		<div class="page" style="margin-top: 8px">
 			<a-button type="primary" @click="addOpen"> <search-outlined />添加转发服务器</a-button>
 			<a-table
 				:rowKey="(record) => record.hostId"
@@ -330,18 +330,14 @@
 	});
 </script>
 
-<style scoped lang="less">
-	// 标题
-	/deep/.ant-table-thead > tr > th,
-	.ant-table-tbody > tr > td,
-	.ant-table tfoot > tr > th,
-	.ant-table tfoot > tr > td {
-		padding: 7.5px 16px;
-	}
+<style scoped lang='less'>
 	.page {
-		padding: 8px;
+		padding: 10px;
 		background-color: #fff;
 		width: 100%;
+	}
+	/deep/ .ant-form{
+		margin-bottom: -22px;
 	}
 	.pointer {
 		cursor: pointer;
@@ -376,7 +372,7 @@
 		border: 1px solid #249ff3;
 		display: flex;
 		float: left;
-		span {
+		span{
 			color: #249ff3;
 		}
 	}

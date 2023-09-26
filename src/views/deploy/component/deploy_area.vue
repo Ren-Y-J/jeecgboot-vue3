@@ -55,7 +55,7 @@
 				:data-source="initdata"
 				bordered
 			>
-				<template #bodyCell="{ column, record }">
+				<template #bodyCell="{ column,record}">
 					<!-- 线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
 						<div style="display: flex; justify-content: center; align-items: center">

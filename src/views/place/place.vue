@@ -14,7 +14,7 @@
 						<a-form-item label="主机组" :labelCol="{ span: 6 }" :wrapperCol="{ span: 23 }">
 							<a-space>
 								<a-select placeholder="请选择" ref="select" style="width: 150px" v-model:value="groupId">
-									<a-select-option v-for="(item, index) in HostsGroupData" key="index" :value="item.groupId">{{
+									<a-select-option v-for="(item, index) in HostsGroupData" :key="index" :value="item.groupId">{{
 										item.groupName
 									}}</a-select-option>
 								</a-select>
@@ -752,14 +752,7 @@
 	};
 </script>
 
-<style  scoped lang="less">
-	// 标题
-	/deep/.ant-table-thead > tr > th,
-	.ant-table-tbody > tr > td,
-	.ant-table tfoot > tr > th,
-	.ant-table tfoot > tr > td {
-		padding: 7.5px 16px;
-	}
+<style scoped lang="less">
 	.page {
 		padding: 8px;
 		background-color: #fff;
@@ -777,6 +770,7 @@
 
 	.search {
 		display: flex;
+		margin-bottom: -20px;
 	}
 
 	.iplist_data {
