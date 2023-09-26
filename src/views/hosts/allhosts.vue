@@ -862,4 +862,20 @@
 			padding-right: 7px;
 		}
 	}
+	
+		.pagination {
+			margin: 10px 0 0 0;
+			display: flex;
+			justify-content: flex-end;
+		}
+	
+		// 标题
+		/deep/.ant-table-thead > tr > th,
+		.ant-table-tbody > tr > td,
+		.ant-table tfoot > tr > th,
+		.ant-table tfoot > tr > td {
+			padding: 7.5px 16px;
+		}
+	
+	
 </style>

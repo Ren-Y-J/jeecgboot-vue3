@@ -6,7 +6,7 @@
 		</div>
 	</div>
 	<div class="container">
-		<span class="title_2">正在安装DNS的主机组：{{installName}}</span>
+		<span class="title_2">正在安装DNS的主机组：{{ installName }}</span>
 	</div>
 	<div class="container">
 		<span class="title_2">注意：如果系统检测到目标主机已经安装DNS，将自动跳过</span>
@@ -29,16 +29,18 @@
 
 			<div style="overflow: auto; height: 358px">
 				<div class="bottom" v-for="(item, index) in initData" key="index">
-					<div class="bottom_title"> {{ item.ipAddress }} </div>
-					<div v-if="item.status == '失败'" class="bottom_title">
+					<div class="bottom_title">
+						{{ item.ipAddress }}
+					</div>
+					<div v-if="item.status === '失败'" class="bottom_title">
 						<img class="installicon_2" src="./image/error.png" alt="" />
 						失败
 					</div>
-					<div v-if="item.status == '成功'" class="bottom_title">
+					<div v-if="item.status === '成功'" class="bottom_title">
 						<img class="installicon_2" src="./image/success.png" alt="" />
 						成功
 					</div>
-					<div v-else class="bottom_title">
+					<div v-if="item.status !== '成功' && item.status !== '失败'" class="bottom_title">
 						{{ item.status }}
 					</div>
 				</div>
@@ -55,20 +57,15 @@
 		initData: [],
 		GoInstallStatus: 0,
 		HostsGroupID: '',
-		installName:''
-		
+		installName: '',
+		timerId: '',
 	});
 
-	const { installName,initData, DNSID, GoInstallStatus } = toRefs(data);
+	const { timerId, installName, initData, DNSID, GoInstallStatus } = toRefs(data);
 	const params = new URLSearchParams(window.location.search);
 	const taskId = params.get('taskId');
 	const groupId = params.get('groupId');
-    installName.value = params.get('installName');
-
-
-
-
-
+	installName.value = params.get('installName');
 	const getData = () => {
 		GetList({
 			taskId: taskId,
@@ -77,17 +74,12 @@
 			GoInstall();
 		});
 	};
-
-	let stopTrigger = true;
 	const GoInstall = async () => {
-		stopTrigger = false;
 		GoInstallStatus.value = 1;
-		if (stopTrigger == true) {
-			return; // 如果为true，则停止触发接口
-		}
 		let res = await GetStatus({
 			value: taskId,
 		});
+		let allStatusMatched = '';
 		res.forEach((item) => {
 			if (item.status == '-1') {
 				item.status = '待安装...';
@@ -104,31 +96,30 @@
 			if (item.status == '3') {
 				item.status = '失败';
 			}
-			let allStatusMatched = res.every((item) => item.status === '2' || item.status === '3');
-			if (allStatusMatched) {
-				stopTrigger = true;
-				GoInstallStatus.value = 0;
-			}
 		});
+		allStatusMatched = res.every((item) => item.status === '成功' || item.status === '失败');
+		if (allStatusMatched) {
+			clearInterval(timerId.value);
+			GoInstallStatus.value = 0;
+		}
 		initData.value = res;
 		DelF5();
 	};
-
 	GetTask({
 		value: taskId,
 	}).then((res) => {
 		// 获取状态，对安装的回显
-		if (res === 1) {
-			GoInstall();
-			setInterval(GoInstall, 4000);
+		if(res==1){
+			GoInstall()
+			GoInstallStatus.value = 1;
+			timerId.value = setInterval(GoInstall, 4000);
 		}
 	});
-
 	const handleClick = () => {
 		getData();
-		GoInstall(); // 执行 GoInstall
-		setInterval(GoInstall, 4000); // 设置定时器
+		timerId.value = setInterval(GoInstall, 4000);
 	};
+
 	const DelF5 = () => {
 		document.oncontextmenu = function () {
 			return false;
@@ -188,8 +179,8 @@
 	.btnNow_ {
 		width: 248px;
 		height: 70px;
-		background-color: #7392b9;
 		border-radius: 35px;
+		background-image: url('./image/install_btn_error.png');
 		span {
 			font-weight: 700;
 			color: #fff;

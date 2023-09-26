@@ -48,20 +48,20 @@
 							</div>
 						</template>
 					<!-- 操作 -->
-					<template v-if="column.dataIndex === 'operation'">
+					<template v-if="column.dataIndex === 'operation' && record.type!=='10' ">
 						<div style="display: flex; justify-content: center; align-items: center">
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认删除" ok-text="是" cancel-text="否" class="del" @confirm="delBtn(record)">
-									<span style="color: #1890ff">删除</span>
+										<a-button  type="link">删除</a-button>
 								</a-popconfirm>
 							</div>
 							<div class="pointer" style="margin-right: 10px" @click="editEploy(record)">
-								<span style="color: #1890ff">编辑</span>
+								<a-button  type="link">编辑</a-button>
 							</div>
 							<div class="pointer" style="margin-right: 10px">
 								<a-popconfirm title="是否确认？" ok-text="是" cancel-text="否" @confirm="stopBtn(record)">
-									<span v-show="record.status == 1" style="color: #1890ff">禁用</span>
-									<span v-show="record.status == 0" style="color: #1890ff">启用</span>
+									<a-button  v-show="record.status == 1"  type="link">禁用</a-button>
+									<a-button  v-show="record.status == 0"  type="link">启用</a-button>
 								</a-popconfirm>
 							</div>
 						</div>
@@ -366,10 +366,16 @@ const radioChange = () =>{
 		edit_visible.value = true;
 	};
 	const clearData = () => {
-		formState.value.name = '';
-		formState.value.type = '';
-		formState.value.lineId = undefined;
-		formState.value.content = '';
+		formState.value.forEach((item) => {
+			item.name = '';
+			item.type = '';
+			item.lineId = undefined;
+			item.ttl = '';
+			item.content = '';
+			item.zoneId = '';
+			item.status = '1';
+		});
+		formState.value.length = 1;
 	};
 	const handleOk_edit = () => {
 		formState_edit.value.lineId = JSON.stringify(formState_edit.value.lineId);
@@ -444,5 +450,16 @@ const radioChange = () =>{
 		align-items: flex-start;
 		font-size: 15px;
 		margin-right: 30px;
+	}
+	.iplist_data {
+		cursor: pointer;
+		padding: 3px;
+		border: 1px solid #249ff3;
+		display: flex;
+		float: left;
+	
+		span {
+			color: #249ff3;
+		}
 	}
 </style>

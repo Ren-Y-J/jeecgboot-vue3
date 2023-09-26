@@ -36,7 +36,7 @@
 						<span v-show="record.type == 9">反向域的NS</span>
 						<span v-show="record.type == 10">GENERATE</span>
 					</template>
-				<!-- 应用线路 -->
+					<!-- 应用线路 -->
 					<template v-if="column.dataIndex === 'lineName'">
 						<div style="display: flex; justify-content: center; align-items: center">
 							<div v-for="(item, index) in record.lineName" key="index" class="iplist_data" style="margin-right: 10px">
@@ -135,8 +135,8 @@
 
 			<a-form-item label="类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
 				<a-radio-group v-model:value="formState_edit.type" style="width: 100%">
-				<a-radio value="9">反向域的NS</a-radio>
-				<a-radio value="8">PTR</a-radio>
+					<a-radio value="9">反向域的NS</a-radio>
+					<a-radio value="8">PTR</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="线路发布" :labelCol="{ span: 5 }" :wrapperCol="{ span: 15 }">
@@ -383,16 +383,16 @@
 		edit_visible.value = true;
 	};
 	const clearData = () => {
-formState.value.forEach((item)=>{
-			item.name=''
-			item.type=''
-			item.lineId=undefined
-			item.ttl=''
-			item.content=''
-			item.zoneId=''
-			item.status='1'
-		})
-		 formState.value.length = 1; 
+		formState.value.forEach((item) => {
+			item.name = '';
+			item.type = '';
+			item.lineId = undefined;
+			item.ttl = '';
+			item.content = '';
+			item.zoneId = '';
+			item.status = '1';
+		});
+		formState.value.length = 1;
 	};
 	const handleOk_edit = () => {
 		formState_edit.value.lineId = JSON.stringify(formState_edit.value.lineId);
@@ -447,7 +447,14 @@ formState.value.forEach((item)=>{
 	};
 </script>
 
-<style>
+<style  scoped lang="less">
+	// 标题
+	/deep/.ant-table-thead > tr > th,
+	.ant-table-tbody > tr > td,
+	.ant-table tfoot > tr > th,
+	.ant-table tfoot > tr > td {
+		padding: 7.5px 16px;
+	}
 	.page {
 		background-color: #fff;
 		padding: 8px;

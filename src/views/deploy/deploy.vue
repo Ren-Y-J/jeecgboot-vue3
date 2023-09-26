@@ -40,7 +40,12 @@
 			<br />
 			<div class="line" />
 			<a-tabs @change="changet_bas" v-model:activeKey="activeKey">
-				<a-tab-pane key="0" tab="基本配置"></a-tab-pane>
+				<a-tab-pane key="0" tab="基本配置">
+					
+					
+					
+					
+				</a-tab-pane>
 				<a-tab-pane key="1" tab="线路配置">
 					<Line />
 				</a-tab-pane>
@@ -213,7 +218,6 @@
 
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归深度" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -225,7 +229,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大递归查询数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -238,7 +241,6 @@
 
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -250,7 +252,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最大缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -262,7 +263,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归超时时间" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -274,7 +274,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="递归最大并发数" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -286,7 +285,6 @@
 					</a-form-item>
 					<a-form-item v-show="formState_bas.advancedOption == 1" label="最小否定缓存TTL" :labelCol="{ span: 8 }" :wrapperCol="{ span: 8 }">
 						<a-input-number
-							:formatter="(value) => Math.floor(value)"
 							:parser="(value) => value.replace(/\D/g, '')"
 							precision="0"
 							min="0"
@@ -637,6 +635,26 @@
 		if(formState_bas.value.dnssecValidation=='0'){
 			formState_bas.value.dnssecEnable='0'
 		}
+		
+		if(formState_bas.value.advancedOption=='0'){
+		formState_bas.value.maxRecursionDepth=''
+		
+			formState_bas.value.maxRecursionQueries=''
+			
+				formState_bas.value.minCacheTtl=''
+				formState_bas.value.maxCacheTtl=''
+				formState_bas.value.resolverQueryTimeout=''
+				formState_bas.value.recursiveClients=''
+				formState_bas.value.minNcacheTtl=''
+				formState_bas.value.transferFormat='one-answer'
+						formState_bas.value.prefetch='0'
+				
+				
+				
+		}
+		
+		
+		
 	});
 	
 	
