@@ -32,14 +32,12 @@
 					<div class="bottom_title"> {{ item.ipAddress }} </div>
 					<div v-if="item.status == '失败'" class="bottom_title">
 						<img class="installicon_2" src="./image/error.png" alt="" />
-						失败
 					</div>
 					<div v-if="item.status == '成功'" class="bottom_title">
 						<img class="installicon_2" src="./image/success.png" alt="" />
-						成功
 					</div>
 					<div v-else class="bottom_title">
-						{{ item.status }}
+						  {{ item.status }}
 					</div>
 				</div>
 			</div>
@@ -56,7 +54,7 @@
 		GoInstallStatus: 0,
 		HostsGroupID: '',
 		installName:''
-		
+
 	});
 
 	const { installName,initData, DNSID, GoInstallStatus } = toRefs(data);
@@ -83,6 +81,7 @@
 		stopTrigger = false;
 		GoInstallStatus.value = 1;
 		if (stopTrigger == true) {
+      GoInstallStatus.value = 0;
 			return; // 如果为true，则停止触发接口
 		}
 		let res = await GetStatus({
