@@ -55,8 +55,8 @@
 		initData: [],
 		GoInstallStatus: 0,
 		HostsGroupID: '',
-		installName:''
-		
+		installName:'',
+		timerId:''
 	});
 
 	const { timerId, installName, initData, DNSID, GoInstallStatus } = toRefs(data);
