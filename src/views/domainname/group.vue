@@ -134,7 +134,7 @@ const formData = ref({
 })
 const rowData = ref({
   zone: "",
-  dnId: ''
+  dnId: undefined
 
 
 })
@@ -262,7 +262,7 @@ const handlChangeFn = async (val) => {
         fromRefgroup.value.resetFields()
         opTitle.value = ""
         rowData.value.zone = ""
-        rowData.value.dnId = ""
+        rowData.value.dnId = undefined
       },
       class: 'test',
     });
@@ -274,7 +274,7 @@ const onClose = () => {
   fromRefgroup.value.resetFields()
   opTitle.value = ""
   rowData.value.zone = ""
-  rowData.value.dnId = ""
+  rowData.value.dnId = undefined
   rowData.value.id = ''
 }
 const delFn = async (record) => {
