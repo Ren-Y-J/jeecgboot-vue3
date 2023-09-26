@@ -4,7 +4,7 @@
 			<a-form autocomplete="off">
 				<a-row :gutter="1">
 					<a-col span="3">
-						<a-form-item style="margin-bottom: 0px" label="状态" name="status" :labelCol="{ span: 7 }"
+						<a-form-item style="margin-bottom: 0px" label="状态" name="status" :labelCol="{ span: 4 }"
 							:wrapperCol="{ span: 10 }">
 							<a-space>
 								<a-select placeholder="请选择" ref="select" style="width: 120px" @focus="focus"
@@ -15,7 +15,7 @@
 							</a-space>
 						</a-form-item>
 					</a-col>
-					<a-col :md="4">
+					<a-col  span="3">
 						<a-form-item style="margin-bottom: 0px" label="集群名称" name="status" :labelCol="{ span: 8 }"
 							:wrapperCol="{ span: 10 }">
 							<a-space>
