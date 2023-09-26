@@ -34,11 +34,9 @@
 					</div>
 					<div v-if="item.status === '失败'" class="bottom_title">
 						<img class="installicon_2" src="./image/error.png" alt="" />
-						失败
 					</div>
 					<div v-if="item.status === '成功'" class="bottom_title">
 						<img class="installicon_2" src="./image/success.png" alt="" />
-						成功
 					</div>
 					<div v-if="item.status !== '成功' && item.status !== '失败'" class="bottom_title">
 						{{ item.status }}
@@ -57,8 +55,8 @@
 		initData: [],
 		GoInstallStatus: 0,
 		HostsGroupID: '',
-		installName: '',
-		timerId: '',
+		installName:''
+		
 	});
 
 	const { timerId, installName, initData, DNSID, GoInstallStatus } = toRefs(data);
@@ -75,7 +73,11 @@
 		});
 	};
 	const GoInstall = async () => {
+		stopTrigger = false;
 		GoInstallStatus.value = 1;
+		if (stopTrigger == true) {
+			return; // 如果为true，则停止触发接口
+		}
 		let res = await GetStatus({
 			value: taskId,
 		});
