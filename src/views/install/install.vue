@@ -79,11 +79,11 @@
 	let stopTrigger = true;
 	const GoInstall = async () => {
 		stopTrigger = false;
-		GoInstallStatus.value = 1;
-		if (stopTrigger == true) {
+    if (stopTrigger == true) {
       GoInstallStatus.value = 0;
 			return; // 如果为true，则停止触发接口
 		}
+    GoInstallStatus.value = 1;
 		let res = await GetStatus({
 			value: taskId,
 		});
