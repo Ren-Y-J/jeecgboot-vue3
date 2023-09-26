@@ -236,29 +236,31 @@
 		console.log(record, 'record');
 		localStorage.setItem('groupName', record.groupName);
 	};
-	
-	
+
+
 	const GoInstall = (record) => {
-		
-		
+
+
 		GetHostsGroup().then((res)=>{
-			console.log(res)
-			localStorage.setItem('HostsGroupID', res);
+			// console.log(res)
+			// localStorage.setItem('HostsGroupID', res);
+      let id = record.groupId;
+      window.open('/install?groupId=' + id+"&taskId="+res);
+
 		})
-		let id = record.groupId;
-		window.open('/install?' + id);
-		
-		
-		
-		
-		
-		
-	
+
+
+
+
+
+
+
+
 	};
-	
-	
-	
-	
+
+
+
+
 </script>
 <style scoped lang="less">
 	.mainset {

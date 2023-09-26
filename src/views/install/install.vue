@@ -50,27 +50,24 @@
 <script setup>
 	import { VerticalAlignBottomOutlined, CheckCircleOutlined,ToolOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
-	import { GetList, GetStatus } from './install.ts';
+	import { GetList, GetStatus, GetTask } from './install.ts';
 	const data = reactive({
 		initData: [],
-		pageID: '',
-		DNSID: '',
-		GoInstallStatus: 0,
+    GoInstallStatus: 0,
 		HostsGroupID:''
 	});
 
-	const { initData, pageID, DNSID, GoInstallStatus,HostsGroupID } = toRefs(data);
+	const { initData, DNSID, GoInstallStatus } = toRefs(data);
+  const params = new URLSearchParams(window.location.search);
+  const taskId = params.get('taskId');
+  const groupId = params.get('groupId');
 
 	const getData = () => {
-		HostsGroupID.value = localStorage.getItem('HostsGroupID');
-		let url = location.search;
-		pageID.value = url.replace('?', '');
-		GetList({
-			taskId:HostsGroupID.value,
-			groupId: pageID.value,
+    GetList({
+			taskId:taskId,
+			groupId: groupId,
 		}).then((res) => {
-			DNSID.value = res;
-			console.log(res, '安装DNS');
+       GoInstall();
 		});
 	};
 
@@ -83,7 +80,7 @@
 			return; // 如果为true，则停止触发接口
 		}
 		let res = await GetStatus({
-			value: DNSID.value,
+			value: taskId,
 		});
 		res.forEach((item) => {
 			if (item.status == '-1') {
@@ -110,6 +107,18 @@
 		initData.value=res
 		DelF5 ()
 	};
+
+   GetTask({
+     value: taskId,
+   }).then((res) => {
+
+      // 获取状态，对安装的回显
+      if(res===1){
+        GoInstall();
+        setInterval(GoInstall, 4000);
+      }
+  });
+
 	const handleClick = () => {
 		getData();
 	  GoInstall(); // 执行 GoInstall
