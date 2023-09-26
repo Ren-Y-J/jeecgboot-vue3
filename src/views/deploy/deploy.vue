@@ -634,6 +634,9 @@
 			formState_bas.value.nxRedirectIpV4=''
 			formState_bas.value.nxRedirectIpV6=''
 		}
+		if(formState_bas.value.dnssecValidation=='0'){
+			formState_bas.value.dnssecEnable='0'
+		}
 	});
 	
 	
