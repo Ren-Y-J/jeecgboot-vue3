@@ -247,7 +247,7 @@ const addTactics =(evt)=>{
     target.blur()
 	router.push('/tactics/disposition/addpolicy')
 }
-
+// 配置策略按钮
 const goeditpolicy = (record)=>{
 	let pid = record.policyId;
 	router.push(`/tactics/disposition/editpolicy?${pid}`);

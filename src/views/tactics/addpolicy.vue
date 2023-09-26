@@ -32,7 +32,7 @@
                         <a-radio value="0">所有地址</a-radio>
                         <a-radio value="1">ACL选择</a-radio>
                     </a-radio-group>
-                    <a-select placeholder="请选择" ref="select"  style="width: 70%; margin-top: 10px"  mode="tags" v-if="formState_bas.radiovalue == '1'"
+                    <a-select placeholder="请选择" ref="select"  style="width: 70%; margin-top: 10px"  mode="multiple" v-if="formState_bas.radiovalue == '1'"
                             :size="size" :options="allaclId" :field-names="{ label: 'aclId', value: 'aclId' }" v-model:value="formState_bas.rule_ACL" >
                     </a-select>
                 </a-form-item>
@@ -47,7 +47,7 @@
                         <a-radio value="0">所有地址</a-radio>
                         <a-radio value="1">ACL选择</a-radio>
                     </a-radio-group>
-                    <a-select placeholder="请选择"  style="width: 70%; margin-top: 10px"  mode="tags" v-if="formState_bas.radiovalue_acl == '1'"
+                    <a-select placeholder="请选择"  style="width: 70%; margin-top: 10px"  mode="multiple" v-if="formState_bas.radiovalue_acl == '1'"
                         :size="size" :options="allaclId" :field-names="{ label: 'aclId', value: 'aclId' }" v-model:value="formState_bas.address_ACL">
                     </a-select>
                 </a-form-item>
@@ -78,7 +78,7 @@
                     <div v-if="formState_bas.radiovalue_domain == '0'" style="margin-top: 10px">* 匹配所有域名</div>
                     <div v-if="formState_bas.radiovalue_domain == '1'">
                         <div style="margin-top: 10px">* 按域名库匹配解析请求，包括系统内置域名库和用户自定义域名库</div>
-                        <a-select placeholder="请选择" mode="tags" style="width: 50%; margin-top: 10px"
+                        <a-select placeholder="请选择" mode="multiple" style="width: 50%; margin-top: 10px"
                             :size="size" :options="Domain" :field-names="{ label: 'dnId', value: 'dnId' }" v-model:value="formState_bas.Domain_library">
                         </a-select>
                         <a-button :style="{ margin: '10px 8px 9px 10px '}"  type="primary" @click="go_Domain">自定义域名库管理</a-button>
@@ -123,7 +123,7 @@
                 <div v-if="formState_bas.radiovalue_load == '2'">
                     <div>
                     <a-form-item label="负载均衡列表" name="aclType" style="margin-bottom: 0px">
-                        <a-table :columns="columns" :pagination="false" bordered :scroll="{ x: 'calc(700px + 50%)', y: 510 }">
+                        <a-table :columns="columns" :pagination="false" bordered >
                         </a-table>
                         <a-button :style="{ margin: '10px 8px 0px 0px ' }" type="primary" @click="add_load">添加负载均衡点</a-button>
                     </a-form-item>
@@ -193,13 +193,13 @@
             </a-form>
 
                 
-                <a-form name="basic" :model="formState_bas" :label-col="{ span: 3 }" :wrapper-col="{ span: 12 }" autocomplete="off" style="padding-top: 40px"
-				@finish="onFinish" @finishFailed="onFinishFailed" validateTrigger="blur" >故障检测
-                <a-form-item label=" " name="aclType" style="margin-bottom: 10px">
+                <a-form name="basic" :model="formState_bas" :label-col="{ span: 3 }" :wrapper-col="{ span: 12 }"  style="padding-top: 40px"
+				  layout="horizontal">故障检测
+                <a-form-item label=" " :colon="false"  name="aclType" style="margin-bottom: 10px">
                     <a-switch v-model:checked="formState_bas.checked" />
                 </a-form-item>
                 <a-form-item  name="aclType" style="margin-bottom: 100px">
-                    <a-button :style="{ margin: '10px 8px 20px 0px ' }" type="primary" >保存配置</a-button>
+                    <a-button :style="{ margin: '10px 8px 20px 0px ' }" type="primary" @click="Save_config">保存配置</a-button>
                 </a-form-item>
             </a-form>
         </div>
@@ -464,18 +464,18 @@ formState_add:{
     Balance:'',
     Forwarding_server:undefined,
     Select_sort:undefined,
-    Detect_cycle:'',
-    Review_cycle:'',
-    abnormal:'',
+    Detect_cycle:10,
+    Review_cycle:10,
+    abnormal:2,
     IP_address:'',
     Group_name:'',
     port:undefined,
     action_out:'0',
     broadband_Mbps:'',
-    Detection_points:'',
-    cycle_points:'',
-    milliseconds:'',
-    frequency:''
+    Detection_points:10,
+    cycle_points:10,
+    milliseconds:500,
+    frequency:2
 },
 formState_Time:{
     policiesTimeType:[],
@@ -513,6 +513,11 @@ const add_load = ()=>{
 const add_load_Off = ()=>{
     // visible_Load.value = false
     console.log(formState_add.value,'formState_add22222');
+}
+
+// 保存配置按钮
+const Save_config = ()=>{
+    router.push('/tactics/disposition')
 }
 
 //点击配置启用时段的添加时间图标v
