@@ -445,7 +445,7 @@
 			checked: '',
 			checkedBox: false,
 			forwarderList:null,
-			recursionType: '1',
+			recursionType: '',
 			rateLimitOn: '0',
 			responsesPerSecond: '20',
 			loggingTypeList: null,
@@ -624,7 +624,7 @@
 	watchEffect(() => {
 		if(formState_bas.value.recursionOn=='0'){
 			formState_bas.value.allowRecursionList=undefined
-			formState_bas.value.limitRecursionRange=false
+			limitRecursionRange.value=false
 		}
 		if(formState_bas.value.recursionType=='1'){
 			formState_bas.value.forwarderList=undefined

@@ -6,7 +6,7 @@
 		</div>
 	</div>
 	<div class="container">
-		<span class="title_2">正在安装DNS的主机组：主机组01</span>
+		<span class="title_2">正在安装DNS的主机组：{{installName}}</span>
 	</div>
 	<div class="container">
 		<span class="title_2">注意：如果系统检测到目标主机已经安装DNS，将自动跳过</span>
@@ -48,29 +48,35 @@
 </template>
 
 <script setup>
-	import { VerticalAlignBottomOutlined, CheckCircleOutlined,ToolOutlined } from '@ant-design/icons-vue'; //icon引入
+	import { VerticalAlignBottomOutlined, CheckCircleOutlined, ToolOutlined } from '@ant-design/icons-vue'; //icon引入
 	import { reactive, ref, toRefs, watchEffect } from 'vue';
 	import { GetList, GetStatus, GetTask } from './install.ts';
 	const data = reactive({
 		initData: [],
-    GoInstallStatus: 0,
-		HostsGroupID:''
+		GoInstallStatus: 0,
+		HostsGroupID: '',
+		installName:''
+		
 	});
 
-	const { initData, DNSID, GoInstallStatus } = toRefs(data);
-  const params = new URLSearchParams(window.location.search);
-  const taskId = params.get('taskId');
-  const groupId = params.get('groupId');
+	const { installName,initData, DNSID, GoInstallStatus } = toRefs(data);
+	const params = new URLSearchParams(window.location.search);
+	const taskId = params.get('taskId');
+	const groupId = params.get('groupId');
+    installName.value = params.get('installName');
+
+
+
+
 
 	const getData = () => {
-    GetList({
-			taskId:taskId,
+		GetList({
+			taskId: taskId,
 			groupId: groupId,
 		}).then((res) => {
-       GoInstall();
+			GoInstall();
 		});
 	};
-
 
 	let stopTrigger = true;
 	const GoInstall = async () => {
@@ -104,25 +110,24 @@
 				GoInstallStatus.value = 0;
 			}
 		});
-		initData.value=res
-		DelF5 ()
+		initData.value = res;
+		DelF5();
 	};
 
-   GetTask({
-     value: taskId,
-   }).then((res) => {
-
-      // 获取状态，对安装的回显
-      if(res===1){
-        GoInstall();
-        setInterval(GoInstall, 4000);
-      }
-  });
+	GetTask({
+		value: taskId,
+	}).then((res) => {
+		// 获取状态，对安装的回显
+		if (res === 1) {
+			GoInstall();
+			setInterval(GoInstall, 4000);
+		}
+	});
 
 	const handleClick = () => {
 		getData();
-	  GoInstall(); // 执行 GoInstall
-	  setInterval(GoInstall, 4000); // 设置定时器
+		GoInstall(); // 执行 GoInstall
+		setInterval(GoInstall, 4000); // 设置定时器
 	};
 	const DelF5 = () => {
 		document.oncontextmenu = function () {
