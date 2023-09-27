@@ -62,7 +62,6 @@
       theme: propTypes.oneOf(['dark', 'light']),
     },
     setup(props) {
-   
       const { t } = useI18n();
       const { prefixCls } = useDesign('simple-menu');
 

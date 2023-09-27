@@ -6,86 +6,51 @@
 .aui-container {
   max-width: 1000px;
   margin: 0 auto;
-  // box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.2);
   position: fixed;
   top: 50%;
   left: 50%;
-  // width: 92%;
-  width: 874px;
+  width: 92%;
   height: auto;
   -webkit-transform: translateX(-50%) translateY(-50%);
   -moz-transform: translateX(-50%) translateY(-50%);
   -ms-transform: translateX(-50%) translateY(-50%);
   transform: translateX(-50%) translateY(-50%);
   -webkit-transform: translateX(-50%) translateY(-50%);
-  border-radius: 14px 14px 14px 14px;
-  .title {
-    // width: 372px;
-    display: flex;
-    justify-content: center;
-    // align-items: center;
-    height: 34px;
-    font-size: 26px;
-    font-family: MicrosoftYaHei;
-    color: #ffffff;
-    // line-height: 0px;
-    // letter-spacing: 7px;
-    // background-color: ;
-    // padding-bottom: 63px;
-    margin-bottom: 63px;
-  }
 }
 
 .aui-form {
   width: 100%;
-  background: #fff;
+  background: #eee;
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  border-radius: 14px 14px 14px 14px;
 }
-// 标题图片
-.aui-image {
-  // padding: 180px 80px;
-  // flex-basis: 60%;
-  // -webkit-flex-basis: 60%;
-  background-color: #fff;
 
-  width: 100%;
-  height: 100%;
-  width: 446px;
-  height: 440px;
+.aui-image {
+  padding: 180px 80px;
+  flex-basis: 60%;
+  -webkit-flex-basis: 60%;
+  background-color: #0198cd;
+  background-image: url(../icon/jeecg_ad.png);
   background-size: cover;
-  margin: 25px 13px 32px 0;
-  // padding: 25px 13px 32px 0;
-  background-image: url(../icon/tit.png);
-  border-radius: 14px 14px 14px 14px;
 }
 
 .aui-image-text {
-  // top: 50%;
-  // left: 50%;
+  top: 50%;
+  left: 50%;
   width: 100%;
-  height: 100%;
-  // width: 462px;
-  // height: 454px;
-  // width: 446px;
-  // height: 440px;
-  // background: #ffffff;
-  border-radius: 14px 14px 14px 14px;
 }
 
 .aui-formBox {
   flex-basis: 40%;
   -webkit-flex-basis: 40%;
   box-sizing: border-box;
-  // padding: 30px 20px;
-  padding: 30px 61px 100px 39px;
+  padding: 30px 20px;
   background: #fff;
-  // box-shadow: 2px 9px 49px -17px rgba(0, 0, 0, 0.1);
-  border-radius: 14px 0px 0px 14px;
+  box-shadow: 2px 9px 49px -17px rgba(0, 0, 0, 0.1);
 }
 
 .aui-logo {
@@ -132,8 +97,7 @@
 .aui-input-line input {
   width: 100%;
   padding: 12px 10px;
-  // border: none;
-  border-radius: 25px 25px 25px 25px;
+  border: none;
   color: #333333;
   font-size: 14px;
   background: unset;
@@ -267,18 +231,14 @@
 
 .aui-form-nav {
   text-align: center;
-  // padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 .aui-form-nav .aui-flex-box {
   color: #040404;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 500;
   cursor: pointer;
-  text-align: left;
-  padding-top: 31px;
-  font-family: Microsoft Ya Hei;
-  padding-left: 10px;
 }
 
 .aui-clear-left {
@@ -292,19 +252,19 @@
 .activeNav {
   position: relative;
 }
-// 标题选中的状态
-// .activeNav::after {
-//   content: '';
-//   position: absolute;
-//   z-index: 0;
-//   bottom: -10px;
-//   left: 50%;
-//   margin-left: -15px;
-//   width: 30px;
-//   height: 4px;
-//   background: #1b90ff;
-//   border-radius: 100px;
-// }
+
+.activeNav::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  bottom: -10px;
+  left: 50%;
+  margin-left: -15px;
+  width: 30px;
+  height: 4px;
+  background: #1b90ff;
+  border-radius: 100px;
+}
 
 .phone .aui-inputClear {
   padding-left: 0;
@@ -365,11 +325,11 @@
 
 .aui-inputClear {
   width: 100%;
-  // border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
   position: relative;
-  // padding-left: 20px;
+  padding-left: 20px;
   background: #fff;
-  // margin-bottom: 8px;
+  margin-bottom: 8px;
   margin-top: 20px;
 }
 
@@ -382,21 +342,16 @@
 .aui-inputClear input {
   width: 100%;
   padding: 10px;
-  // border: none;
-  border-radius: 25px 25px 25px 25px;
+  border: none;
   color: #333333;
   font-size: 14px;
   background: none;
 }
-// placeholder里面的颜色
-.aui-inputClear input::placeholder {
-  color: #919191 !important;
-}
-// 短信验证码图片
+
 .aui-code {
   position: absolute;
-  right: 1px;
-  bottom: 4px;
+  right: 8px;
+  bottom: 0;
   width: 115px;
   cursor: pointer;
 }
@@ -414,13 +369,13 @@
 }
 
 .aui-inputClear:focus {
-  // border-bottom: 1px solid #1b90ff;
+  border-bottom: 1px solid #1b90ff;
 }
 
 .aui-inputClear:hover {
-  // border-bottom: 1px solid #1b90ff;
+  border-bottom: 1px solid #1b90ff;
 }
-// 记住密码
+
 .aui-choice {
   position: relative;
   font-size: 12px;
@@ -432,8 +387,6 @@
   align-items: center;
   position: relative;
   color: #040404;
-  // padding-left: 22px;
-  padding: 19px 0 33px 6px;
 }
 
 .aui-choice input {
@@ -450,9 +403,9 @@
 .aui-forget a:hover {
   text-decoration: underline;
 }
-// 登录提交的按钮
+
 .aui-formButton {
-  padding-top: 65px;
+  padding-top: 10px;
 }
 
 .aui-formButton a {
@@ -464,8 +417,7 @@
   background: #1b90ff;
   width: 100%;
   cursor: pointer;
-  border-radius: 25px 25px 25px 25px;
-  // border: none;
+  border: none;
   color: #fff;
   margin: 8px 0;
   display: block;

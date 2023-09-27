@@ -3,7 +3,6 @@
     <template v-if="!getCollapse">
       <div :class="`${prefixCls}-submenu-title`" @click.stop="handleClick" :style="getItemStyle">
         <slot name="title" :getIsOpened="getIsOpend"></slot>
-        
         <Icon icon="eva:arrow-ios-downward-outline" :size="14" :class="`${prefixCls}-submenu-title-icon`" />
       </div>
       <CollapseTransition>

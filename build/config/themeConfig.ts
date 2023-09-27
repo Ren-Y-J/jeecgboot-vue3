@@ -1,6 +1,6 @@
 import { generate } from '@ant-design/colors';
 
-export const primaryColor = '#2bdc70';
+export const primaryColor = '#1890FF';
 
 export const darkMode = 'light';
 

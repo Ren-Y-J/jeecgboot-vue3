@@ -3,6 +3,7 @@
 @import 'public.less';
 @import 'ant/index.less';
 @import './theme.less';
+@import './entry.css';
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px white inset !important;
@@ -46,3 +47,21 @@ svg,
 span {
   outline: none !important;
 }
+
+// 保持 和 windi 一样的全局样式，减少升级带来的影响
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+// 保持 和 windi 一样的全局样式，减少升级带来的影响
+
+// update-begin--author:liaozhiyang---date:20230925---for：【issues/5407】字段信息校验是多行提示会被遮挡
+.vxe-cell--valid-msg {
+  white-space: nowrap;
+}
+// update-end--author:liaozhiyang---date:20230925---for：【issues/5407】字段信息校验是多行提示会被遮挡
