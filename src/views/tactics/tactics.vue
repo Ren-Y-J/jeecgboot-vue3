@@ -469,7 +469,6 @@ const getcordList = () => {
 // 修改按钮
 const editGroup = (record)=>{
   	visible_editsyn.value = true
-  	formDataName_edit.value = [{id:'1',state_value:[]}]
   	BackLine(record.policiesId).then((res)=>{//回显接口
 		formState_edit.value.policiesId = res.policiesId
 		formState_edit.value.policiesName = res.policiesName
@@ -482,7 +481,7 @@ const editGroup = (record)=>{
 		for (let i = 0; i < result.length; i += 2) {
 			transformedA.push([result[i], result[i + 1]]);
 		}
-		formDataName_edit.value.forEach((item, index) => {
+		formDataName_edit.value.forEach((item, index) => {  
 			if (transformedA[index]){
 				item.state_value_edit = transformedA[index];
 			}

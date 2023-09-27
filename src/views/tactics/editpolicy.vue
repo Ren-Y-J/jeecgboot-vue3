@@ -33,7 +33,7 @@
                         <a-radio value="1">ACL选择</a-radio>
                     </a-radio-group>
                     <a-select placeholder="请选择" ref="select"  style="width: 70%; margin-top: 10px"  mode="tags" v-if="formState_bas.radiovalue == '1'"
-                            :size="size" :options="allaclId" :field-names="{ label: 'aclName', value: 'aclId' }" v-model:value="formState_bas.rule_ACL" >
+                            :size="size" :options="allaclId" :field-names="{ label: 'aclId', value: 'aclId' }" v-model:value="formState_bas.rule_ACL" >
                     </a-select>
                 </a-form-item>
                 <!-- ACL选择下拉框 -->
@@ -48,7 +48,7 @@
                         <a-radio value="1">ACL选择</a-radio>
                     </a-radio-group>
                     <a-select placeholder="请选择"  style="width: 70%; margin-top: 10px"  mode="tags" v-if="formState_bas.radiovalue_acl == '1'"
-                        :size="size" :options="allaclId" :field-names="{ label: 'aclName', value: 'aclId' }" v-model:value="formState_bas.address_ACL">
+                        :size="size" :options="allaclId" :field-names="{ label: 'aclId', value: 'aclId' }" v-model:value="formState_bas.address_ACL">
                     </a-select>
                 </a-form-item>
                 <!-- ACL选择下拉框 -->
@@ -79,7 +79,7 @@
                     <div v-if="formState_bas.radiovalue_domain == '1'">
                         <div style="margin-top: 10px">* 按域名库匹配解析请求，包括系统内置域名库和用户自定义域名库</div>
                         <a-select placeholder="请选择" mode="tags" style="width: 50%; margin-top: 10px"
-                            :size="size" :options="Domain" :field-names="{ label: 'name', value: 'dnId' }" v-model:value="formState_bas.Domain_library">
+                            :size="size" :options="Domain" :field-names="{ label: 'dnId', value: 'dnId' }" v-model:value="formState_bas.Domain_library">
                         </a-select>
                         <a-button :style="{ margin: '10px 8px 9px 10px '}"  type="primary" @click="go_Domain">自定义域名库管理</a-button>
                     </div>
@@ -464,18 +464,18 @@ formState_add:{
     Balance:'',
     Forwarding_server:undefined,
     Select_sort:undefined,
-    Detect_cycle:'',
-    Review_cycle:'',
-    abnormal:'',
+    Detect_cycle:10,
+    Review_cycle:10,
+    abnormal:2,
     IP_address:'',
     Group_name:'',
     port:undefined,
     action_out:'0',
     broadband_Mbps:'',
-    Detection_points:'',
-    cycle_points:'',
-    milliseconds:'',
-    frequency:''
+    Detection_points:10,
+    cycle_points:10,
+    milliseconds:500,
+    frequency:2
 },
 formState_Time:{
     policiesTimeType:[],
@@ -588,7 +588,7 @@ const gethostAll = ()=>{
         let transformedServe = res.map((item) => {
 			return {
 				value: item.id,
-				label: item.name,
+				label: item.id,
 			};
 		});
 		server.value = transformedServe;
